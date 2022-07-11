@@ -1,0 +1,15 @@
+/*! Copyright © 2020 北京视图更新科技有限公司 | https://pro.iviewui.com */
+/*! Version 1.0.0 */
+/*!
+多功能导航菜单使用协议：
+北京视图更新科技有限公司版权所有 (c) 2019-至今
+使用多功能导航菜单，必须遵守以下协议：
+1. 购买者可将授权后的产品用于任意符合国家法律法规的应用平台。
+2. 购买的物料产品仅限于被授权主体（个人、企业或组织）使用，不能给其它主体（个人、企业或组织）使用。
+3. 授权者务必尊重知识产权，严格保证不恶意传播产品源码、不得直接对授权的产品本身进行二次转售或倒卖、不得对授权的产品进行简单包装后声称为自己的产品等。否则我们有权利收回产品授权，并根据事态轻重追究相应法律责任。
+4. 多功能导航菜单一旦购买，不支持退款。
+5. 我们有义务为授权者提供有效期内的产品下载、更新和维护。
+6. 我们有义务为授权者在规定期间内提供免费的产品技术支持以及额外付费的技术支持、技术顾问、定制化需求、线下课程辅导等。免费的技术支持提供在线工单、QQ、微信的技术支持，不包含远程服务。
+7. 本协议及本协议任何条款内容的最终解释权及修改权归北京视图更新科技有限公司所有。
+*/
+.i-sidebar{display:inline-block}.i-sidebar-btn{display:inline-block;width:64px;height:64px;text-align:center;cursor:pointer}.i-sidebar-drawer{top:64px!important}.i-sidebar-drawer .ivu-drawer{top:64px}.i-sidebar-drawer .ivu-drawer-body{padding:0;padding-bottom:64px}.i-sidebar-drawer .ivu-menu{width:240px}.i-sidebar-drawer .ivu-menu-light.ivu-menu-vertical .ivu-menu-item-active:not(.ivu-menu-submenu):after,.i-sidebar-drawer .ivu-menu-vertical.ivu-menu-light:after{display:none}.i-sidebar-main-menu{width:240px;height:100%;position:absolute;overflow:auto;box-shadow:0 4px 12px rgba(0,0,0,.15);padding-bottom:64px}.i-sidebar-main-divider{margin:0!important}.i-sidebar-main-extend{position:absolute;top:16px;left:272px;right:16px;bottom:64px}.i-sidebar-main-extend-row{height:100%!important}.i-sidebar-main-extend-col{height:100%!important}.i-sidebar-main-extend-search{width:100%;height:48px}.i-sidebar-main-extend-menu{position:absolute;top:48px;left:0;right:0;bottom:0;overflow:auto}.i-sidebar-main-extend-menu-without-search{top:0}.i-sidebar-main-extend-menu-group{column-count:3;column-gap:12px;margin-bottom:12px}.i-sidebar-main-extend-menu-group-list{display:inline-block;width:100%;margin-bottom:12px;break-inside:avoid}.i-sidebar-main-extend-menu-group-list h4{padding:6px;border-radius:2px}.i-sidebar-main-extend-menu-group-list .i-link{display:block;padding:6px;border-radius:2px;transition:all .2s ease-in-out}.i-sidebar-main-extend-menu-group-list .i-link:hover{color:#2d8cf0;background:#f8f8f9}.i-sidebar-main-extend-menu-group-highlight{background:#2d8cf0;color:#fff}.i-sidebar-main-extend-nav{position:absolute;top:0;left:16px;right:0;bottom:0;overflow:auto;border-left:1px solid #dcdee2}.i-sidebar-main-extend-nav li{display:block;list-style:none;cursor:pointer;padding:6px 6px 6px 16px}.i-sidebar-main-extend-nav li:hover{color:#2d8cf0}.i-sidebar-item{position:relative}.i-sidebar-item-arrow{float:right;position:relative;top:5px}
