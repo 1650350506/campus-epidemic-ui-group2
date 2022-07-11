@@ -1,19 +1,19 @@
 <template>
-    <GlobalFooter class="i-copyright" :links="links" :copyright="copyright" />
+  <GlobalFooter class="i-copyright" :links="links" :copyright="copyright" />
 </template>
 <script>
-    export default {
-        name: 'i-copyright',
-        data () {
-            return {
-                links: [
-                    {
-                        title: '官网',
-                        key: '官网',
-                        href: 'http://www.hztianque.com/home',
-                        blankTarget: true
-                    }
-                /*  {
+export default {
+  name: 'i-copyright',
+  data() {
+    return {
+      links: [
+        {
+          title: '官网',
+          key: '官网',
+          href: 'http://www.hztianque.com/home',
+          blankTarget: true
+        }
+        /*  {
                         title: '社区',
                         key: '社区',
                         href: 'https://dev.iviewui.com',
@@ -25,11 +25,11 @@
                         href: 'https://pro.iviewui.com',
                         blankTarget: true
                     } */
-                ],
-                copyright: 'Copyright © 2019 杭州天阙科技有限公司'
-            }
-        }
+      ],
+      copyright: 'Copyright © 2019 杭州天阙科技有限公司'
     }
+  }
+}
 </script>
 <style lang="less">
     .i-copyright{

@@ -1,12 +1,12 @@
 <template>
-    <Grid :col="3" class="dashboard-workplace-apps" :border="false" padding="6px" hover>
-        <GridItem v-for="(item, index) in data" :key="index">
-            <i-link :to='item.normalUrl' :target='item.jumpType==="open" ? "_blank" : "_self" '>
-            <div class="dashboard-workplace-apps-item" :style="'background-image:url(' + item.cover + ')'">
-                <div class="dashboard-workplace-apps-item-main">
-                    <div class="dashboard-workplace-apps-name">{{ item.name }}</div>
-                    <div class="dashboard-workplace-apps-desc">{{ item.desc }}</div>
-                    <!-- <div class="dashboard-workplace-apps-extra">
+  <Grid :col="3" class="dashboard-workplace-apps" :border="false" padding="6px" hover>
+    <GridItem v-for="(item, index) in data" :key="index">
+      <i-link :to='item.normalUrl' :target='item.jumpType==="open" ? "_blank" : "_self" '>
+        <div class="dashboard-workplace-apps-item" :style="'background-image:url(' + item.cover + ')'">
+          <div class="dashboard-workplace-apps-item-main">
+            <div class="dashboard-workplace-apps-name">{{ item.name }}</div>
+            <div class="dashboard-workplace-apps-desc">{{ item.desc }}</div>
+            <!-- <div class="dashboard-workplace-apps-extra">
                         <Tooltip placement="top" content="设置">
                             <Icon type="md-settings" />
                         </Tooltip>
@@ -17,50 +17,50 @@
                             <Icon type="md-star" @click="handleCollect(index)" />
                         </Tooltip>
                     </div> -->
-                </div>
-            </div>
-            </i-link>
-        </GridItem>
-    </Grid>
+          </div>
+        </div>
+      </i-link>
+    </GridItem>
+  </Grid>
 </template>
 <script>
-    export default {
-        data () {
-            return {
-                data: []
-            }
-        },
-        props: {
-            value: {
-                type: Array,
-                default: () => []
-            }
-        },
-        methods: {
-            handleCollect (index) {
-                this.data[index].collect = 1;
-            },
-            handleUnCollect (index) {
-                this.data[index].collect = 0;
-            },
-            handJump (jumpType) {
-                return jumpType === 'open' ? '_blank' : ''
-            }
-        },
-        watch: {
-            value (newVal) {
-                newVal.forEach((item, index) => {
-                    this.data.push({
-                        name: item.appName,
-                        desc: item.appKey,
-                        cover: require('@/assets/app-images/app' + (index % 4 + 1) + '.jpeg'),
-                        normalUrl: item.indexUrl,
-                        jumpType: item.jumpType
-                    })
-                })
-            }
-        }
+export default {
+  props: {
+    value: {
+      type: Array,
+      default: () => []
     }
+  },
+  data() {
+    return {
+      data: []
+    }
+  },
+  watch: {
+    value(newVal) {
+      newVal.forEach((item, index) => {
+        this.data.push({
+          name: item.appName,
+          desc: item.appKey,
+          cover: require(`@/assets/app-images/app${index % 4 + 1}.jpeg`),
+          normalUrl: item.indexUrl,
+          jumpType: item.jumpType
+        })
+      })
+    }
+  },
+  methods: {
+    handleCollect(index) {
+      this.data[index].collect = 1
+    },
+    handleUnCollect(index) {
+      this.data[index].collect = 0
+    },
+    handJump(jumpType) {
+      return jumpType === 'open' ? '_blank' : ''
+    }
+  }
+}
 </script>
 <style lang="less">
     .dashboard-workplace-apps{

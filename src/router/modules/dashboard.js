@@ -1,46 +1,27 @@
-import BasicLayout from '@/layouts/basic-layout';
+import BasicLayout from '@/layouts/basic-layout'
 
 const meta = {
-    auth: true
-};
+  auth: true
+}
 
-const pre = 'dashboard-';
+const pre = 'dashboard-'
 
 export default {
-    path: '/dashboard',
-    name: 'dashboard',
-    redirect: {
-        name: `${pre}workplace`
-    },
-    component: BasicLayout,
-    children: [
-        {
-            path: 'console',
-            name: `${pre}console`,
-            meta: {
-                ...meta,
-                title: '主控台',
-                closable: false
-            },
-            component: () => import('@/pages/dashboard/console')
-        },
-        {
-            path: 'monitor',
-            name: `${pre}monitor`,
-            meta: {
-                ...meta,
-                title: '监控页'
-            },
-            component: () => import('@/pages/dashboard/monitor')
-        },
-        {
-            path: 'workplace',
-            name: `${pre}workplace`,
-            meta: {
-                auth: false,
-                title: '工作台'
-            },
-            component: () => import('@/pages/dashboard/workplace')
-        }
-    ]
-};
+  path: '/dashboard',
+  name: 'dashboard',
+  redirect: {
+    name: `${pre}workplace`
+  },
+  component: BasicLayout,
+  children: [
+    {
+      path: 'workplace',
+      name: `${pre}workplace`,
+      meta: {
+        auth: false,
+        title: '工作台'
+      },
+      component: () => import('@/pages/dashboard/workplace')
+    }
+  ]
+}

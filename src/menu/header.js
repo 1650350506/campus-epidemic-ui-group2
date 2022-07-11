@@ -2,21 +2,21 @@
 // import { listSortBySeq } from '@/api/setup/headerMenu';
 
 export default [
-    {
-        path: '/index',
-        title: '首页',
-        icon: 'md-home',
-        hideSider: false,
-        name: 'home'
-    },
-    {
-        path: '/log',
-        title: '日志',
-        icon: 'md-locate',
-        hideSider: true,
-        name: 'system'
-    }
-];
+  {
+    path: '/index',
+    title: '首页',
+    icon: 'md-home',
+    hideSider: false,
+    name: 'home'
+  },
+  {
+    path: '/log',
+    title: '日志',
+    icon: 'md-locate',
+    hideSider: true,
+    name: 'system'
+  }
+]
 // const headerMenuList = []
 
 // listSortBySeq()

@@ -3,14 +3,14 @@
  * 这个文件是一次性创建的，不应该被修改。
  */
 
-const files = require.context('./modules', false, /\.js$/);
-const modules = {};
+const files = require.context('./modules', false, /\.js$/)
+const modules = {}
 
 files.keys().forEach(key => {
-    modules[key.replace(/(\.\/|\.js)/g, '')] = files(key).default
-});
+  modules[key.replace(/(\.\/|\.js)/g, '')] = files(key).default
+})
 
 export default {
-    namespaced: true,
-    modules
-};
+  namespaced: true,
+  modules
+}

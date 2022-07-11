@@ -1,75 +1,68 @@
 <template>
-    <div class="page-account template-login-data">
-        <div class="page-account-container">
-            <div class="page-account-top">
-                <div class="page-account-top-logo">
-                    <img src="@/assets/images/logo-dark.png" alt="logo">
-                </div>
-                <div class="page-account-top-desc">Doraemon Admin  天阙中台基础设施</div>
-            </div>
-            <div class="template-login-data-main">
-                <Login @on-submit="handleSubmit">
-                    <UserName name="username" value="admin" />
-                    <Password name="password" value="admin" enter-to-submit />
-                    <Submit>{{ $t('page.login.submit') }}</Submit>
-                </Login>
-                <!-- <div class="page-account-other template-login-data-other">
-                    <Divider size="small">{{ $t('page.login.other') }}</Divider>
-                    <img src="@/assets/svg/icon-social-wechat.svg" alt="wechat">
-                    <img src="@/assets/svg/icon-social-qq.svg" alt="qq">
-                    <img src="@/assets/svg/icon-social-weibo.svg" alt="weibo">
-                </div> -->
-            </div>
+  <div class="page-account template-login-data">
+    <div class="page-account-container">
+      <div class="page-account-top">
+        <div class="page-account-top-logo">
+          <img src="@/assets/images/logo-dark.png" alt="logo">
         </div>
-        <i-copyright class="template-login-data-copyright" />
+        <div class="page-account-top-desc">Doraemon Admin  天阙中台基础设施</div>
+      </div>
+      <div class="template-login-data-main">
+        <Login @on-submit="handleSubmit">
+          <UserName name="username" value="admin" />
+          <Password name="password" value="admin" enter-to-submit />
+          <Submit>登录</Submit>
+        </Login>
+      </div>
     </div>
+    <i-copyright class="template-login-data-copyright" />
+  </div>
 </template>
 <script>
-    import iCopyright from '@/components/copyright';
-    import { mapActions } from 'vuex';
-    import mixins from '../mixins';
-    import md5 from 'js-md5'
+import iCopyright from '@/components/copyright'
+import { mapActions } from 'vuex'
+import md5 from 'js-md5'
 
-    export default {
-        mixins: [mixins],
-        components: { iCopyright },
-        data () {
-            return {
-                autoLogin: true
-            }
-        },
-        methods: {
-            ...mapActions('admin/account', [
-                'login'
-            ]),
-            /**
+export default {
+  components: { iCopyright },
+  data() {
+    return {
+      autoLogin: true
+    }
+  },
+  methods: {
+    ...mapActions('admin/account', [
+      'login'
+    ]),
+    /**
              * @description 登录
              * 表单校验已有 iView Pro 自动完成，如有需要修改，请阅读 iView Pro 文档
              */
-            handleSubmit (valid, values) {
-                if (valid) {
-                    let { username, password } = values;
-                    password = md5(password)
-                    this.login({
-                        username,
-                        password
-                    })
-                        .then(() => {
-                            // 重定向对象不存在则返回顶层路径
-                            if (this.$route.query.redirect === undefined) {
-                                this.$router.replace('/index');
-                            } else {
-                                this.$router.replace(this.$route.query.redirect || '/');
-                            }
-                        }).catch(error => {
-                            // 异常情况
-                            this.$log.error(error)
-                            this.$Message.error(error.message)
-                    });
-                }
+    handleSubmit(valid, values) {
+      if (valid) {
+        let { username, password } = values
+        password = md5(password)
+        this.login({
+          username,
+          password
+        })
+          .then(() => {
+            // 重定向对象不存在则返回顶层路径
+            if (!this.$route.query.redirect) {
+              this.$router.replace('/index')
+            } else {
+              this.$router.replace(this.$route.query.redirect || '/')
             }
-        }
-    };
+          })
+          .catch(error => {
+            // 异常情况
+            this.$log.error(error)
+            this.$Message.error(error.message)
+          })
+      }
+    }
+  }
+}
 </script>
 <style lang="less">
     .template-login-data{

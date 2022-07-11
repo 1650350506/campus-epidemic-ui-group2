@@ -1,7 +1,7 @@
 <template>
-    <div>
-        <Exception type="403" img-color :desc="$t('page.exception.e403')" :back-text="$t('page.exception.btn')" />
-    </div>
+  <div>
+    <Exception type="403" img-color desc="抱歉，你无权访问该页面" back-text="返回首页" />
+  </div>
 </template>
 <script>
 
