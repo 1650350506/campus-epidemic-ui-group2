@@ -11,6 +11,15 @@ export function AccountLogin(data) {
   return request({
     url: `${moduleName.doraemon_oauth}/oauth/token`,
     method: 'post',
+    urlType: 'login',
+    data
+  })
+}
+export function Demo(data) {
+  return request({
+    url: `${moduleName.doraemon_demo}/demo/ddd`,
+    method: 'get',
+    urlType: 'test',
     data
   })
 }

@@ -3,7 +3,6 @@ import axios from 'axios'
 import util from '@/libs/util'
 import Setting from '@/setting'
 import { serialize } from '@/utils/util'
-
 import { Message, Notice } from 'view-design'
 
 // 创建一个错误
@@ -12,7 +11,7 @@ function errorCreate(msg) {
   errorLog(err)
   throw err
 }
-
+const BaseURL = ''
 // 记录和显示错误
 function errorLog(err) {
   // 添加到日志
@@ -45,23 +44,31 @@ function errorLog(err) {
 
 // 创建一个 axios 实例
 const service = axios.create({
-  baseURL: Setting.apiBaseURL,
+  baseURL: BaseURL,
   timeout: 5000 // 请求超时时间
 })
 
 // 请求拦截器
 service.interceptors.request.use(
   config => {
+    if (config.urlType === 'login') {
+      config.baseURL = '/api'
+      config.headers.Authorization = 'Basic dXNlcmNlbnRlcjoxMTg2MDQ1ZDU1OTlkZTZlZjJjYTI4MjM0N2E1NWNhMg=='
+    } else {
+      config.baseURL = '/test'
+      config.headers.Authorization = util.cookies.get('token')
+    }
+    console.log(config)
     const mete = (config.meta || {})
     // 在请求发送之前做一些处理
     const token = util.cookies.get('token')
     // 让每个请求携带token-- ['X-Token']为自定义key 请根据实际情况自行修改
     config.headers.auth = `bearer ${token}`
-    config.headers.Authorization = 'Basic dXNlcmNlbnRlcjoxMTg2MDQ1ZDU1OTlkZTZlZjJjYTI4MjM0N2E1NWNhMg=='
     if (config.method === 'post' && mete.isSerialize !== false) {
       config.data = serialize(config.data)
       // encode 解决提交中文乱码 post
       config.data = encodeURI(config.data)
+      console.log(config)
     }
     return config
   },
@@ -87,6 +94,7 @@ service.interceptors.response.use(
       return dataAxios
     }
     // 根据 code 进行判断
+    // eslint-disable-next-line no-undefined
     if (code === undefined) {
       // 如果没有 code 代表这不是项目后端开发的接口
       return dataAxios

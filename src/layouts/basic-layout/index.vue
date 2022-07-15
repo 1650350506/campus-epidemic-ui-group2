@@ -9,24 +9,24 @@
           <i-header-logo v-if="isMobile && showMobileLogo" />
           <i-header-logo v-if="!isMobile && isHeaderStick && headerFix" />
           <i-header-collapse v-if="(isMobile || showSiderCollapse) && !hideSider" @on-toggle-drawer="handleToggleDrawer" />
-          <i-header-reload v-if="!isMobile && showReload" @on-reload="handleReload" />
-          <i-menu-head v-if="headerMenu && !isMobile" ref="menuHead" />
-          <i-header-breadcrumb v-if="showBreadcrumb && !headerMenu && !isMobile" ref="breadcrumb" />
-          <i-header-search v-if="showSearch && !headerMenu && !isMobile && !showBreadcrumb" />
+          <!--          <i-header-reload v-if="!isMobile && showReload" @on-reload="handleReload" />-->
+          <!--          <i-menu-head v-if="headerMenu && !isMobile" ref="menuHead" />-->
+<!--          <i-header-breadcrumb v-if="showBreadcrumb && !headerMenu && !isMobile" ref="breadcrumb" />-->
+<!--          <i-header-search v-if="showSearch && !headerMenu && !isMobile && !showBreadcrumb" />-->
           <div class="i-layout-header-right">
-            <i-header-search v-if="(showSearch && isMobile) || (showSearch && (headerMenu || showBreadcrumb))" />
-            <i-menu-head v-if="headerMenu && isMobile" />
-            <i-header-log v-if="isDesktop && showLog" />
+<!--            <i-header-search v-if="(showSearch && isMobile) || (showSearch && (headerMenu || showBreadcrumb))" />-->
+<!--            <i-menu-head v-if="headerMenu && isMobile" />-->
+<!--            <i-header-log v-if="isDesktop && showLog" />-->
             <i-header-fullscreen v-if="isDesktop && showFullscreen" />
-            <i-header-notice v-if="showNotice" />
+<!--            <i-header-notice v-if="showNotice" />-->
             <i-header-user />
-            <i-header-setting v-if="enableSetting && !isMobile" />
+<!--            <i-header-setting v-if="enableSetting && !isMobile" />-->
           </div>
         </Header>
       </transition>
       <Content class="i-layout-content" :class="contentClasses">
         <transition name="fade-quick">
-          <i-tabs v-if="tabs" v-show="showHeader" @on-reload="handleReload" />
+<!--          <i-tabs v-if="tabs" v-show="showHeader" @on-reload="handleReload" />-->
         </transition>
         <div class="i-layout-content-main">
           <keep-alive :include="keepAlive">

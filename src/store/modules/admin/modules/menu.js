@@ -209,7 +209,7 @@ export default {
     getMenus() {
       return new Promise((resolve, reject) => {
         // 获取用户菜单
-        GetMenus({ appKey: 'tq-doraemon' })
+        GetMenus({ appKey: 'cappus-epidemic-group2' })
           .then(res => {
             const menuSider = []
             menuSider.push(dashboard)

@@ -17,11 +17,19 @@ module.exports = {
   devServer: {
     proxy: {
       '/api': {
-        target: 'http://192.168.110.197:8081',
+        target: 'http://192.168.1.94:8081',
         ws: true,
         changeOrigin: true,
         pathRewrite: {
-          '^/api': ''
+          '/api': ''
+        }
+      },
+      '/test': {
+        target: 'http://192.168.1.181:28088',
+        ws: true,
+        changeOrigin: true,
+        pathRewrite: {
+          '^/test': ''
         }
       }
     }
@@ -54,8 +62,8 @@ module.exports = {
         config => config.devtool('cheap-source-map')
       )
     // 非开发环境
+      // eslint-disable-next-line no-empty-function
       .when(process.env.NODE_ENV !== 'development', config => {
-
       })
     // 不编译 iView Pro
     config.module

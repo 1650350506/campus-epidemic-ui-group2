@@ -5,6 +5,7 @@ export function GetMenus(data) {
   return request({
     url: `${moduleName.doraemon_system}/menu/listAppMenuByAppKey`,
     method: 'get',
+    urlType: 'login',
     params: {
       ...data
     }
@@ -15,6 +16,7 @@ export function GetPermissionBtns(data) {
   return request({
     url: `${moduleName.doraemon_system}/menu/listButtonByParentId`,
     method: 'get',
+    urlType: 'login',
     params: {
       ...data
     }
@@ -25,6 +27,16 @@ export function GetPermissionBtns(data) {
 export function listBaseMenu(data) {
   return request({
     url: `${moduleName.doraemon_system}/menu/listAppBaseMenu`,
+    method: 'get',
+    urlType: 'login',
+    params: {
+      ...data
+    }
+  })
+}
+export function demo(data) {
+  return request({
+    url: `${moduleName.doraemon_demo}/demo/ddd`,
     method: 'get',
     params: {
       ...data

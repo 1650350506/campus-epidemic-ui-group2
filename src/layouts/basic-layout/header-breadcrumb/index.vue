@@ -77,10 +77,12 @@ export default {
       return flattenSiderMenu(this.menuSider, [])
     }
   },
+  // eslint-disable-next-line vue/order-in-components
   data() {
     return {
       // 得到所有侧边菜单，并转为平级，查询图标及显示对应内容
       // allSiderMenu: flattenSiderMenu(menuSider, []),
+      // eslint-disable-next-line no-empty-function
       handleResize: () => {},
       isLimit: false,
       maxWidth: 560,
@@ -111,6 +113,7 @@ export default {
     }
   },
   mounted() {
+    console.log(this.filterSider)
     this.handleResize = throttle(this.handleCheckWidth, 100, { leading: false })
     on(window, 'resize', this.handleResize)
     this.handleGetWidth()

@@ -22,6 +22,11 @@ const frameIn = [
         }
       },
       {
+        path: '/isolationAnalysis',
+        name: 'isolationAnalysis',
+        component: () => import('@/pages/administrators/analysis/isolation/index')
+      },
+      {
         path: 'log',
         name: 'log',
         meta: {

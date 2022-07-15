@@ -3,7 +3,7 @@
  * */
 
 const env = process.env.NODE_ENV
-
+console.log(env)
 const Setting = {
   /**
      * 基础配置
@@ -18,6 +18,7 @@ const Setting = {
   showProgressBar: true,
   // 接口请求地址
   apiBaseURL: env === 'development' ? '/api' : '/api',
+  apiBaseURL2: env === 'development' ? '/test' : '/test',
   // 接口请求返回错误时，弹窗的持续时间，单位：秒
   modalDuration: 3,
   // 接口请求返回错误时，弹窗的类型，可选值为 Message 或 Notice
