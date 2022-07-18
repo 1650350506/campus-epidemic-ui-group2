@@ -27,6 +27,16 @@ const frameIn = [
         component: () => import('@/pages/administrators/analysis')
       },
       {
+        path: '/riskAreaManage',
+        name: 'riskArea',
+        component: () => import('@/pages/administrators/area')
+      },
+      {
+        path: '/highestPreManage',
+        name: 'highestPre',
+        component: () => import('@/pages/administrators/college')
+      },
+      {
         path: 'log',
         name: 'log',
         meta: {

@@ -17,7 +17,7 @@ export function AccountLogin(data) {
 }
 export function Demo(data) {
   return request({
-    url: `${moduleName.doraemon_demo}/demo/ddd`,
+    url: `${moduleName.doraemon_demo}/analysis/total`,
     method: 'get',
     urlType: 'test',
     data

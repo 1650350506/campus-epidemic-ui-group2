@@ -1,9 +1,9 @@
 <template>
   <div>
-    <Card :bordered="false"  style="width: 98.4%;margin-left: 1em" class="card">
+    <Card :bordered="false"  class="card-top card">
       <!--       这是面包屑组件-->
       <i-header-breadcrumb  ref="breadcrumb" />
-      <h3>你好！ 管理员！</h3>
+      <h2>你好！ 管理员！</h2>
     </Card>
     <Card class="container" :bordered="false" dis-hover>
       <div class="chart-top">
@@ -38,6 +38,7 @@
 <script>
 import _ from 'lodash'
 import iHeaderBreadcrumb from '@/layouts/basic-layout/header-breadcrumb'
+import { GetAllIsolationTotal } from '@api/administorators/analysis'
 const echarts = require('echarts')
 export default {
   name: 'index',
@@ -47,7 +48,7 @@ export default {
   data() {
     return {
       topList: [
-        { name: '总隔离人数', num: 55 },
+        { name: '总隔离人数', num: 0 },
         { name: '新增隔离人数', num: 5 },
         { name: '新增解除人数', num: 10 }
       ],
@@ -246,6 +247,9 @@ export default {
     const result2 = _.merge(this.option2.series.data, this.option2)
     myChart2.setOption(result2)
   },
+  created() {
+    this.getAllIsolationTotal()
+  },
   methods: {
     optionsAve() {
       let sum = 0
@@ -253,6 +257,12 @@ export default {
         sum += this.option2.series[0].data[i]
       }
       console.log(sum)
+    },
+    getAllIsolationTotal() {
+      GetAllIsolationTotal().then((res) => {
+        console.log(res)
+        this.topList[0].num = res.field
+      })
     }
   }
 }
@@ -287,10 +297,6 @@ i {
   font-size: 3em;
   font-weight: bold;
   cursor: pointer;
-}
-.card {
-  border-radius: 10px;
-  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
 }
 .chart-mid {
   height: 40vw;

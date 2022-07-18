@@ -9,8 +9,8 @@
       </div>
       <div class="template-login-data-main">
         <Login @on-submit="handleSubmit">
-          <UserName name="username" value="admin345" />
-          <Password name="password" value="Admin345" enter-to-submit />
+          <UserName name="username" value="admin456" />
+          <Password name="password" value="Admin456" enter-to-submit />
           <Submit>登录</Submit>
         </Login>
       </div>

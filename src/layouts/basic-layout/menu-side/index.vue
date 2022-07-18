@@ -106,6 +106,7 @@ export default {
   },
   created() {
     this.listBaseMenuT()
+    console.log(this.filterSider)
   },
   methods: {
     listBaseMenuT() {

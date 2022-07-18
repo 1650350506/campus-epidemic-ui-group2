@@ -15,4 +15,6 @@
     <tree path="/src/pages/personnel/riskpremanage/waitisolation" title="待隔离人员"/>
     <tree path="/src/pages/personnel/journeyrecord" title="行程录入"/>
     <tree path="/src/pages/personnel/journeyrecord/inputmessage" title="信息录入"/>
+    <tree path="/src/store" title="vuex"/>
+    <tree path="/src/styles" title="全局样式"/>
 </trees>
