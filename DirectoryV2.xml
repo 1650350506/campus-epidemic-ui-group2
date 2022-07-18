@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ <trees>
+     <tree path="/src/pages/groupleader/stumanage/outrecord" title="外出记录"/>
+     <tree path="/src/pages/groupleader/stumanage/riskpre" title="风险人员信息"/>
+     <tree path="/src/pages/groupleader/stumanage/stubasic" title="学生基本信息"/>
+     <tree path="/src/pages/groupleader" title="防疫组长"/>
+     <tree path="/src/pages/administrators" title="最高管理员"/>
+     <tree path="/src/pages/administrators/analysis" title="数据分析"/>
+     <tree path="/src/pages/administrators/area" title="风险地区管理"/>
+     <tree path="/src/pages/administrators/college" title="教职工管理"/>
+     <tree path="/src/pages/personnel" title="防疫人员"/>
+     <tree path="/src/pages/personnel/premanage" title="风险人员管理"/>
+     <tree path="/src/pages/personnel/riskpremanage" title="风险人员管理"/>
+    <tree path="/src/pages/personnel/riskpremanage/premanage" title="已隔离管理"/>
+    <tree path="/src/pages/personnel/riskpremanage/waitisolation" title="待隔离人员"/>
+    <tree path="/src/pages/personnel/journeyrecord" title="行程录入"/>
+    <tree path="/src/pages/personnel/journeyrecord/inputmessage" title="信息录入"/>
+</trees>

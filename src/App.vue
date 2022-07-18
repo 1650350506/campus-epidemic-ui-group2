@@ -32,10 +32,12 @@ export default {
       }
     }
   },
+  // eslint-disable-next-line vue/order-in-components
   mounted() {
     on(window, 'resize', this.handleWindowResize)
     this.handleMatchMedia()
   },
+  // eslint-disable-next-line vue/order-in-components
   beforeDestroy() {
     off(window, 'resize', this.handleWindowResize)
   }
