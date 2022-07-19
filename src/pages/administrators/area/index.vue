@@ -1,15 +1,272 @@
 <template>
-  <div>地区管理</div>
+  <div>
+    <Card :bordered="false"  class="card">
+      <!--       这是面包屑组件-->
+      <i-header-breadcrumb  ref="breadcrumb" />
+      <h2>你好！ 管理员！</h2>
+    </Card>
+    <Card class="card-marginTop card">
+      <div slot="title" class="search-module">
+        <div class="search-left">
+          <i class="ivu-icon ivu-icon-ios-search"></i>
+          <Cascader style="width: 300px" :data="place" v-model="placeValue"></Cascader>
+        </div>
+        <Button type="primary" class="btn">查询</Button>
+        <Button class="btn">重置</Button>
+      </div>
+      <Card style="margin-bottom: 1em">
+        <div class="batch-box">
+          <div class="select-text">已选择 <span style="color: #d41944; font-size: 18px">{{batchNum}}</span> 项</div>
+          <div class="group">
+            <Checkbox-group  v-for="(item, index) in riskGradeList" :key="index" :change="chooseRiskGrade(index)">
+              <Checkbox :label="item"></Checkbox>
+            </Checkbox-group>
+          </div>
+          <Button class="btn" type="primary" @click="batchSubmit">批量提交</Button>
+        </div>
+      </Card>
+      <Table border :columns="columns2" :data="data2" class="table" :border="false"
+             @on-select="selectItem"
+      ></Table>
+      <Page :total="100" show-elevator show-sizer class-name="page"></Page>
+    </Card>
+  </div>
 </template>
 
 <script>
 
-export default {
+import iHeaderBreadcrumb from '@/layouts/basic-layout/header-breadcrumb'
+import { GetCityList, GetNewIsolationTotal, GetProvinceList } from '@api/administorators/analysis'
 
-  name: 'index'
+export default {
+  name: 'index',
+  components: {
+    iHeaderBreadcrumb
+  },
+  data() {
+    return {
+      riskGrade: '',
+      riskGradeList: ['高风险', '中风险', '低风险'],
+      placeValue: ['浙江省', 'hw', '西湖区', '留下街道'],
+      place: [
+        {
+          code: '222',
+          value: 'www',
+          label: '浙江省',
+          children: [
+            {
+              value: '杭州市',
+              label: '杭州市',
+              children: [
+                {
+                  value: '西湖区',
+                  label: '西湖区',
+                  children: [
+                    {
+                      value: '留下街道',
+                      label: '留下街道'
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      columns2: [
+        {
+          type: 'selection',
+          width: 60,
+          align: 'center',
+          on: {
+            'on-change': (e) => {
+              console.log(e)
+            }
+          }
+        },
+        {
+          title: '地区编号',
+          align: 'center',
+          width: 120,
+          key: 'uid'
+        },
+        {
+          title: '地区名称',
+          key: 'name',
+          align: 'center'
+        },
+        {
+          title: '风险等级',
+          width: '280',
+          align: 'center',
+          key: 'grade',
+          render: (h, params) => {
+            const arr = [{ grade: '低风险', checked: false },
+              { grade: '中风险', checked: false },
+              { grade: '高风险', checked: false }]
+            const temp = params.row.grade
+            if (temp === 0) {
+              arr[0].checked = true
+            } else if (temp === 1) {
+              console.log()
+              arr[1].checked = true
+            } else if (temp === 2) {
+              arr[2].checked = true
+            }
+            const CheckboxList = []
+            arr.forEach((item, index) => {
+              CheckboxList.push(h('Radio', {
+                props: {
+                  label: item.grade,
+                  value: item.checked
+                },
+                on: {
+                  'on-change': (e) => {
+                    this.data2[params.index].grade = index
+                  }
+                }
+              }, item))
+            })
+            return h('div', {}, [
+              CheckboxList])
+          }
+
+        },
+        {
+          title: '更新时间',
+          align: 'center',
+          key: 'update'
+        },
+        {
+          title: '操作',
+          key: 'action',
+          align: 'center',
+          render: (h, params) => {
+            return h('div', [
+              h('Button', {
+                props: {
+                  size: 'small'
+                },
+                style: {
+                },
+                on: {
+                  click: () => {
+                    this.show(params.index)
+                  }
+                }
+              }, '提交')
+            ])
+          }
+        }
+      ],
+      data2: [
+        {
+          uid: 199200118,
+          name: '浙江省杭州市余杭区无常街道后山路',
+          grade: 0,
+          update: '2022-05-01'
+        },
+        {
+          uid: 199200118,
+          name: '浙江省杭州市余杭区无常街道后山路',
+          grade: 1,
+          update: '2022-05-01'
+        },
+        {
+          uid: 199200118,
+          name: '浙江省杭州市余杭区无常街道后山路',
+          grade: 2,
+          update: '2022-05-01'
+        },
+        {
+          uid: 199200118,
+          name: '浙江省杭州市余杭区无常街道后山路',
+          grade: 2,
+          update: '2022-05-01'
+        },
+        {
+          uid: 199200118,
+          name: '浙江省杭州市余杭区无常街道后山路',
+          grade: 2,
+          update: '2022-05-01'
+        },
+        {
+          uid: 199200118,
+          name: '浙江省杭州市余杭区无常街道后山路',
+          grade: 2,
+          update: '2022-05-01'
+        },
+        {
+          uid: 199200118,
+          name: '浙江省杭州市余杭区无常街道后山路',
+          grade: 2,
+          update: '2022-05-01'
+        }
+      ],
+      batchNum: 0
+    }
+  },
+  created() {
+    this.getProvinceList()
+    this.getCityListByValue()
+  },
+  methods: {
+    // 批量提交
+    batchSubmit() {
+
+    },
+    selectItem(e) {
+      console.log(e)
+    },
+    //  选择批量修改的等级
+    chooseRiskGrade(index) {
+      this.riskGrade = index
+    },
+    getProvinceList() {
+      GetProvinceList().then((res) => {
+        console.log(res)
+      })
+    },
+    getCityListByValue() {
+      const valueList = { value: '33' }
+      // eslint-disable-next-line no-undef
+      GetCityList(valueList).then((res) => {
+        console.log(res)
+      })
+    }
+  }
 }
 </script>
 
-<style scoped>
-
+<style lang="less" scoped>
+.search-module {
+  width: 70%;
+  display: flex;
+  .search-left {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 2em;
+    i {
+      font-size: 2em;
+      margin-right: 5px;
+    }
+  }
+  .btn {
+    margin-right: 2em;
+  }
+}
+.batch-box {
+  display: flex;
+  align-items: center;
+  .select-text {
+    margin-left: 1.2vw;
+  }
+  .group {
+    margin-left: 10px;
+  }
+  .btn {
+    margin-left: 1vw;
+  }
+}
 </style>

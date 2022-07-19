@@ -2,6 +2,7 @@
  * 接口请求模块名
  */
 export default {
+  doraemon_userinfo: '/gridcloud-usercenter',
   doraemon_campus: '/gridcloud-campusepidemic',
   doraemon_system: '/doraemon-system',
   doraemon_user: '/doraemon-user',

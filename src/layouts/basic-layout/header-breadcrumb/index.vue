@@ -113,7 +113,7 @@ export default {
     }
   },
   mounted() {
-    console.log(this.filterSider)
+    // console.log(this.filterSider)
     this.handleResize = throttle(this.handleCheckWidth, 100, { leading: false })
     on(window, 'resize', this.handleResize)
     this.handleGetWidth()

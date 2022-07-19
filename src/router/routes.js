@@ -37,6 +37,21 @@ const frameIn = [
         component: () => import('@/pages/administrators/college')
       },
       {
+        path: '/studentMessage',
+        name: 'studentMessage',
+        component: () => import('@/pages/groupleader/stumanage/stubasic')
+      },
+      {
+        path: '/riskPreMessage',
+        name: 'riskPreMessage',
+        component: () => import('@/pages/groupleader/stumanage/riskpre')
+      },
+      {
+        path: '/outRecord',
+        name: 'outRecord',
+        component: () => import('@/pages/groupleader/stumanage/outrecord')
+      },
+      {
         path: 'log',
         name: 'log',
         meta: {

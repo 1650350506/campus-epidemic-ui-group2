@@ -13,79 +13,45 @@
       <Page :total="100" show-elevator show-sizer class-name="page"></Page>
     </Card>
     <Modal
-      v-model="dialogVisible"
-      @on-ok="handleShow"
-      @on-cancel="dialogVisible = false"
+      v-model="updateDialogVisible"
+      @on-ok="handleUpdateUserInfo"
+      @on-cancel="updateDialogVisible = false"
       class-name="vertical-center-modal"
       width="720"
     >
-      <p slot="header" style="text-align: center">教职工基本信息</p>
+      <p slot="header" style="text-align: center">工作人员基本信息</p>
       <div class="modal-container">
-        <Row style="margin-bottom:1em">
-          <Col :span="1"></Col>
-          <Col :span="9" class="col-style"><div class="text">工号:</div>
-            <div style="width: 180px">
-              <div>{{dialogList.code}}</div>
-            </div></Col>
-          <Col :span="3"></Col>
-          <Col :span="9" class="col-style"><div class="text">姓名:</div>
-            <div style="width: 180px">
-              <div>{{dialogList.name}}</div>
-            </div>
-          </Col>
-        </Row>
-        <Row style="margin-bottom:1em">
-          <Col :span="1"></Col>
-          <Col :span="9" class="col-style"><div class="text">年龄:</div>
-            <div style="width: 180px">
-              <div>{{dialogList.age}}</div>
-            </div>
-          </Col>
-          <Col :span="3"></Col>
-          <Col :span="9" class="col-style"><div class="text">性别:</div>
-            <div style="width: 180px">
-              <div>{{dialogList.sex ? '男': '女'}}</div>
-            </div>
-          </Col>
-        </Row>
-        <Row style="margin-bottom:1em">
-          <Col :span="1">
-          </Col>
-          <Col :span="9" class="col-style"><div class="text">身份证:</div>
-            <div style="width: 180px">
-              <div>{{dialogList.id_card}}</div>
-            </div>
-          </Col>
-          <Col :span="3"></Col>
-          <Col :span="9" class="col-style"><div class="text">二级学院:</div>
-            <div style="width: 180px">
-              <div>{{dialogList.dept_code}}</div>
-            </div></Col>
-        </Row>
-        <Row style="margin-bottom:1em">
-          <Col :span="1"><i v-show="!isEdit">*</i></Col>
-          <Col :span="9" class="col-style"><div class="text">手机号: </div>
-            <div style="width: 180px">
-              <Input   v-if="!isEdit" v-model="dialogList.phone"></Input>
-              <div v-else>{{dialogList.phone}}</div>
-            </div></Col>
-          <Col :span="3"><i v-show="!isEdit">*</i></Col>
-          <Col :span="9" class="col-style"><div class="text">当前职务: </div>
-            <div style="width: 180px">
-              <Input   v-if="!isEdit" v-model="dialogList.system_post"></Input>
-              <div v-else>{{dialogList.system_post}}</div>
-            </div></Col>
-        </Row>
-        <Row style="margin-bottom:1em">
-          <Col :span="1"><i v-show="!isEdit">*</i></Col>
-          <Col :span="9" class="col-style"><div class="text">校内职务: </div>
-            <div style="width: 180px">
-              <Input   v-if="!isEdit" v-model="dialogList.school_post"></Input>
-              <div v-else>{{dialogList.school_post}}</div>
-            </div></Col>
-        </Row>
+        <div class="modal-item"v-for="(item, index) in dialogList" :key="index">
+          <div class="null"></div><div class="star" :style="item.isEdit ? {}: {opacity: 0}">*</div><div class="title">{{item.title}}：</div>
+          <div class="core"> <Input v-if="item.isEdit" v-model="item.value"></Input><span v-else>{{item.value}}</span>
+          </div>
+        </div>
       </div>
     </Modal>
+    <Modal
+      v-model="showDialogVisible"
+      @on-cancel="showDialogVisible = false"
+      width="720"
+    >
+      <p slot="header" style="text-align: center">工作人员基本信息</p>
+      <div class="modal-container">
+        <div class="modal-item"v-for="(item, index) in dialogList" :key="index">
+          <div class="null"></div><div class="star" :style="item.isEdit ? {}: {opacity: 0}">*</div><div class="title">{{item.title}}：</div><div class="core">{{item.value}}</div>
+        </div>
+      </div>
+      <div slot="footer">
+        <Button @click="showDialogVisible = false" type="primary">关闭</Button>
+      </div>
+    </Modal>
+    <Poptip
+      v-model="deleteVisible"
+      confirm
+      title="您确认删除这条内容吗？"
+      @on-ok="ok"
+      @on-cancel="deleteUser"
+    >
+      <Button>删除</Button>
+    </Poptip>
   </div>
 </template>
 
@@ -134,7 +100,6 @@ export default {
             return h('div', [
               h('Button', {
                 props: {
-                  // type: 'primary',
                   size: 'small'
                 },
                 style: {
@@ -143,17 +108,17 @@ export default {
                 },
                 on: {
                   click: () => {
-                    this.isEdit = false
-                    this.dialogVisible = true
-                    this.dialogList.code = params.row.code
-                    this.dialogList.name = params.row.name
-                    this.dialogList.age = params.row.age
-                    this.dialogList.sex = params.row.sex
-                    this.dialogList.phone = params.row.phone
-                    this.dialogList.id_card = params.row.id_card
-                    this.dialogList.dept_code = params.row.dept_code
-                    this.dialogList.system_post = params.row.system_post
-                    this.dialogList.school_post = params.row.school_post
+                    this.updateDialogVisible = true
+                    console.log(params.row.code)
+                    this.dialogList.code.value = params.row.code
+                    this.dialogList.name.value = params.row.name
+                    this.dialogList.age.value = params.row.age
+                    this.dialogList.sex.value = params.row.sex
+                    this.dialogList.phone.value = params.row.phone
+                    this.dialogList.id_card.value = params.row.id_card
+                    this.dialogList.dept_code.value = params.row.dept_code
+                    this.dialogList.system_post.value = params.row.system_post
+                    this.dialogList.school_post.value = params.row.school_post
                   }
                 }
               }, '编辑'),
@@ -168,35 +133,54 @@ export default {
                 },
                 on: {
                   click: () => {
-                    this.isEdit = true
-                    this.dialogVisible = true
-                    this.dialogList.code = params.row.code
-                    this.dialogList.name = params.row.name
-                    this.dialogList.age = params.row.age
-                    this.dialogList.sex = params.row.sex
-                    this.dialogList.phone = params.row.phone
-                    this.dialogList.id_card = params.row.id_card
-                    this.dialogList.dept_code = params.row.dept_code
-                    this.dialogList.system_post = params.row.system_post
-                    this.dialogList.school_post = params.row.school_post
+                    this.showDialogVisible = true
+                    console.log(params.row.code)
+                    this.dialogList.code.value = params.row.code
+                    this.dialogList.name.value = params.row.name
+                    this.dialogList.age.value = params.row.age
+                    this.dialogList.sex.value = params.row.sex
+                    this.dialogList.phone.value = params.row.phone
+                    this.dialogList.id_card.value = params.row.id_card
+                    this.dialogList.dept_code.value = params.row.dept_code
+                    this.dialogList.system_post.value = params.row.system_post
+                    this.dialogList.school_post.value = params.row.school_post
                   }
                 }
               }, '查看'),
-              h('Button', {
-                props: {
-                  // type: 'warning',
-                  size: 'small'
-                },
-                style: {
-                  marginRight: '5px',
-                  border: '0px'
-                },
-                on: {
-                  // eslint-disable-next-line no-empty-function
-                  click: () => {
+              [
+                h('Poptip', {
+                  props: {
+                    placement: 'top-start',
+                    confirm: true,
+                    transfer: true,
+                    title: '确定删除这条数据吗？'
+                  },
+                  on: {
+                    'on-ok': () => {
+                      console.log(params.row)
+                    },
+                    // eslint-disable-next-line no-empty-function
+                    'on-cancel': () => {
+                    }
                   }
-                }
-              }, '删除')
+                }, [
+                  h('Button', {
+                    class: 'deleteHover',
+                    props: {
+                      size: 'small'
+                    },
+                    attrs: {
+                      title: '删除'
+                    },
+                    style: {
+                      marginRight: '5px',
+                      border: '0px'
+                    },
+                    on: {
+                    }
+                  }, '删除')
+                ])
+              ]
             ])
           }
         }
@@ -215,7 +199,7 @@ export default {
         },
         {
           code: 199200118,
-          name: '张三1',
+          name: '张三2',
           age: '18',
           sex: 1,
           id_card: '2131231231231',
@@ -226,7 +210,7 @@ export default {
         },
         {
           code: 199200118,
-          name: '张三1',
+          name: '张三5',
           age: '18',
           sex: 1,
           id_card: '465466464',
@@ -237,7 +221,7 @@ export default {
         },
         {
           code: 199200118,
-          name: '张三1',
+          name: '张三3',
           age: '18',
           sex: 1,
           id_card: '4564645645',
@@ -259,24 +243,48 @@ export default {
         }
       ],
       //  对话框显示
-      dialogVisible: false,
+      is_Edit: false,
+      showDialogVisible: false,
+      updateDialogVisible: false,
+      deleteVisible: false,
       dialogList: {
-        code: '',
-        name: '',
-        age: '',
-        sex: 0,
-        phone: '',
-        id_card: '',
-        dept_code: '',
-        system_post: '',
-        school_post: ''
-      },
-      isEdit: false
+        code: {
+          title: '工号', value: '', isEdit: false
+        },
+        name: {
+          title: '姓名', value: '', isEdit: false
+        },
+        age: {
+          title: '年龄', value: '', isEdit: false
+        },
+        sex: {
+          title: '性别', value: 0, isEdit: false
+        },
+        id_card: {
+          title: '身份证', value: '', isEdit: false
+        },
+        dept_code: {
+          title: '二级学院', value: '', isEdit: false
+        },
+        phone: {
+          title: '手机号', value: '', isEdit: true
+        },
+        system_post: {
+          title: '当前职务', value: '', isEdit: true
+        },
+        school_post: {
+          title: '校内职务', value: '', isEdit: true
+        }
+      }
     }
   },
   methods: {
-    handleShow() {
+    handleUpdateUserInfo() {
       this.dialogVisible = false
+    },
+    //  删除工作人员信息
+    deleteUser(e) {
+
     }
   }
 }
@@ -285,6 +293,34 @@ export default {
 <style lang="less" scoped>
 .modal-container {
   margin: 20px 0;
+  display: flex;
+  flex-wrap: wrap;
+  .modal-item {
+    width: 50%;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    .null {
+      flex-basis: 10%;
+    }
+    .star {
+      flex-basis: 10%;
+      text-align: right;
+      font-size: 18px;
+      color: #be1f19;
+      padding-right: 5px;
+      height: 50%;
+    }
+    .title {
+      flex-basis: 30%;
+      text-align-last: justify;
+      text-justify: distribute-all-lines;
+      text-align: justify;
+    }
+    .core {
+      flex-basis: 50%;
+    }
+  }
 }
 .col-style {
   display: flex;

@@ -16,7 +16,11 @@
       <div class="chart-mid">
         <Card class="card" :bordered="false">
           <h2 slot="title" style="margin: 1em 0;">新增隔离人数趋势</h2>
-          <i class="ivu-icon ivu-icon-ios-refresh" slot="extra"></i>
+          <div slot="extra">
+            <Select :value="timeList[0].label" style="width:200px">
+              <Option v-for="item in timeList" :value="item.value" :key="item">{{ item.label }}</Option>
+            </Select>
+          </div>
           <div id="main" style="aspect-ratio: 1.2/1; height: 60vh"></div>
         </Card>
         <Card class="card" :bordered="false">
@@ -38,7 +42,7 @@
 <script>
 import _ from 'lodash'
 import iHeaderBreadcrumb from '@/layouts/basic-layout/header-breadcrumb'
-import { GetAllIsolationTotal } from '@api/administorators/analysis'
+import { GetAllIsolationTotal, GetIsolationList, GetNewIsolationTotal } from '@api/administorators/analysis'
 const echarts = require('echarts')
 export default {
   name: 'index',
@@ -51,6 +55,15 @@ export default {
         { name: '总隔离人数', num: 0 },
         { name: '新增隔离人数', num: 5 },
         { name: '新增解除人数', num: 10 }
+      ],
+      timeList: [{
+        value: 7,
+        label: '过去7天'
+      },
+      {
+        value: 14,
+        label: '过去14天'
+      }
       ],
       option: {
         title: {
@@ -248,7 +261,9 @@ export default {
     myChart2.setOption(result2)
   },
   created() {
-    this.getAllIsolationTotal()
+    // this.getAllIsolationTotal()
+    // this.getNewIsolationTotal()
+    this.getIsolationList()
   },
   methods: {
     optionsAve() {
@@ -256,12 +271,22 @@ export default {
       for (let i = 0; i < this.option2.series[0].data.length; i++) {
         sum += this.option2.series[0].data[i]
       }
-      console.log(sum)
     },
-    getAllIsolationTotal() {
-      GetAllIsolationTotal().then((res) => {
+    // getAllIsolationTotal() {
+    //   GetAllIsolationTotal().then((res) => {
+    //     console.log(res)
+    //     this.topList[0].num = res.field
+    //   })
+    // },
+    // getNewIsolationTotal() {
+    //   GetNewIsolationTotal().then((res) => {
+    //     console.log(res)
+    //   })
+    // },
+    getIsolationList() {
+      const list = { command: 7 }
+      GetIsolationList(list).then((res) => {
         console.log(res)
-        this.topList[0].num = res.field
       })
     }
   }
