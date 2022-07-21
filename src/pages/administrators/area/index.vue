@@ -9,7 +9,7 @@
       <div slot="title" class="search-module">
         <div class="search-left">
           <i class="ivu-icon ivu-icon-ios-search"></i>
-          <Cascader style="width: 300px" :data="place" v-model="placeValue"></Cascader>
+          <Cascader style="width: 300px" :data="place" v-model="placeValue" @on-change="loadData"></Cascader>
         </div>
         <Button type="primary" class="btn">查询</Button>
         <Button class="btn">重置</Button>
@@ -25,7 +25,7 @@
           <Button class="btn" type="primary" @click="batchSubmit">批量提交</Button>
         </div>
       </Card>
-      <Table border :columns="columns2" :data="data2" class="table" :border="false"
+      <Table border :columns="columns2" :data="data2" class="table"
              @on-select="selectItem"
       ></Table>
       <Page :total="100" show-elevator show-sizer class-name="page"></Page>
@@ -36,7 +36,6 @@
 <script>
 
 import iHeaderBreadcrumb from '@/layouts/basic-layout/header-breadcrumb'
-import { GetCityList, GetNewIsolationTotal, GetProvinceList } from '@api/administorators/analysis'
 
 export default {
   name: 'index',
@@ -47,32 +46,8 @@ export default {
     return {
       riskGrade: '',
       riskGradeList: ['高风险', '中风险', '低风险'],
-      placeValue: ['浙江省', 'hw', '西湖区', '留下街道'],
-      place: [
-        {
-          code: '222',
-          value: 'www',
-          label: '浙江省',
-          children: [
-            {
-              value: '杭州市',
-              label: '杭州市',
-              children: [
-                {
-                  value: '西湖区',
-                  label: '西湖区',
-                  children: [
-                    {
-                      value: '留下街道',
-                      label: '留下街道'
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        }
-      ],
+      placeValue: [],
+      place: [],
       columns2: [
         {
           type: 'selection',
@@ -87,7 +62,7 @@ export default {
         {
           title: '地区编号',
           align: 'center',
-          width: 120,
+          width: 130,
           key: 'uid'
         },
         {
@@ -135,10 +110,12 @@ export default {
         {
           title: '更新时间',
           align: 'center',
+          width: 130,
           key: 'update'
         },
         {
           title: '操作',
+          width: 150,
           key: 'action',
           align: 'center',
           render: (h, params) => {
@@ -207,8 +184,7 @@ export default {
     }
   },
   created() {
-    this.getProvinceList()
-    this.getCityListByValue()
+    // this.getProvinceList()
   },
   methods: {
     // 批量提交
@@ -221,19 +197,84 @@ export default {
     //  选择批量修改的等级
     chooseRiskGrade(index) {
       this.riskGrade = index
-    },
-    getProvinceList() {
-      GetProvinceList().then((res) => {
-        console.log(res)
-      })
-    },
-    getCityListByValue() {
-      const valueList = { value: '33' }
-      // eslint-disable-next-line no-undef
-      GetCityList(valueList).then((res) => {
-        console.log(res)
-      })
     }
+    // getProvinceList() {
+    //   const arrays = []
+    //   GetProvinceList().then((res) => {
+    //     res.forEach(ele => {
+    //       arrays.push({
+    //         level: 1,
+    //         label: ele.label,
+    //         value: ele.value,
+    //         children: []
+    //       })
+    //     })
+    //     this.place = arrays
+    //     console.log(this.place)
+    //   })
+    // }
+    // loadData(item, selectedData) {
+    //   console.log(item)
+    //   let index
+    //   for (let i = 0; i < this.place.length; i++) {
+    //     // eslint-disable-next-line eqeqeq
+    //     if (this.place[i].value == item) {
+    //       index = i
+    //     }
+    //   }
+    //   let datalist = this.place[index]
+    //   const arrays = []
+    //   let parentValue
+    //   if (datalist.level === 1) {
+    //     parentValue = datalist.value
+    //     GetCityList({ value: parentValue }).then((res) => {
+    //       res.forEach(ele => {
+    //         arrays.push({
+    //           level: 2,
+    //           label: ele.label,
+    //           value: ele.value,
+    //           children: []
+    //         })
+    //       })
+    //     })
+    //   }
+    //   datalist.children = arrays
+    //   this.place = datalist
+    //   console.log(this.place)
+    // },   //   console.log(item)
+    //   let index
+    //   for (let i = 0; i < this.place.length; i++) {
+    //     // eslint-disable-next-line eqeqeq
+    //     if (this.place[i].value == item) {
+    //       index = i
+    //     }
+    //   }
+    //   let datalist = this.place[index]
+    //   const arrays = []
+    //   let parentValue
+    //   if (datalist.level === 1) {
+    //     parentValue = datalist.value
+    //     GetCityList({ value: parentValue }).then((res) => {
+    //       res.forEach(ele => {
+    //         arrays.push({
+    //           level: 2,
+    //           label: ele.label,
+    //           value: ele.value,
+    //           children: []
+    //         })
+    //       })
+    //     })
+    //   }
+    //   datalist.children = arrays
+    //   this.place = datalist
+    //   console.log(this.place)
+    // },
+    // getCityListByValue(val) {
+    //   // const valueList = { value: val[0] }
+    //   // GetCityList(valueList).then((res) => {
+    //   //   console.log(res)
+    //   // })
+    // }
   }
 }
 </script>

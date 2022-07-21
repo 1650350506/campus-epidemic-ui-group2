@@ -15,13 +15,6 @@ const frameIn = [
     component: BasicLayout,
     children: [
       {
-        path: 'index',
-        name: 'index',
-        redirect: {
-          name: 'dashboard-workplace'
-        }
-      },
-      {
         path: '/isolationAnalysis',
         name: 'isolationAnalysis',
         component: () => import('@/pages/administrators/analysis')
@@ -50,6 +43,16 @@ const frameIn = [
         path: '/outRecord',
         name: 'outRecord',
         component: () => import('@/pages/groupleader/stumanage/outrecord')
+      },
+      {
+        path: '/quarantinedManage',
+        name: 'quarantinedManage',
+        component: () => import('@/pages/personnel/riskpremanage/premanage')
+      },
+      {
+        path: '/waitIsolation',
+        name: 'waitIsolation',
+        component: () => import('@/pages/personnel/riskpremanage/waitisolation')
       },
       {
         path: 'log',

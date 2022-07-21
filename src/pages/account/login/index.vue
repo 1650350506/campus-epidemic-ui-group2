@@ -9,8 +9,8 @@
       </div>
       <div class="template-login-data-main">
         <Login @on-submit="handleSubmit">
-          <UserName name="username" value="admin234" />
-          <Password name="password" value="Admin234" enter-to-submit />
+          <UserName name="username" value="admin456" />
+          <Password name="password" value="Admin456" enter-to-submit />
           <Submit>登录</Submit>
         </Login>
       </div>
@@ -49,7 +49,7 @@ export default {
           .then(() => {
             // 重定向对象不存在则返回顶层路径
             if (!this.$route.query.redirect) {
-              this.$router.replace('/index')
+              this.$router.replace('/isolationAnalysis')
             } else {
               this.$router.replace(this.$route.query.redirect || '/')
             }

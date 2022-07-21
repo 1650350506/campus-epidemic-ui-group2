@@ -163,27 +163,26 @@ export default {
     })
     this.listBaseMenuT()
     this.listTopTodo()
-    this.testDemo()
   },
   methods: {
     listBaseMenuT() {
-      listBaseMenu({ groupEname: 'LightGroup' }).then((res) => {
-        res.forEach((element) => {
-          element.children.forEach((item) => {
-            this.appMenus.push(item)
-          })
-        })
-        this.appNumber = this.appMenus.length
-      })
+      // listBaseMenu({ groupEname: 'LightGroup' }).then((res) => {
+      //   res.forEach((element) => {
+      //     element.children.forEach((item) => {
+      //       this.appMenus.push(item)
+      //     })
+      //   })
+      //   this.appNumber = this.appMenus.length
+      // })
     },
-    listTopTodo() { },
-    testDemo() {
-      // eslint-disable-next-line no-undef
-      demo().then((res) => {
-        alert(res)
-        return res
-      })
-    }
+    listTopTodo() { }
+    // testDemo() {
+    //   // eslint-disable-next-line no-undef
+    //   demo().then((res) => {
+    //     alert(res)
+    //     return res
+    //   })
+    // }
   }
 }
 </script>

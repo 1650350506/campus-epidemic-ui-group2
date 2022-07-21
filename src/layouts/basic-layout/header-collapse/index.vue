@@ -40,10 +40,10 @@ export default {
     // 展开/收起侧边栏
     handleToggleMenuSide(state) {
       if (this.isMobile) {
-        this.updateMenuCollapse(false)
+        this.updateMenuCollapse(true)
         this.$emit('on-toggle-drawer', state)
       } else {
-        this.updateMenuCollapse(!this.menuCollapse)
+        this.updateMenuCollapse(true)
       }
     }
   }

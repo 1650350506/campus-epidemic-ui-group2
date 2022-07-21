@@ -12,7 +12,8 @@ export default {
     isMobile: false, // 是否为手机
     isTablet: false, // 是否为平板
     isDesktop: true, // 是否为桌面
-    isFullscreen: false // 是否切换到了全屏
+    isFullscreen: false, // 是否切换到了全屏
+    menuCollapse: false
   },
   mutations: {
     /**
@@ -32,7 +33,7 @@ export default {
          * @param {Boolean} collapse 折叠状态
          * */
     updateMenuCollapse(state, collapse) {
-      state.menuCollapse = collapse
+      state.menuCollapse = false
     },
     /**
          * @description 设置全屏状态
@@ -49,6 +50,7 @@ export default {
          * @param {Object} value layout 值
          * */
     updateLayoutSetting(state, { key, value }) {
+      console.log(this.state)
       state[key] = value
     }
   },

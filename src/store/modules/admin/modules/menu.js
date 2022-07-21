@@ -213,11 +213,16 @@ export default {
           .then(res => {
             const menuSider = []
             menuSider.push(dashboard)
+            console.log(1)
+            console.log(res)
             res.forEach(menu => {
               const childMenu = []
               if (menu.children) {
-                menu.children.forEach(item => {
+                menu.children.forEach((item, index) => {
+                  console.log(2)
+                  console.log(item)
                   if (item.jumpType === 'open') {
+                    console.log('w')
                     childMenu.push({
                       custom: item.ico,
                       title: item.cname,
@@ -235,6 +240,7 @@ export default {
                       jumpType: item.jumpType
                     })
                   } else {
+                    console.log(`${index}i`)
                     childMenu.push({
                       custom: item.ico,
                       title: item.cname,
@@ -244,11 +250,22 @@ export default {
                   }
                 })
                 menuSider.push({
-                  path: `/${menu.ename.split(':')[1]}`,
+                  path: `/${menu.ename.split(':')[0]}`,
                   title: menu.cname,
                   header: 'home',
                   custom: menu.ico,
                   children: childMenu
+                })
+                console.log('ce')
+                console.log(menuSider)
+              } else {
+                console.log(menu)
+                menuSider.push({
+                  path: menu.normalUrl,
+                  children: [],
+                  title: menu.cname,
+                  header: 'home',
+                  custom: menu.ico
                 })
               }
             })

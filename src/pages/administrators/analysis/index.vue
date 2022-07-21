@@ -1,49 +1,63 @@
 <template>
   <div>
-    <Card :bordered="false"  class="card-top card">
+    <Card :bordered="false"  class="card">
       <!--       这是面包屑组件-->
       <i-header-breadcrumb  ref="breadcrumb" />
       <h2>你好！ 管理员！</h2>
     </Card>
-    <Card class="container" :bordered="false" dis-hover>
-      <div class="chart-top">
-        <Card v-for="(item, index) in topList" :key="index" class="card">
-          <h2>{{ item.name }}</h2>
-          <i class="ivu-icon ivu-icon-ios-refresh" slot="extra"></i>
-          <h2 class="name">{{ item.num }}</h2>
-        </Card>
-      </div>
-      <div class="chart-mid">
-        <Card class="card" :bordered="false">
-          <h2 slot="title" style="margin: 1em 0;">新增隔离人数趋势</h2>
-          <div slot="extra">
-            <Select :value="timeList[0].label" style="width:200px">
-              <Option v-for="item in timeList" :value="item.value" :key="item">{{ item.label }}</Option>
-            </Select>
-          </div>
-          <div id="main" style="aspect-ratio: 1.2/1; height: 60vh"></div>
-        </Card>
-        <Card class="card" :bordered="false">
-          <h2 slot="title" style="margin: 1em 0;">各个学院隔离人员分布</h2>
-          <i class="ivu-icon ivu-icon-ios-refresh" slot="extra"></i>
-          <div id="main2" :style="{ width: '100%', height: '60vh' }"></div>
-        </Card>
-      </div>
-      <div class="chart-bottom">
-        <Card class="card">
-          <h2 slot="title" style="margin: 1em 0;">各学院防疫人员分布</h2>
-          <i class="ivu-icon ivu-icon-ios-refresh" slot="extra"></i>
-          <div id="main3" :style="{ width: '90%' , height: '20vw'}"></div>
-        </Card>
-      </div>
-    </Card>
+    <!--        <i class="ivu-icon ivu-icon-ios-refresh" slot="extra"></i>-->
+    <div class="chart-top">
+      <Card v-for="(item, index) in topList" :key="index"  class="card-box" :style="{background:'linear-gradient(-45deg, transparent 50%,'+bgColorList[index]+' 0)'}">
+        <Row>
+          <Col span="8">
+            <div class="card-left-item">
+              <i :class="item.icon"></i>
+            </div>
+          </Col>
+          <Col span="2"></Col>
+          <Col span="12" class="col-style">
+            <h2 style="font-size: 24px">{{item.name}}</h2>
+            <h2 class="num">{{item.num}}</h2>
+          </Col>
+        </Row>
+      </Card>
+    </div>
+    <div class="chart-bottom" style="background: #fff">
+      <Card class="card">
+        <h2 slot="title" style="margin: 1em 0;">各学院防疫人员分布</h2>
+        <i class="ivu-icon ivu-icon-ios-refresh" slot="extra"></i>
+        <div id="main3" :style="{ width: '100%' , height: '22vw'}"></div>
+      </Card>
+    </div>
+    <div class="chart-mid card-marginTop">
+      <Card class="card" :bordered="false">
+        <h2 slot="title" style="margin: 1em 0;">新增隔离人数趋势</h2>
+        <div slot="extra">
+          <Select :value="timeList[0].label" class="select-box">
+            <Option v-for="item in timeList" :value="item.value" :key="item">{{ item.label }}</Option>
+          </Select>
+        </div>
+        <div id="main" style="width: 100%; height: 58vh;"></div>
+      </Card>
+      <Card class="card" :bordered="false">
+        <h2 slot="title" style="margin: 1em 0;">各个学院隔离人员分布</h2>
+        <i class="ivu-icon ivu-icon-ios-refresh" slot="extra"></i>
+        <div id="main2" :style="{ width: '98%', height: '60vh' }"></div>
+      </Card>
+    </div>
   </div>
 </template>
 <script>
 import _ from 'lodash'
 import iHeaderBreadcrumb from '@/layouts/basic-layout/header-breadcrumb'
-import { GetAllIsolationTotal, GetIsolationList, GetNewIsolationTotal } from '@api/administorators/analysis'
+import {
+  GetAllIsolationTotal,
+  GetIsolationListByDate,
+  GetNewIsolationTotal,
+  GetRelieveIsolationTotal
+} from '@api/administorators/analysis'
 const echarts = require('echarts')
+
 export default {
   name: 'index',
   components: {
@@ -51,10 +65,13 @@ export default {
   },
   data() {
     return {
+      bgColorList: [
+        '#FB9528', '#53A2FF', '#48D684'
+      ],
       topList: [
-        { name: '总隔离人数', num: 0 },
-        { name: '新增隔离人数', num: 5 },
-        { name: '新增解除人数', num: 10 }
+        { name: '总隔离人数', num: 0, icon: 'iconfont icon-computeChart' },
+        { name: '新增隔离人数', num: 0, icon: 'iconfont icon-tubiaoshangshengqushi', color: '#c31c1c' },
+        { name: '新增解除人数', num: 0, icon: 'iconfont icon-tubiaoxiajiangqushi' }
       ],
       timeList: [{
         value: 7,
@@ -86,37 +103,49 @@ export default {
         },
         xAxis: {
           type: 'category',
-          name: '时间',
           boundaryGap: false,
           nameLocation: 'center',
           splitLine: {
-            show: true,
+            show: false,
             lineStyle: {
               color: '#ebebeb'
             }
           },
           axisLine: {
-            show: true
+            show: false
+          },
+          axisTick: {
+            show: false
           },
           nameGap: 10,
           nameTextStyle: {
-            fontSize: 20,
+            fontSize: 14,
             padding: [0, 0, 10, 0]
           },
-          data: [7.1, 7.2, 7.3, 7.4, 7.5, 7.6, 7.7, '']
+          // data: this.eachDays
+          data: [7.4, 7.2, 7.3, 7.4, 7.5, 7.6, 7.7]
         },
         yAxis: {
           type: 'value',
-          name: '人数',
           axisLine: {
-            show: true
+            show: false
+          },
+          axisTick: {
+            show: false
           },
           nameGap: 20,
           nameLocation: 'center',
           nameRotate: '90',
           nameTextStyle: {
-            fontSize: 16,
+            fontSize: 14,
             padding: [0, 0, 0, 0, 0] // 加上padding可以调整其位置
+          },
+          splitLine: {
+            // 网格线
+            lineStyle: {
+              type: 'dashed' // 设置网格线类型 dotted：虚线   solid:实线
+            },
+            show: true // 隐藏或显示
           }
         },
         series: [
@@ -124,9 +153,13 @@ export default {
             name: '新增隔离人数',
             type: 'line',
             stack: 'Total',
+            symbol: 'none',
+            smooth: true,
             data: [3, 5, 10, 6, 3, 12, 5],
-            lineStyle: {
-              color: '#0093ff'
+            lineStyle: { // 设置线条的style等
+              normal: {
+                color: '#9bcfff' // 折线线条颜色:红色
+              }
             },
             itemStyle: {
               normal: {
@@ -174,7 +207,7 @@ export default {
         },
         legend: {
           orient: 'vertical',
-          top: '40%',
+          top: '20%',
           right: '10%',
           itemGap: 40
         },
@@ -182,8 +215,8 @@ export default {
           {
             name: 'Access From',
             type: 'pie',
-            radius: ['70%', '50%'],
-            center: ['30%', '60%'],
+            radius: ['65%', '40%'],
+            center: ['30%', '50%'],
             avoidLabelOverlap: false,
             itemStyle: {
               borderRadius: 10,
@@ -218,24 +251,48 @@ export default {
         xAxis: {
           type: 'category',
           name: '二级学院',
-          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+          axisLine: {
+            show: false
+          },
+          axisTick: {
+            show: false
+          }
         },
         yAxis: {
           type: 'value',
           name: '比例',
           axisLine: {
-            show: true
+            show: false
+          },
+          axisTick: {
+            show: false
+          },
+          splitLine: {
+            // 网格线
+            lineStyle: {
+              type: 'dashed' // 设置网格线类型 dotted：虚线   solid:实线
+            },
+            show: true // 隐藏或显示
           }
         },
         series: [
           {
             data: [120, 200, 150, 80, 70, 110, 130, 120, 200, 150, 80, 70, 110, 130],
             type: 'bar',
+            itemStyle: {
+              normal: {
+                color: '#435EBE',
+                label: {
+                  show: false
+                }
+              }
+            },
             markLine: {
               symbol: 'none',
               itemStyle: {
                 normal: {
-                  color: '#ff1e52',
+                  color: '#57CAEB',
                   label: {
                     show: true
                   }
@@ -245,12 +302,40 @@ export default {
             }
           }
         ]
+      },
+      option3: {
+        xAxis: {
+          type: 'category',
+          data: [],
+          splitLine: false,
+          axisTick: false,
+          show: false
+        },
+        yAxis: {
+          type: 'value',
+          splitLine: false,
+          show: false
+        },
+        series: [
+          {
+            data: [0, 2, 1, 1, 4, 3, 8, 6, 3, 1, 1, 4, 3.5, 5, 5, 4, 3, 8, 6, 3, 1, 1, 4, 3.5, 5, 5, 4, 3, 8, 4, 3.5, 1, 2],
+            type: 'line',
+            smooth: true,
+            symbol: 'none'
+          }
+        ],
+        eachDays: [],
+        eachCount: []
       }
     }
   },
   mounted() {
-    const myChart = echarts.init(document.getElementById('main'))
-    const result = _.merge(this.option.series.data, this.option)
+    this.getOldIsolationListByDate()
+    this.option.series.data = this.eachCount
+    this.option.xAxis.data = this.eachDays
+    console.log(this.option.xAxis.data)
+    let myChart = echarts.init(document.getElementById('main'))
+    let result = _.merge(this.option.series.data, this.option)
     myChart.setOption(result)
     const myChart1 = echarts.init(document.getElementById('main2'))
     const result1 = _.merge(this.option1.series.data, this.option1)
@@ -259,11 +344,15 @@ export default {
     const myChart2 = echarts.init(document.getElementById('main3'))
     const result2 = _.merge(this.option2.series.data, this.option2)
     myChart2.setOption(result2)
+    const myChart3 = echarts.init(document.getElementById('top'))
+    const result3 = _.merge(this.option3.series.data, this.option3)
+    myChart3.setOption(result3)
   },
   created() {
-    // this.getAllIsolationTotal()
-    // this.getNewIsolationTotal()
-    this.getIsolationList()
+    this.getAllIsolationTotal()
+    this.getNewIsolationTotal()
+    this.getReliveIsolationTotal()
+
   },
   methods: {
     optionsAve() {
@@ -272,22 +361,52 @@ export default {
         sum += this.option2.series[0].data[i]
       }
     },
-    // getAllIsolationTotal() {
-    //   GetAllIsolationTotal().then((res) => {
-    //     console.log(res)
-    //     this.topList[0].num = res.field
-    //   })
-    // },
-    // getNewIsolationTotal() {
-    //   GetNewIsolationTotal().then((res) => {
-    //     console.log(res)
-    //   })
-    // },
-    getIsolationList() {
-      const list = { command: 7 }
-      GetIsolationList(list).then((res) => {
-        console.log(res)
+    // 获得总隔离人数
+    getAllIsolationTotal() {
+      GetAllIsolationTotal().then((res) => {
+        this.topList[0].num = res.field
       })
+    },
+    // 获得新增隔离人数
+    getNewIsolationTotal() {
+      GetNewIsolationTotal().then((res) => {
+        this.topList[1].num = res.field
+      })
+    },
+    // 获得新增解除人数
+    getReliveIsolationTotal() {
+      GetRelieveIsolationTotal().then((res) => {
+        this.topList[2].num = res.field
+        // this.topList[2].num = res.field
+      })
+    },
+    getOldIsolationListByDate() {
+      const list = { command: 7 }
+      GetIsolationListByDate(list).then((res) => {
+        const arr1 = []
+        const arr2 = []
+        res.field.forEach(item => {
+          arr1.push(parseFloat(this.dateFormat(item.to_char)))
+          arr2.push(item.count)
+        })
+        this.eachDays = arr1
+        this.eachCount = arr2
+        console.log(this.eachDays)
+      })
+    },
+    dateFormat(time) {
+      const date = new Date(time)
+      const year = date.getFullYear()
+      /* 在日期格式中，月份是从0开始的，因此要加0
+       * 使用三元表达式在小于10的前面加0，以达到格式统一  如 09:11:05
+       * */
+      const month = date.getMonth() + 1 < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1
+      const day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate()
+      const hours = date.getHours() < 10 ? `0${date.getHours()}` : date.getHours()
+      const minutes = date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes()
+      const seconds = date.getSeconds() < 10 ? `0${date.getSeconds()}` : date.getSeconds()
+      // 拼接
+      return `${month}.${day}`
     }
   }
 }
@@ -303,25 +422,49 @@ h3 {
   margin-top: 16px;
   overflow-y: hidden;
 }
+canvas {
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+.select-box {
+  width: 140px;
+  margin-top: 1em;
+}
 .chart-top {
   //background: #55a532;
   width: 100%;
-  height: 12vw;
+  height: 14vw;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  .card {
+  .card-box {
     width: 30%;
     height: 85%;
-    .name {
-      font-size: 4em;
-    }
+    border-radius: 10px;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.4);
   }
 }
 i {
   font-size: 3em;
   font-weight: bold;
   cursor: pointer;
+}
+.card-left-item {
+  margin-top: 8%;
+  text-align: center;
+  i {
+    font-size: 6em;
+  }
+}
+.col-style {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+.num {
+  font-size: 4em;
 }
 .chart-mid {
   height: 40vw;

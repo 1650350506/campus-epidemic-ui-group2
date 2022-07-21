@@ -1,6 +1,7 @@
 import request from '@/plugins/request'
 import moduleName from '@/config/moduleName'
 export function GetAllIsolationTotal(data) {
+  // 获得总隔离人数
   return request({
     url: `${moduleName.doraemon_campus}/analysis/total`,
     method: 'get',
@@ -8,17 +9,37 @@ export function GetAllIsolationTotal(data) {
     data
   })
 }
+// 获得新增隔离人数
 export function GetNewIsolationTotal(data) {
   return request({
-    url: `${moduleName.doraemon_campus}/orgManage/belongOrg`,
+    url: `${moduleName.doraemon_campus}/analysis/add`,
     method: 'get',
     urlType: 'test',
     data
   })
 }
-export function GetIsolationList(data) {
+// 获得新增解除人数
+export function GetRelieveIsolationTotal(data) {
   return request({
-    url: `${moduleName.doraemon_campus}/newlyAnalysis`,
+    url: `${moduleName.doraemon_campus}/analysis/relieve`,
+    method: 'get',
+    urlType: 'test',
+    data
+  })
+}
+// 获得各学院防疫人员分布
+// export function GetEachCollegeTotal(data) {
+//   return request({
+//     url: `${moduleName.doraemon_campus}/analysis/relieve`,
+//     method: 'get',
+//     urlType: 'test',
+//     data
+//   })
+// }
+// 获得过去一周或者14天新增的隔离人数（传参： 7 或者 14）
+export function GetIsolationListByDate(data) {
+  return request({
+    url: `${moduleName.doraemon_campus}/analysis/newlyAnalysis`,
     method: 'get',
     urlType: 'test',
     params: {
@@ -26,21 +47,4 @@ export function GetIsolationList(data) {
     }
   })
 }
-export function GetProvinceList(data) {
-  return request({
-    url: `${moduleName.doraemon_campus}/supAdmin/province`,
-    method: 'get',
-    urlType: 'test',
-    data
-  })
-}
-export function GetCityList(data) {
-  return request({
-    url: `${moduleName.doraemon_campus}/supAdmin/getCityByProvince`,
-    method: 'get',
-    urlType: 'test',
-    params: {
-      ...data
-    }
-  })
-}
+// 获得各个学院隔离人员分析

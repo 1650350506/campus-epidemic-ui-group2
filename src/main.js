@@ -20,7 +20,7 @@ import iViewPro from '@/libs/iview-pro/iview-pro.min.js'
 
 // 图标
 import '@/assets/iconfont/iconfont.css'
-
+import '@/assets/font/iconfont.css'
 // 菜单和路由
 import router from './router'
 import menuHeader from '@/menu/header'

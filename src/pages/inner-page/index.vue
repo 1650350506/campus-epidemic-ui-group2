@@ -1,5 +1,5 @@
 <template>
-  <iframe  ref='bdIframe' :src='source' frameborder='0' width="100%" />
+<!--  <iframe  ref='bdIframe' :src='source' frameborder='0' width="100%" />-->
 </template>
 
 <script>

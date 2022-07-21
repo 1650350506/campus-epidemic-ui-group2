@@ -11,9 +11,9 @@
           <Option v-for="item in gradeList" :value="item" :key="item">{{ item }}</Option>
         </Select>
       </div>
-      <Search></Search>
-      <Table  border :columns="columns" :data="data" :border="false" class="table"></Table>
-      <Page :total="100" show-elevator show-sizer class-name="page"></Page>
+      <Search :keyValue="queryInfo.keyword" @selectFun="queryStuInfoBykey"></Search>
+      <Table  border :columns="columns" :data="data" class="table"></Table>
+      <Page :total="100" show-elevator show-sizer class-name="page"  @on-change="editPageNum" @on-page-size-change="editPageSize"></Page>
     </Card>
     <Modal
       v-model="showDialogVisible"
@@ -39,7 +39,7 @@
       @on-cancel="updateDialogVisible = false"
       width="720"
     >
-      <p slot="header" style="text-align: center">学生基本信息</p>
+      <p slot="header" style="text-align: center; font-size: 20px">学生基本信息</p>
       <div class="modal-container">
         <div class="modal-item" v-show="item.title !== '近七天行程'" v-for="(item, index) in dialogList" :key="index">
           <div class="null"></div><div class="star"></div><div class="title" v-if="item">{{item.title}}：</div> <div class="core"> <Input v-if="item.isEdit" v-model="item.value"></Input><span v-else>{{item.value}}</span>
@@ -56,6 +56,9 @@
 <script>
 import iHeaderBreadcrumb from '@/layouts/basic-layout/header-breadcrumb'
 import Search from '@/components/top/search'
+import {
+  GetStuList
+} from '@api/personnel/stuManage'
 export default {
   name: 'index',
   components: {
@@ -79,25 +82,34 @@ export default {
         sex: {
           title: '性别', value: 0, isEdit: false
         },
-        id_card: {
+        idCard: {
           title: '身份证', value: '350311100010123456', isEdit: false
         },
-        dept_code: {
+        deptName: {
           title: '二级学院', value: '计算机学院', isEdit: false
         },
-        class_name: {
+        className: {
           title: '班级', value: '计科19', isEdit: false
         },
-        phone: {
+        riskArea: {
+          title: '风险地区', value: '', isEdit: false
+        },
+        riskLevel: {
+          title: '风险等级', value: 0, isEdit: false
+        },
+        quarantine: {
+          title: '隔离状态', value: '', isEdit: false
+        },
+        phoneNumber: {
           title: '手机号', value: '12345678900', isEdit: true
         },
         address: {
           title: '居住地址', value: '杭州市临安区联胜街道', isEdit: true
         },
-        contact: {
+        emergencyContact: {
           title: '联系人', value: 'die', isEdit: true
         },
-        contact_phone: {
+        emergencyContactPhone: {
           title: '联系人电话', value: '12345467890', isEdit: true
         },
         seven_goto: {
@@ -111,29 +123,30 @@ export default {
           align: 'center'
         },
         {
-          title: '学号',
+          title: '学生学号',
           key: 'code'
         },
         {
-          title: '姓名',
+          title: '学生姓名',
           key: 'name'
         },
         {
           title: '班级',
-          key: 'class_name'
+          key: 'className'
         },
         {
           title: '隔离状态',
-          key: 'state'
+          key: 'quarantine'
         },
         {
           title: '风险地区等级',
-          key: 'grade',
+          key: 'riskLevel',
+          align: 'center',
           render: (h, params) => {
             let types
-            if (params.row.grade === 1) {
+            if (params.row.riskLevel === 1) {
               types = 'error'
-            } else if (params.row.grade === 2) {
+            } else if (params.row.riskLevel === 2) {
               types = 'warning'
             }
             return h('div', [
@@ -155,7 +168,7 @@ export default {
         },
         {
           title: '风险地区',
-          key: 'area',
+          key: 'riskArea',
           align: 'center',
           width: 200
         },
@@ -181,10 +194,10 @@ export default {
                     this.dialogList.code.value = params.row.code
                     this.dialogList.name.value = params.row.name
                     this.dialogList.sex.value = params.row.sex
-                    this.dialogList.phone.value = params.row.phone
-                    this.dialogList.id_card.value = params.row.id_card
-                    this.dialogList.dept_code.value = params.row.dept_code
-                    this.dialogList.class_name.value = params.row.class_name
+                    this.dialogList.phoneNumber.value = params.row.phoneNumber
+                    this.dialogList.idCard.value = params.row.idCard
+                    this.dialogList.deptName.value = params.row.deptName
+                    this.dialogList.className.value = params.row.className
                     this.dialogList.address.value = params.row.address
                     this.dialogList.contact.value = params.row.contact
                     this.dialogList.contact_phone.value = params.row.contact_phone
@@ -257,87 +270,16 @@ export default {
           }
         }
       ],
-      data: [
-        {
-          code: '199200118',
-          name: '张三',
-          sex: 1,
-          class_name: '计科19',
-          phone: '198291011',
-          grade: 1,
-          area: '杭州市西湖区留下街道',
-          address: '杭州市西湖区留下街道',
-          id_card: '11111111111',
-          contact: 'die',
-          contact_phone: '2222222222',
-          seven_goto: '杭州市西湖区留下街道杭州市西湖区留下街道'
-        },
-        {
-          uid: 199200118,
-          name: '张三',
-          class: '计科19',
-          state: '隔离中',
-          grade: '中风险',
-          area: '杭州市西湖区留下街道'
-        },
-        {
-          uid: 199200118,
-          name: '张三',
-          class: '计科19',
-          state: '隔离中',
-          grade: '中风险',
-          area: '杭州市西湖区留下街道'
-        },
-        {
-          uid: 199200118,
-          name: '张三',
-          class: '计科19',
-          state: '隔离中',
-          grade: '高风险',
-          area: '杭州市西湖区留下街道'
-        },
-        {
-          uid: 199200118,
-          name: '张三',
-          class: '计科19',
-          state: '隔离中',
-          grade: '高风险',
-          area: '杭州市西湖区留下街道'
-        },
-        {
-          uid: 199200118,
-          name: '张三',
-          class: '计科19',
-          state: '隔离中',
-          grade: '高风险',
-          area: '杭州市西湖区留下街道'
-        },
-        {
-          uid: 199200118,
-          name: '张三',
-          class: '计科19',
-          state: '隔离中',
-          grade: '高风险',
-          area: '杭州市西湖区留下街道'
-        },
-        {
-          uid: 199200118,
-          name: '张三',
-          class: '计科19',
-          state: '隔离中',
-          grade: '高风险',
-          area: '杭州市西湖区留下街道'
-        },
-        {
-          uid: 199200118,
-          name: '张三',
-          class: '计科19',
-          state: '隔离中',
-          grade: '高风险',
-          area: '杭州市西湖区留下街道'
-        }
-      ]
+      data: [],
+      queryInfo: {
+        pageNum: 1,
+        pageSize: 10,
+        keyword: ''
+      }
     }
+  },
+  created() {
+    this.getStuList()
   },
   methods: {
     handleUpdateStuInfo() {
@@ -346,6 +288,24 @@ export default {
     // 通过等级查询
     queryListByGrade(grade) {
       console.log(grade)
+    },
+    getStuList() {
+      GetStuList(this.queryInfo).then((res) => {
+        this.data = res.data
+      })
+    },
+    queryStuInfoBykey(e) {
+      this.data = []
+      this.queryInfo.keyword = e
+      this.getStuList()
+    },
+    editPageNum(e) {
+      this.queryInfo.pageNum = e
+      this.getStuList()
+    },
+    editPageSize(e) {
+      this.queryInfo.pageSize = e
+      this.getStuList()
     }
   }
 }
@@ -360,28 +320,36 @@ export default {
     width: 50%;
     height: 40px;
     display: flex;
+    margin: 5px 0;
+    font-size: 16px;
     align-items: center;
     .null {
-      flex-basis: 10%;
+      flex-basis: 5%;
     }
     .star {
       color: #ea2969;
-      flex-basis: 10%;
+      //flex-basis: 10%;
       text-align: right;
       font-size: 18px;
       padding-right: 5px;
       height: 50%;
     }
     .title {
+      color: #544b4b;
       flex-basis: 30%;
       text-align-last: justify;
       text-justify: distribute-all-lines;
       text-align: justify;
     }
     .core {
-      flex-basis: 50%;
+      color: #000000;
+      flex-basis: 55%;
     }
   }
+}
+::v-deep .ivu-input {
+  font-size: 16px;
+  color: #000;
 }
 .search-module {
   width: 70%;
@@ -410,11 +378,11 @@ export default {
   display: flex;
   //align-items: center;
   .null {
-    flex-basis: 5%;
+    flex-basis: 2%;
   }
   .star {
-    color: #ea2969;
-    flex-basis: 5%;
+    //color: #ea2969;
+    //flex-basis: 5%;
     text-align: right;
     font-size: 18px;
     padding-right: 5px;
@@ -422,11 +390,13 @@ export default {
   }
   .title {
     flex-basis: 15%;
+    color: #544b4b;
     text-align-last: justify;
     text-justify: distribute-all-lines;
     text-align: justify;
   }
   .core {
+    color: #000000;
     flex-basis: 64%;
     height: 90px;
     //border: 1px solid #5c6b77;

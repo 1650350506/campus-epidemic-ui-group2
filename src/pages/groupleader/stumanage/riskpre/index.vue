@@ -15,7 +15,7 @@
       </div>
       <Search></Search>
       <Table  border :columns="columns" :data="data" :border="false" class="table"></Table>
-      <Page :total="100" show-elevator show-sizer class-name="page"></Page>
+      <Page :total="100" show-elevator show-sizer class-name="page"  @on-change="editPageNum" @on-page-size-change="editPageSize"></Page>
     </Card>
     <Modal
       v-model="showDialogVisible"
@@ -246,6 +246,12 @@ export default {
   //  通过隔离状态查询
     queryListByState(state) {
       console.log(state)
+    },
+    editPageNum(e) {
+      this.queryInfo.pageNum = e
+    },
+    editPageSize(e) {
+      this.queryInfo.pageSize = e
     }
   }
 }

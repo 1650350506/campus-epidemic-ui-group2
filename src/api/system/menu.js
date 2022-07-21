@@ -34,12 +34,3 @@ export function listBaseMenu(data) {
     }
   })
 }
-export function demo(data) {
-  return request({
-    url: `${moduleName.doraemon_demo}/demo/ddd`,
-    method: 'get',
-    params: {
-      ...data
-    }
-  })
-}
