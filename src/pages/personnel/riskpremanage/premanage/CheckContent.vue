@@ -4,8 +4,9 @@
       v-model="checkSwitch"
       @on-cancel="close"
       width="720"
+      :styles="{top: '20px'}"
     >
-      <p slot="header" style="text-align: center">查看</p>
+      <p slot="header" style="text-align: left; font-size: 20px">查看</p>
       <div class="model-box">
         <div class="top-box">
           <div class="modal-item" v-for="(item, index) in checkList1" :key="index">
@@ -15,9 +16,16 @@
         </div>
         <div class="mid-box">
           <div class="mid-box-left">监测信息:</div>
-<!--          <div style="flex-basis: 3%"></div>-->
+          <div style="flex-basis: 4%"></div>
           <div class="mid-box-right">
-            <Table border :columns="columns" :data="data1"></Table>
+            <Table border :columns="columns" :data="data1" style="margin-top: 2em"></Table>
+          </div>
+        </div>
+        <div class="mid-box">
+          <div class="mid-box-left">服务记录:</div>
+          <div style="flex-basis: 4%"></div>
+          <div class="mid-box-right">
+            <Table border :columns="columns1" :data="data1" style="margin-top: 2em"></Table>
           </div>
         </div>
       </div>
@@ -36,18 +44,44 @@ export default {
     return {
       columns: [
         {
-          title: '姓名',
+          title: '检测时间',
           key: 'name'
         },
         {
-          title: '年龄',
+          title: '核酸结果',
           key: 'age'
         },
         {
-          title: '地址',
+          title: '检测结果',
           key: 'address'
         }
       ],
+      columns1: [
+        {
+          title: '隔离开始时间',
+          key: 'name'
+        },
+        {
+          title: '隔离结束时间',
+          key: 'age'
+        },
+        {
+          title: '隔离原因',
+          key: 'address'
+        }
+      ],
+      data1: [
+        {
+          name: '李小红',
+          age: 30,
+          address: '上海市浦东新区世纪大道'
+        },
+        {
+          name: '周小伟',
+          age: 26,
+          address: '深圳市南山区深南大道'
+        }
+      ]
     }
   },
   methods: {
@@ -93,6 +127,7 @@ export default {
     }
   }
   .mid-box {
+    margin-top: 1em;
     display: flex;
     .mid-box-left {
       color: #050505;
@@ -100,7 +135,6 @@ export default {
       font-size: 18px;
       text-align: right;
       flex-basis: 20%;
-      background: #1e93ff;
     }
     .mid-box-right {
       flex-basis: 65%;

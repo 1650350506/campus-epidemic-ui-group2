@@ -21,29 +21,7 @@
       <Page :total="100" show-elevator show-sizer class-name="page"  @on-change="editPageNum" @on-page-size-change="editPageSize"></Page>
     </Card>
     <CheckContent :checkSwitch="showDialogVisible" :checkList1="checkList1" @switchCheck="close"></CheckContent>
-    <Modal
-      v-model="updateDialogVisible"
-      @on-ok="handleAddRecord"
-      @on-cancel="updateDialogVisible = false"
-      class-name="vertical-center-modal"
-      width="720"
-    >
-      <p slot="header" style="text-align: center">工作人员基本信息</p>
-      <div class="modal-container">
-        <div class="modal-item" v-for="(item, index) in dialogList" :key="index">
-          <div class="null"></div><div class="star" :style="item.isEdit ? {}: {opacity: 0}"></div><div class="title" v-if="item">{{item.title}}</div><div style="flex-basis: 4%">:</div>
-          <div class="core">
-            <Input v-if="item.isEdit&&item.title!=='核酸时间'&&item.title!=='核酸结果'" v-model="item.value"></Input>
-            <Date-picker type="date" format="yyyy-MM-dd" placeholder="选择日期" v-model="dialogList.nucleic_time.value"  v-else-if="item.isEdit&&item.title === '核酸时间'"></Date-picker>
-            <Checkbox-group  v-else-if="item.isEdit&&item.title === '核酸结果'" v-model="item.value">
-              <Checkbox label="阴性" value="0"></Checkbox>
-              <Checkbox label="阳性" value="1"></Checkbox>
-            </Checkbox-group>
-            <span v-else>{{item.value}}</span>
-          </div>
-        </div>
-      </div>
-    </Modal>
+    <AddContent :addSwitch="updateDialogVisible" :addList1="addInfoList1" @switchAdd="closeByAdd"></AddContent>
   </div>
 </template>
 
@@ -51,11 +29,12 @@
 import iHeaderBreadcrumb from '@/layouts/basic-layout/header-breadcrumb'
 import Search from '@/components/top/search'
 import CheckContent from './CheckContent'
+import AddContent from './AddContent'
 import { DeleteIsolationInfo, GetIsolationInfoList } from '@api/personnel/riskpremanage'
 export default {
   name: 'index',
   components: {
-    iHeaderBreadcrumb, Search, CheckContent
+    iHeaderBreadcrumb, Search, CheckContent, AddContent
   },
   data() {
     return {
@@ -73,8 +52,8 @@ export default {
           value: 1
         }
       ],
-      showDialogVisible: true,
-      updateDialogVisible: false,
+      showDialogVisible: false,
+      updateDialogVisible: true,
       checkList1: {
         name: {
           title: '姓名', value: '真的装'
@@ -105,6 +84,28 @@ export default {
         },
         end_time: {
           title: '结束时间', value: '2022-07-01'
+        }
+      },
+      checkList2: [],
+      checkList3: [],
+      addInfoList1: {
+        name: {
+          title: '姓名', value: '真的装'
+        },
+        sex: {
+          title: '性别', value: '男'
+        },
+        dept_code: {
+          title: '二级学院', value: '计算机学院'
+        },
+        classname: {
+          title: '班级', value: '计科191'
+        },
+        phone: {
+          title: '手机号', value: '199200118'
+        },
+        associates: {
+          title: '关联防疫人员', value: '飞尔德'
         }
       },
       dialogList: {
@@ -230,10 +231,9 @@ export default {
                 },
                 style: {
                   marginRight: '5px',
-                  backgroundColor: '#e0e0e0',
+                  backgroundColor: 'transparent',
                   border: '0px',
-                  color: '#01b0ff',
-                  background: 'transparent'
+                  color: '#01b0ff'
                 },
                 on: {
                   click: () => {
@@ -283,9 +283,10 @@ export default {
                       title: '解除'
                     },
                     style: {
-                      color: '#01b0ff',
                       marginRight: '5px',
-                      border: '0px'
+                      backgroundColor: 'transparent',
+                      border: '0px',
+                      color: '#01b0ff'
                     },
                     on: {
                     }
@@ -298,9 +299,10 @@ export default {
                   size: 'small'
                 },
                 style: {
-                  color: '#01b0ff',
                   marginRight: '5px',
-                  border: '0px'
+                  backgroundColor: 'transparent',
+                  border: '0px',
+                  color: '#01b0ff'
                 },
                 on: {
                   click: () => {
@@ -354,6 +356,9 @@ export default {
     close(e) {
       console.log(e)
       this.showDialogVisible = false
+    },
+    closeByAdd(e) {
+      this.updateDialogVisible = false
     },
     dateFormat(time) {
       const date = new Date(time)
@@ -413,106 +418,6 @@ export default {
     editPageSize(e) {
       this.queryInfo.pageSize = e
       this.getStuList()
-        [
-          {
-            code: 199200118,
-            name: '张三',
-            sex: 1,
-            class_name: '计科19',
-            phone: '198581044444',
-            start_time: '2022-05-04',
-            end_time: '2022-05-04',
-            isolation_state: '0',
-            nucleic_result: '阴性',
-            temperature: 36.5,
-            associates: '林林林',
-            nucleic_time: '2022-05-04'
-          },
-          {
-            code: 199200118,
-            name: '张三',
-            sex: 1,
-            class_name: '计科19',
-            phone: '198581044444',
-            start_time: '2022-05-04',
-            end_time: '2022-05-04',
-            isolation_state: 0,
-            nucleic_result: '阴性',
-            temperature: 36.5,
-            associates: '林林林',
-            nucleic_time: '2022-05-04'
-          },
-          {
-            code: 199200118,
-            name: '张三',
-            sex: 1,
-            class_name: '计科19',
-            phone: '198581044444',
-            start_time: '2022-05-04',
-            end_time: '2022-05-04',
-            isolation_state: 0,
-            nucleic_result: '阴性',
-            temperature: 36.5,
-            associates: '林林林',
-            nucleic_time: '2022-05-04'
-          },
-          {
-            code: 199200118,
-            name: '张三',
-            sex: 1,
-            class_name: '计科19',
-            phone: '198581044444',
-            start_time: '2022-05-04',
-            end_time: '2022-05-04',
-            isolation_state: 0,
-            nucleic_result: '阴性',
-            temperature: 36.5,
-            associates: '林林林',
-            nucleic_time: '2022-05-04'
-          },
-          {
-            code: 199200118,
-            name: '张三',
-            sex: 1,
-            class_name: '计科19',
-            phone: '198581044444',
-            start_time: '2022-05-04',
-            end_time: '2022-05-04',
-            isolation_state: 0,
-            nucleic_result: '阴性',
-            temperature: 36.5,
-            associates: '林林林',
-            nucleic_time: '2022-05-04'
-          },
-          {
-            code: 199200118,
-            name: '张三',
-            sex: 1,
-            class_name: '计科19',
-            phone: '198581044444',
-            start_time: '2022-05-04',
-            end_time: '2022-05-04',
-            isolation_state: 0,
-            nucleic_result: '阴性',
-            temperature: 67.5,
-            associates: '林林林',
-            nucleic_time: '2022-05-04'
-          },
-          {
-            code: 199200118,
-            name: '张三',
-            sex: 1,
-            class_name: '计科19',
-            phone: '198581044444',
-            start_time: '2022-05-04',
-            end_time: '2022-05-04',
-            isolation_state: 0,
-            nucleic_result: '阴性',
-            temperature: 36.5,
-            associates: '林林林',
-            nucleic_time: '2022-05-04'
-          }
-        ]
     }
   }
 }
