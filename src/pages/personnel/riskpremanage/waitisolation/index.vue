@@ -13,12 +13,12 @@
         </Card>
       </Col>
     </Row>
-    <Card class="card-marginTop card">
-      <Search></Search>
+    <Card class="card">
+      <Search :keyValue="queryInfo.keyword" @selectFun="queryWaitIsolationInfoBykey"></Search>
     </Card>
-    <Card class="card-marginTop">
+    <Card class="card-marginTop card">
       <Table border :columns="columns" :data="data" :border="false" class="table"></Table>
-      <Page :total="100" show-elevator show-sizer class-name="page"></Page>
+      <Page :total="total" show-elevator show-sizer class-name="page"  @on-change="editPageNum" @on-page-size-change="editPageSize"></Page>
     </Card>
   </div>
 </template>
@@ -51,7 +51,7 @@ export default {
         },
         {
           title: '班级',
-          key: 'class_name',
+          key: 'classname',
           align: 'center'
         },
         {
@@ -66,23 +66,38 @@ export default {
           align: 'center',
           render: (h, params) => {
             return h('div', [
-              h('Button', {
+              h('Poptip', {
                 props: {
-                  size: 'small'
-                },
-                style: {
-                  marginRight: '5px',
-                  backgroundColor: '#e0e0e0',
-                  border: '0px',
-                  color: '#01b0ff',
-                  background: 'transparent'
+                  placement: 'top-start',
+                  confirm: true,
+                  transfer: true,
+                  title: '确定修改隔离状态吗？'
                 },
                 on: {
-                  click: () => {
-                    this.addIsolation(params.row)
+                  'on-ok': () => {
+                  },
+                  // eslint-disable-next-line no-empty-function
+                  'on-cancel': () => {
                   }
                 }
-              }, '待隔离')
+              }, [
+                h('Button', {
+                  class: 'deleteHover',
+                  props: {
+                    size: 'small'
+                  },
+                  attrs: {
+                    title: '解除'
+                  },
+                  style: {
+                    color: '#01b0ff',
+                    marginRight: '5px',
+                    border: '0px'
+                  },
+                  on: {
+                  }
+                }, '待隔离')
+              ])
             ])
           }
         }
@@ -185,11 +200,17 @@ export default {
           temperature: 36.5,
           associates: '林林林',
           nucleic_time: '2022-05-04'
-        }]
+        }],
+      queryInfo: {
+        pageNum: 1,
+        pageSize: 10,
+        keyword: ''
+      },
+      total: 0
     }
   },
   created() {
-    this.getAllRiskInfoList()
+    this.getWaitIsolationInfoList()
   },
   methods: {
     // 点击修改该人状态（变成已隔离)
@@ -204,15 +225,29 @@ export default {
       obj.isolation_state = 1
       console.log(obj)
     },
-    getAllRiskInfoList() {
-      const data = {
-        pageNum: '1',
-        pageSize: '10',
-        keyword: ''
-      }
-      GetIsolationInfoList(data).then((res) => {
+    // 查询已隔离或者未隔离信息
+    getWaitIsolationInfoList() {
+      GetIsolationInfoList(this.queryInfo).then((res) => {
         console.log(res)
+        this.data = res.data
+        this.total = res.total
       })
+    },
+    // 关键字查询隔离人员信息
+    queryWaitIsolationInfoBykey(e) {
+      this.data = []
+      this.queryInfo.keyword = e
+      this.getWaitIsolationInfoList()
+    },
+    // 选择页码
+    editPageNum(e) {
+      this.queryInfo.pageNum = e
+      this.getWaitIsolationInfoList()
+    },
+    // 选择当页最大条数
+    editPageSize(e) {
+      this.queryInfo.pageSize = e
+      this.getWaitIsolationInfoList()
     }
   }
 }

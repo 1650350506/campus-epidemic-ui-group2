@@ -28,12 +28,12 @@
               target='_blank'
               :to='child.normalUrl'
             >
-            <Icon :custom='child.ico' />{{child.cname}}
+              <Icon :custom='child.ico' />{{child.cname}}
             </MenuItem>
           </div>
           <div v-else>
-            <MenuItem :name='child.id' :to='child.normalUrl' >
-            <Icon :custom='child.ico' />{{child.cname}}
+            <MenuItem :name='child.id' :to='child.normalUrl'>
+              <Icon :custom='child.ico' />{{child.cname}}
             </MenuItem>
           </div>
         </div>
@@ -42,38 +42,38 @@
   </Drawer>
 </template>
 <script>
-    export default {
-        name: 'DrawerMenu',
-        props: {
-            value: {
-                type: Boolean,
-                default: false
-            },
-            data: {
-                type: Array,
-                default: () => []
-            }
-        },
-        data () {
-            return {
-                visible: this.value,
-                activeName: '',
-                openNames: []
-            }
-        },
-        watch: {
-            value (newVal) {
-                this.visible = newVal
-            }
-        },
-        created () {},
-        methods: {
-            selectPro (path) {
-                this.visible = false
-                this.$emit('input', false)
-            }
-        }
+export default {
+  name: 'DrawerMenu',
+  props: {
+    value: {
+      type: Boolean,
+      default: false
+    },
+    data: {
+      type: Array,
+      default: () => []
     }
+  },
+  data() {
+    return {
+      visible: this.value,
+      activeName: '',
+      openNames: []
+    }
+  },
+  watch: {
+    value(newVal) {
+      this.visible = newVal
+    }
+  },
+  created() {},
+  methods: {
+    selectPro(path) {
+      this.visible = false
+      this.$emit('input', false)
+    }
+  }
+}
 </script>
 
 <style lang="less" scoped>

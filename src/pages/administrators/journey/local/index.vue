@@ -1,5 +1,5 @@
 <template>
-  <div></div>
+  <div>本地行程</div>
 </template>
 
 <script>

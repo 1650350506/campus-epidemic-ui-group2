@@ -1,7 +1,7 @@
 
 import dashboard from './modules/dashboard'
 import BasicLayout from '@/layouts/basic-layout'
-
+import administrators from './modules/administrators'
 /**
  * 在主框架内显示
  */
@@ -15,6 +15,13 @@ const frameIn = [
     component: BasicLayout,
     children: [
       {
+        path: 'index',
+        name: 'index',
+        redirect: {
+          name: 'dashboard-workplace'
+        }
+      },
+      {
         path: '/isolationAnalysis',
         name: 'isolationAnalysis',
         component: () => import('@/pages/administrators/analysis')
@@ -25,15 +32,36 @@ const frameIn = [
         component: () => import('@/pages/administrators/area')
       },
       {
+        path: '/journey/local',
+        name: '',
+        component: () => import('@/pages/administrators/journey/local')
+      },
+      {
+        path: '/journey/cross',
+        name: '',
+        component: () => import('@/pages/administrators/journey/cross')
+      },
+      {
         path: '/highestPreManage',
         name: 'highestPre',
         component: () => import('@/pages/administrators/college')
       },
-      {
-        path: '/studentMessage',
-        name: 'studentMessage',
-        component: () => import('@/pages/groupleader/stumanage/stubasic')
-      },
+      // {
+      //   path: '/journey',
+      //   name: '',
+      //   children: [
+      //     {
+      //       path: '/local',
+      //       name: '',
+      //       component: () => import('@/pages/administrators/journey/local')
+      //     },
+      //     {
+      //       path: '/cross',
+      //       name: '',
+      //       component: () => import('@/pages/administrators/journey/cross')
+      //     }
+      //   ]
+      // },
       {
         path: '/riskPreMessage',
         name: 'riskPreMessage',
@@ -105,7 +133,12 @@ const frameIn = [
       }
     ]
   },
-  dashboard
+  {
+    path: '/isolationAnalysis',
+    name: 'isolationAnalysis',
+    component: () => import('@/pages/administrators/analysis')
+  },
+  dashboard, administrators
 ]
 
 /**

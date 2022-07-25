@@ -33,7 +33,7 @@
       <Card class="card" :bordered="false">
         <h2 slot="title" style="margin: 1em 0;">新增隔离人数趋势</h2>
         <div slot="extra">
-          <Select :value="timeList[0].label" class="select-box">
+          <Select :value="timeList" class="select-box" @on-change="selectTime">
             <Option v-for="item in timeList" :value="item.value" :key="item">{{ item.label }}</Option>
           </Select>
         </div>
@@ -51,7 +51,7 @@
 import _ from 'lodash'
 import iHeaderBreadcrumb from '@/layouts/basic-layout/header-breadcrumb'
 import {
-  GetAllIsolationTotal,
+  GetAllIsolationTotal, GetEachEpidemicListAnalysis, GetEachIsolationListAnalysis,
   GetIsolationListByDate,
   GetNewIsolationTotal,
   GetRelieveIsolationTotal
@@ -73,6 +73,7 @@ export default {
         { name: '新增隔离人数', num: 0, icon: 'iconfont icon-tubiaoshangshengqushi', color: '#c31c1c' },
         { name: '新增解除人数', num: 0, icon: 'iconfont icon-tubiaoxiajiangqushi' }
       ],
+      selectModel: '过去7天',
       timeList: [{
         value: 7,
         label: '过去7天'
@@ -121,9 +122,9 @@ export default {
           nameTextStyle: {
             fontSize: 14,
             padding: [0, 0, 10, 0]
-          },
+          }
           // data: this.eachDays
-          data: [7.4, 7.2, 7.3, 7.4, 7.5, 7.6, 7.7]
+          // data: [7.4, 7.2, 7.3, 7.4, 7.5, 7.6, 7.7]
         },
         yAxis: {
           type: 'value',
@@ -155,7 +156,6 @@ export default {
             stack: 'Total',
             symbol: 'none',
             smooth: true,
-            data: [3, 5, 10, 6, 3, 12, 5],
             lineStyle: { // 设置线条的style等
               normal: {
                 color: '#9bcfff' // 折线线条颜色:红色
@@ -200,7 +200,11 @@ export default {
       },
       option1: {
         title: {
-          text: '各院隔离人员比例'
+          text: '各院隔离人员比例',
+          subtextStyle: {
+            color: '#B4E4FF',
+            fontSize: 8
+          }
         },
         tooltip: {
           trigger: 'item'
@@ -214,6 +218,7 @@ export default {
         series: [
           {
             name: 'Access From',
+            itemGap: -10,
             type: 'pie',
             radius: ['65%', '40%'],
             center: ['30%', '50%'],
@@ -236,14 +241,7 @@ export default {
             },
             labelLine: {
               show: false
-            },
-            data: [
-              { value: 1048, name: 'Search Engine' },
-              { value: 735, name: 'Direct' },
-              { value: 580, name: 'Email' },
-              { value: 484, name: 'Union Ads' },
-              { value: 300, name: 'Video Ads' }
-            ]
+            }
           }
         ]
       },
@@ -251,7 +249,6 @@ export default {
         xAxis: {
           type: 'category',
           name: '二级学院',
-          data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
           axisLine: {
             show: false
           },
@@ -278,7 +275,6 @@ export default {
         },
         series: [
           {
-            data: [120, 200, 150, 80, 70, 110, 130, 120, 200, 150, 80, 70, 110, 130],
             type: 'bar',
             itemStyle: {
               normal: {
@@ -325,36 +321,54 @@ export default {
           }
         ],
         eachDays: [],
-        eachCount: []
+        eachCount: [],
+        queryDayInfo: {
+          command: 7
+        }
       }
     }
   },
   mounted() {
-    this.getOldIsolationListByDate()
-    this.option.series.data = this.eachCount
-    this.option.xAxis.data = this.eachDays
-    console.log(this.option.xAxis.data)
-    let myChart = echarts.init(document.getElementById('main'))
-    let result = _.merge(this.option.series.data, this.option)
-    myChart.setOption(result)
-    const myChart1 = echarts.init(document.getElementById('main2'))
-    const result1 = _.merge(this.option1.series.data, this.option1)
-    myChart1.setOption(result1)
-    this.optionsAve()
-    const myChart2 = echarts.init(document.getElementById('main3'))
-    const result2 = _.merge(this.option2.series.data, this.option2)
-    myChart2.setOption(result2)
-    const myChart3 = echarts.init(document.getElementById('top'))
-    const result3 = _.merge(this.option3.series.data, this.option3)
-    myChart3.setOption(result3)
+    this.updateOptions()
+    // this.updateOptions1()
+    this.updateOptions2()
+    // const myChart1 = echarts.init(document.getElementById('main2'))
+    // const result1 = _.merge(this.option1.series.data, this.option1)
+    // myChart1.setOption(result1)
+    // this.optionsAve()
+    // const myChart2 = echarts.init(document.getElementById('main3'))
+    // const result2 = _.merge(this.option2.series.data, this.option2)
+    // myChart2.setOption(result2)
+    // const myChart3 = echarts.init(document.getElementById('top'))
+    // const result3 = _.merge(this.option3.series.data, this.option3)
+    // myChart3.setOption(result3)
   },
   created() {
+    this.getOldIsolationListByDate()
     this.getAllIsolationTotal()
     this.getNewIsolationTotal()
     this.getReliveIsolationTotal()
-
+    this.getEachEpidemicListAnalysis()
+    this.getEachIsolationListAnalysis()
   },
   methods: {
+    // 选择修改时间
+    selectTime(e) {
+      this.queryDayInfo.command = e
+      this.getOldIsolationListByDate()
+    },
+    updateOptions() {
+      const myChart = echarts.init(document.getElementById('main'))
+      myChart.setOption(this.option, true)
+    },
+    updateOptions1() {
+      const myChart = echarts.init(document.getElementById('main3'))
+      myChart.setOption(this.option2, true)
+    },
+    updateOptions2() {
+      const myChart = echarts.init(document.getElementById('main2'))
+      myChart.setOption(this.option1, true)
+    },
     optionsAve() {
       let sum = 0
       for (let i = 0; i < this.option2.series[0].data.length; i++) {
@@ -381,17 +395,44 @@ export default {
       })
     },
     getOldIsolationListByDate() {
-      const list = { command: 7 }
-      GetIsolationListByDate(list).then((res) => {
+      GetIsolationListByDate(this.queryDayInfo).then((res) => {
         const arr1 = []
         const arr2 = []
         res.field.forEach(item => {
           arr1.push(parseFloat(this.dateFormat(item.to_char)))
           arr2.push(item.count)
         })
-        this.eachDays = arr1
-        this.eachCount = arr2
-        console.log(this.eachDays)
+        this.option.series[0].data = arr2
+        this.option.xAxis.data = arr1
+        this.updateOptions()
+      })
+    },
+    getEachEpidemicListAnalysis() {
+      GetEachEpidemicListAnalysis().then(res => {
+        const arr1 = Object.keys(res.field)
+        const arr2 = Object.values(res.field)
+        this.option2.series[0].data = arr2
+        this.option2.xAxis.data = arr1
+        this.updateOptions1()
+      })
+    },
+    getEachIsolationListAnalysis() {
+      GetEachIsolationListAnalysis().then(res => {
+        const arr1 = Object.keys(res.field)
+        const arr2 = Object.values(res.field)
+        const arr = []
+        console.log(res.field)
+        arr1.forEach((item, index) => {
+          arr.push({
+            name: item,
+            value: arr2[index]
+          })
+        })
+        console.log(1)
+        console.log(arr)
+        this.option1.series[0].data = arr
+        // console.log(this.option.series)
+        this.updateOptions2()
       })
     },
     dateFormat(time) {

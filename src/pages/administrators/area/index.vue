@@ -18,15 +18,15 @@
         <div class="batch-box">
           <div class="select-text">已选择 <span style="color: #d41944; font-size: 18px">{{batchNum}}</span> 项</div>
           <div class="group">
-            <Checkbox-group  v-for="(item, index) in riskGradeList" :key="index" :change="chooseRiskGrade(index)">
-              <Checkbox :label="item"></Checkbox>
-            </Checkbox-group>
+            <RadioGroup  @on-change="chooseRiskGrade">
+              <Radio  v-for="(item, index) in riskGradeList" :key="index" :label="item"></Radio>
+            </RadioGroup>
           </div>
           <Button class="btn" type="primary" @click="batchSubmit">批量提交</Button>
         </div>
       </Card>
-      <Table border :columns="columns2" :data="data2" class="table"
-             @on-select="selectItem"
+      <Table  :columns="columns2" :data="data2" :border="false" class="table"
+              @on-selection-change="selectItem"
       ></Table>
       <Page :total="100" show-elevator show-sizer class-name="page"></Page>
     </Card>
@@ -36,6 +36,7 @@
 <script>
 
 import iHeaderBreadcrumb from '@/layouts/basic-layout/header-breadcrumb'
+import { GetProvinceList } from '@api/administorators/riskArea'
 
 export default {
   name: 'index',
@@ -44,7 +45,7 @@ export default {
   },
   data() {
     return {
-      riskGrade: '',
+      riskGrade: 0,
       riskGradeList: ['高风险', '中风险', '低风险'],
       placeValue: [],
       place: [],
@@ -55,25 +56,26 @@ export default {
           align: 'center',
           on: {
             'on-change': (e) => {
+              console.log('全选')
               console.log(e)
             }
           }
         },
         {
           title: '地区编号',
-          align: 'center',
-          width: 130,
+          align: 'left',
           key: 'uid'
         },
         {
           title: '地区名称',
+          width: '300',
           key: 'name',
-          align: 'center'
+          align: 'left'
         },
         {
           title: '风险等级',
-          width: '280',
-          align: 'center',
+          align: 'left',
+          width: '340',
           key: 'grade',
           render: (h, params) => {
             const arr = [{ grade: '低风险', checked: false },
@@ -109,13 +111,11 @@ export default {
         },
         {
           title: '更新时间',
-          align: 'center',
-          width: 130,
+          align: 'left',
           key: 'update'
         },
         {
           title: '操作',
-          width: 150,
           key: 'action',
           align: 'center',
           render: (h, params) => {
@@ -125,10 +125,12 @@ export default {
                   size: 'small'
                 },
                 style: {
+                  color: '#01b0ff',
+                  border: '0px'
                 },
                 on: {
                   click: () => {
-                    this.show(params.index)
+                    this.submitInfo(params.row)
                   }
                 }
               }, '提交')
@@ -180,101 +182,77 @@ export default {
           update: '2022-05-01'
         }
       ],
-      batchNum: 0
+      batchList: [
+      ]
     }
   },
   created() {
-    // this.getProvinceList()
+    this.getProvinceList()
   },
   methods: {
     // 批量提交
     batchSubmit() {
-
+      console.log(this.riskGrade)
+      this.batchList.forEach((item) => {
+        item.risk_level = this.riskGrade
+      })
+      console.log(this.batchList)
     },
+    // 表格
     selectItem(e) {
-      console.log(e)
+      this.batchList = []
+      e.forEach((item, index) => {
+        console.log(item)
+        this.batchList.push({
+          code: item.uid,
+          risk_level: item.grade
+        })
+      })
     },
     //  选择批量修改的等级
     chooseRiskGrade(index) {
-      this.riskGrade = index
+      let state
+      if (index === '低风险') {
+        state = 0
+      } else if (index === '中风险') {
+        state = 1
+      } else if (index === '高风险') {
+        state = 2
+      }
+      this.riskGrade = state
+    },
+    submitInfo(info) {
+      const RiskInfo = {
+        code: info.code,
+        risk_level: info.risk_level
+      }
+    //  post请求
+    },
+    getProvinceList() {
+      const arrays = []
+      GetProvinceList().then((res) => {
+        res.forEach(ele => {
+          arrays.push({
+            level: 1,
+            label: ele.label,
+            value: ele.value,
+            children: []
+          })
+        })
+        this.place = arrays
+        console.log(this.place)
+      })
+    },
+    loadData(item, selectedData) {
+      console.log(item)
+      console.log(selectedData)
+    },   //   console.log(item)
+    getCityListByValue(val) {
+      // const valueList = { value: val[0] }
+      // GetCityList(valueList).then((res) => {
+      //   console.log(res)
+      // })
     }
-    // getProvinceList() {
-    //   const arrays = []
-    //   GetProvinceList().then((res) => {
-    //     res.forEach(ele => {
-    //       arrays.push({
-    //         level: 1,
-    //         label: ele.label,
-    //         value: ele.value,
-    //         children: []
-    //       })
-    //     })
-    //     this.place = arrays
-    //     console.log(this.place)
-    //   })
-    // }
-    // loadData(item, selectedData) {
-    //   console.log(item)
-    //   let index
-    //   for (let i = 0; i < this.place.length; i++) {
-    //     // eslint-disable-next-line eqeqeq
-    //     if (this.place[i].value == item) {
-    //       index = i
-    //     }
-    //   }
-    //   let datalist = this.place[index]
-    //   const arrays = []
-    //   let parentValue
-    //   if (datalist.level === 1) {
-    //     parentValue = datalist.value
-    //     GetCityList({ value: parentValue }).then((res) => {
-    //       res.forEach(ele => {
-    //         arrays.push({
-    //           level: 2,
-    //           label: ele.label,
-    //           value: ele.value,
-    //           children: []
-    //         })
-    //       })
-    //     })
-    //   }
-    //   datalist.children = arrays
-    //   this.place = datalist
-    //   console.log(this.place)
-    // },   //   console.log(item)
-    //   let index
-    //   for (let i = 0; i < this.place.length; i++) {
-    //     // eslint-disable-next-line eqeqeq
-    //     if (this.place[i].value == item) {
-    //       index = i
-    //     }
-    //   }
-    //   let datalist = this.place[index]
-    //   const arrays = []
-    //   let parentValue
-    //   if (datalist.level === 1) {
-    //     parentValue = datalist.value
-    //     GetCityList({ value: parentValue }).then((res) => {
-    //       res.forEach(ele => {
-    //         arrays.push({
-    //           level: 2,
-    //           label: ele.label,
-    //           value: ele.value,
-    //           children: []
-    //         })
-    //       })
-    //     })
-    //   }
-    //   datalist.children = arrays
-    //   this.place = datalist
-    //   console.log(this.place)
-    // },
-    // getCityListByValue(val) {
-    //   // const valueList = { value: val[0] }
-    //   // GetCityList(valueList).then((res) => {
-    //   //   console.log(res)
-    //   // })
-    // }
   }
 }
 </script>

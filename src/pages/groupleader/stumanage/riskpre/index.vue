@@ -9,13 +9,14 @@
     <Card class="card-marginTop card">
       <div slot="extra" style="display: flex; align-items: center">
         <div style="margin-right: 5px">隔离状态选择：</div>
-        <Select v-model="selectModel" style="width:200px" :change="queryListByState(selectModel)">
+        <Select v-model="selectModel" style="width:200px" @on-change="queryListByState(selectModel)">
           <Option v-for="item in gradeList" :value="item" :key="item">{{ item }}</Option>
         </Select>
+        <Button>查询</Button>
       </div>
-      <Search></Search>
-      <Table  border :columns="columns" :data="data" :border="false" class="table"></Table>
-      <Page :total="100" show-elevator show-sizer class-name="page"  @on-change="editPageNum" @on-page-size-change="editPageSize"></Page>
+      <Search :keyValue="queryInfo.keyword" @selectFun="queryRiskPreByKey"></Search>
+      <Table  :border="false" :columns="columns" :data="data" class="table"></Table>
+      <Page :total="total" show-elevator show-sizer class-name="page"  @on-change="editPageNum" @on-page-size-change="editPageSize"></Page>
     </Card>
     <Modal
       v-model="showDialogVisible"
@@ -38,6 +39,7 @@
 <script>
 import iHeaderBreadcrumb from '@/layouts/basic-layout/header-breadcrumb'
 import Search from '@/components/top/search'
+import { GetRiskPreInfoList } from '@api/group/riskPre'
 export default {
   name: 'index',
   components: {
@@ -239,17 +241,38 @@ export default {
           grade: '高风险',
           area: '杭州市西湖区留下街道'
         }
-      ]
+      ],
+      queryInfo: {
+        pageNum: 1,
+        pageSize: 10,
+        keyword: ''
+      },
+      total: 0
     }
   },
   methods: {
-  //  通过隔离状态查询
+    // 获取风险人数列表
+    getRiskPreInfoList() {
+      GetRiskPreInfoList(this.queryInfo).then((res) => {
+        console.log(res)
+        console.log('获取风险人数列表')
+      })
+    },
+    //  通过隔离状态查询
     queryListByState(state) {
       console.log(state)
     },
+    // 关键字查询
+    queryRiskPreByKey(e) {
+      this.data = []
+      this.queryInfo.keyword = e
+      this.getRiskPreInfoList()
+    },
+    // 修改条件页码
     editPageNum(e) {
       this.queryInfo.pageNum = e
     },
+    // 修改条件单页最大条数
     editPageSize(e) {
       this.queryInfo.pageSize = e
     }

@@ -106,7 +106,7 @@ export default {
          * @description 在当前 header 下，是否隐藏 sider（及折叠按钮）
          * */
     hideSider(state, getters) {
-      let visible = false
+      let visible = true
       if (getters.currentHeader && 'hideSider' in getters.currentHeader) visible = getters.currentHeader.hideSider
       return visible
     }
@@ -213,16 +213,12 @@ export default {
           .then(res => {
             const menuSider = []
             menuSider.push(dashboard)
-            console.log(1)
-            console.log(res)
             res.forEach(menu => {
               const childMenu = []
               if (menu.children) {
-                menu.children.forEach((item, index) => {
-                  console.log(2)
-                  console.log(item)
+                menu.children.forEach(item => {
                   if (item.jumpType === 'open') {
-                    console.log('w')
+                    console.log('1')
                     childMenu.push({
                       custom: item.ico,
                       title: item.cname,
@@ -240,7 +236,6 @@ export default {
                       jumpType: item.jumpType
                     })
                   } else {
-                    console.log(`${index}i`)
                     childMenu.push({
                       custom: item.ico,
                       title: item.cname,
@@ -250,22 +245,19 @@ export default {
                   }
                 })
                 menuSider.push({
-                  path: `/${menu.ename.split(':')[0]}`,
+                  path: `${menu.normalUrl}`,
                   title: menu.cname,
                   header: 'home',
                   custom: menu.ico,
                   children: childMenu
                 })
-                console.log('ce')
-                console.log(menuSider)
               } else {
-                console.log(menu)
                 menuSider.push({
-                  path: menu.normalUrl,
-                  children: [],
+                  path: `${menu.normalUrl}`,
                   title: menu.cname,
                   header: 'home',
-                  custom: menu.ico
+                  custom: menu.ico,
+                  children: childMenu
                 })
               }
             })

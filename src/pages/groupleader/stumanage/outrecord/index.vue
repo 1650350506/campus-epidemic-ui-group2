@@ -6,11 +6,11 @@
       <h2>你好！ {{接口数据}}疫情防控小组组长！</h2>
     </Card>
     <Card class="card-marginTop card">
-      <Search></Search>
+      <Search :keyValue="queryInfo.keyword" @selectFun="queryOutRecordByKey"></Search>
     </Card>
     <Card class="card-marginTop card">
-      <Table  border :columns="columns" :data="data" :border="false" class="table"></Table>
-      <Page :total="100" show-elevator show-sizer class-name="page"></Page>
+      <Table   :columns="columns" :data="data" :border="false" class="table"></Table>
+      <Page :total="total" show-elevator show-sizer class-name="page" @on-change="editPageNum" @on-page-size-change="editPageSize"></Page>
     </Card>
     <Modal
       v-model="showDialogVisible"
@@ -36,6 +36,7 @@
 <script>
 import iHeaderBreadcrumb from '@/layouts/basic-layout/header-breadcrumb'
 import Search from '@/components/top/search'
+import { GetOutRecordList } from '@api/group/outRecord'
 export default {
   name: 'index',
   components: {
@@ -45,7 +46,7 @@ export default {
     return {
       selectModel: '默认',
       gradeList: [
-        '默认', '只看中风险', '只看高风险'
+        '默认', '只看地风险', '只看中风险', '只看高风险'
       ],
       showDialogVisible: false,
       dialogList: {
@@ -217,16 +218,37 @@ export default {
           back: '2022-05-09',
           area: '杭州市西湖区道'
         }
-      ]
+      ],
+      queryInfo: {
+        pageNum: 1,
+        pageSize: 10,
+        keyword: ''
+      },
+      total: 0
     }
   },
   methods: {
-    handleUpdateStuInfo() {
-      console.log('用户更新')
+  //  关键字查询
+    queryOutRecordByKey(e) {
+      this.data = []
+      this.queryInfo.keyword = e
+      this.getOutRecordList()
     },
-    // 通过等级查询
-    queryListByGrade(grade) {
-      console.log(grade)
+    //  获得学生外出列表
+    getOutRecordList() {
+      GetOutRecordList(this.queryInfo).then((res) => {
+        console.log(res)
+      })
+    },
+    // 选择页码
+    editPageNum(e) {
+      this.queryInfo.pageNum = e
+      this.getOutRecordList()
+    },
+    // 选择当页最大条数
+    editPageSize(e) {
+      this.queryInfo.pageSize = e
+      this.getOutRecordList()
     }
   }
 }

@@ -13,28 +13,14 @@
         </Card>
       </Col>
     </Row>
-    <Card class="card-marginTop card">
-      <Search></Search>
+    <Card class="card">
+      <Search :keyValue="queryInfo.keyword" @selectFun="queryQuarantinedInfoByKey"></Search>
     </Card>
     <Card class="card-marginTop card">
-      <Table border :columns="columns" :data="data" class="table"></Table>
-      <Page :total="100" show-elevator show-sizer class-name="page"></Page>
+      <Table :border="false" :columns="columns" :data="data" class="table"></Table>
+      <Page :total="100" show-elevator show-sizer class-name="page"  @on-change="editPageNum" @on-page-size-change="editPageSize"></Page>
     </Card>
-    <Modal
-      v-model="showDialogVisible"
-      @on-cancel="showDialogVisible = false"
-      width="720"
-    >
-      <p slot="header" style="text-align: center">隔离学生基本信息</p>
-      <div class="modal-container">
-        <div class="modal-item"  v-for="(item, index) in dialogList" :key="index">
-          <div class="null"></div><div class="star" :style="item.isEdit ? {}: {opacity: 0}"></div><div class="title" v-if="item">{{item.title}}</div><div style="flex-basis: 4%">:</div><div class="core">{{item.value}}</div>
-        </div>
-      </div>
-      <div slot="footer">
-        <Button @click="showDialogVisible = false" type="primary">关闭</Button>
-      </div>
-    </Modal>
+    <CheckContent :checkSwitch="showDialogVisible" :checkList1="checkList1" @switchCheck="close"></CheckContent>
     <Modal
       v-model="updateDialogVisible"
       @on-ok="handleAddRecord"
@@ -64,11 +50,12 @@
 <script>
 import iHeaderBreadcrumb from '@/layouts/basic-layout/header-breadcrumb'
 import Search from '@/components/top/search'
+import CheckContent from './CheckContent'
 import { DeleteIsolationInfo, GetIsolationInfoList } from '@api/personnel/riskpremanage'
 export default {
   name: 'index',
   components: {
-    iHeaderBreadcrumb, Search
+    iHeaderBreadcrumb, Search, CheckContent
   },
   data() {
     return {
@@ -86,8 +73,40 @@ export default {
           value: 1
         }
       ],
-      showDialogVisible: false,
+      showDialogVisible: true,
       updateDialogVisible: false,
+      checkList1: {
+        name: {
+          title: '姓名', value: '真的装'
+        },
+        sex: {
+          title: '性别', value: '男'
+        },
+        dept_code: {
+          title: '二级学院', value: '计算机学院'
+        },
+        classname: {
+          title: '班级', value: '计科191'
+        },
+        phone: {
+          title: '手机号', value: '199200118'
+        },
+        associates: {
+          title: '关联防疫人员', value: '飞尔德'
+        },
+        isolation_address: {
+          title: '隔离地点', value: 'B119'
+        },
+        isolation_state: {
+          title: '隔离状态', value: '抢救中'
+        },
+        state_time: {
+          title: '开始时间', value: '2022-07-13'
+        },
+        end_time: {
+          title: '结束时间', value: '2022-07-01'
+        }
+      },
       dialogList: {
         code: {
           title: '学生学号', value: '199200118', isEdit: false
@@ -98,33 +117,33 @@ export default {
         sex: {
           title: '性别', value: 0, isEdit: false
         },
-        class_name: {
+        classname: {
           title: '班级', value: '计科19', isEdit: false
         },
-        phone: {
+        phoneNumber: {
           title: '手机号', value: '12345678900', isEdit: false
         },
-        start_time: {
+        startTime: {
           title: '隔离开始时间', value: '2022-05-22', isEdit: false
         },
-        end_time: {
+        endTime: {
           title: '隔离结束时间', value: '2022-05-22', isEdit: false
         },
-        isolation_state: {
+        state: {
           title: '隔离状态', value: '', isEdit: false
         },
-        nucleic_result: {
-          title: '核酸结果', value: '', isEdit: false
-        },
+        // nucleic_result: {
+        //   title: '核酸结果', value: '', isEdit: false
+        // },
         temperature: {
           title: '体温', value: 0, isEdit: false
-        },
-        associates: {
-          title: '关联防疫人员', value: '', isEdit: false
-        },
-        nucleic_time: {
-          title: '核酸时间', value: '', isEdit: false
         }
+        // associates: {
+        //   title: '关联防疫人员', value: '', isEdit: false
+        // },
+        // nucleic_time: {
+        //   title: '核酸时间', value: '', isEdit: false
+        // }
       },
       columns: [
         {
@@ -219,22 +238,22 @@ export default {
                 on: {
                   click: () => {
                     this.showDialogVisible = true
-                    this.dialogList.code.value = params.row.code
-                    this.dialogList.name.value = params.row.name
-                    this.dialogList.sex.value = params.row.sex
-                    this.dialogList.class_name.value = params.row.class_name
-                    this.dialogList.phone.value = params.row.phone
-                    this.dialogList.start_time.value = params.row.start_time
-                    this.dialogList.end_time.value = params.row.end_time
-                    this.dialogList.isolation_state.value = params.row.isolation_state
-                    this.dialogList.nucleic_result.value = params.row.nucleic_result
-                    this.dialogList.temperature.value = params.row.temperature
-                    this.dialogList.associates.value = params.row.associates
-                    this.dialogList.nucleic_time.value = params.row.nucleic_time
-                    this.dialogList.nucleic_result.isEdit = false
-                    this.dialogList.temperature.isEdit = false
-                    this.dialogList.associates.isEdit = false
-                    this.dialogList.nucleic_time.isEdit = false
+                    // this.dialogList.code.value = params.row.code
+                    // this.dialogList.name.value = params.row.name
+                    // this.dialogList.sex.value = params.row.sex
+                    // this.dialogList.class_name.value = params.row.class_name
+                    // this.dialogList.phone.value = params.row.phone
+                    // this.dialogList.start_time.value = params.row.start_time
+                    // this.dialogList.end_time.value = params.row.end_time
+                    // this.dialogList.isolation_state.value = params.row.isolation_state
+                    // this.dialogList.nucleic_result.value = params.row.nucleic_result
+                    // this.dialogList.temperature.value = params.row.temperature
+                    // this.dialogList.associates.value = params.row.associates
+                    // this.dialogList.nucleic_time.value = params.row.nucleic_time
+                    // this.dialogList.nucleic_result.isEdit = false
+                    // this.dialogList.temperature.isEdit = false
+                    // this.dialogList.associates.isEdit = false
+                    // this.dialogList.nucleic_time.isEdit = false
                   }
                 }
               }, '查看'),
@@ -248,7 +267,7 @@ export default {
                   },
                   on: {
                     'on-ok': () => {
-                      this.removeIsolationInfo()
+                      this.relieveIsolation(params.row.code)
                     },
                     // eslint-disable-next-line no-empty-function
                     'on-cancel': () => {
@@ -309,109 +328,33 @@ export default {
           }
         }
       ],
-      data: [
-        {
-          code: 199200118,
-          name: '张三',
-          sex: 1,
-          class_name: '计科19',
-          phone: '198581044444',
-          start_time: '2022-05-04',
-          end_time: '2022-05-04',
-          isolation_state: '0',
-          nucleic_result: '阳性',
-          temperature: 36.5,
-          associates: '林林林',
-          nucleic_time: '2022-05-04'
-        },
-        {
-          code: 199200118,
-          name: '张三',
-          sex: 1,
-          class_name: '计科19',
-          phone: '198581044444',
-          start_time: '2022-05-04',
-          end_time: '2022-05-04',
-          isolation_state: 0,
-          nucleic_result: '阳性',
-          temperature: 36.5,
-          associates: '林林林',
-          nucleic_time: '2022-05-04'
-        },
-        {
-          code: 199200118,
-          name: '张三',
-          sex: 1,
-          class_name: '计科19',
-          phone: '198581044444',
-          start_time: '2022-05-04',
-          end_time: '2022-05-04',
-          isolation_state: 0,
-          nucleic_result: '阴性',
-          temperature: 36.5,
-          associates: '林林林',
-          nucleic_time: '2022-05-04'
-        },
-        {
-          code: 199200118,
-          name: '张三',
-          sex: 1,
-          class_name: '计科19',
-          phone: '198581044444',
-          start_time: '2022-05-04',
-          end_time: '2022-05-04',
-          isolation_state: 0,
-          nucleic_result: '阴性',
-          temperature: 36.5,
-          associates: '林林林',
-          nucleic_time: '2022-05-04'
-        },
-        {
-          code: 199200118,
-          name: '张三',
-          sex: 1,
-          class_name: '计科19',
-          phone: '198581044444',
-          start_time: '2022-05-04',
-          end_time: '2022-05-04',
-          isolation_state: 0,
-          nucleic_result: '阴性',
-          temperature: 36.5,
-          associates: '林林林',
-          nucleic_time: '2022-05-04'
-        },
-        {
-          code: 199200118,
-          name: '张三',
-          sex: 1,
-          class_name: '计科19',
-          phone: '198581044444',
-          start_time: '2022-05-04',
-          end_time: '2022-05-04',
-          isolation_state: 0,
-          nucleic_result: '阴性',
-          temperature: 67.5,
-          associates: '林林林',
-          nucleic_time: '2022-05-04'
-        },
-        {
-          code: 199200118,
-          name: '张三',
-          sex: 1,
-          class_name: '计科19',
-          phone: '198581044444',
-          start_time: '2022-05-04',
-          end_time: '2022-05-04',
-          isolation_state: 0,
-          nucleic_result: '阴性',
-          temperature: 36.5,
-          associates: '林林林',
-          nucleic_time: '2022-05-04'
-        }
-      ]
+      data: [{
+        code: 199200118,
+        name: '张三',
+        sex: 1,
+        class_name: '计科19',
+        phone: '198581044444',
+        start_time: '2022-05-04',
+        end_time: '2022-05-04',
+        isolation_state: 0,
+        nucleic_result: '阴性',
+        temperature: 67.5,
+        associates: '林林林',
+        nucleic_time: '2022-05-04'
+      }],
+      queryInfo: {
+        pageNum: 1,
+        pageSize: 10,
+        keyword: ''
+      },
+      total: 0
     }
   },
   methods: {
+    close(e) {
+      console.log(e)
+      this.showDialogVisible = false
+    },
     dateFormat(time) {
       const date = new Date(time)
       const year = date.getFullYear()
@@ -426,6 +369,7 @@ export default {
       // 拼接
       return `${year}-${month}-${day}`
     },
+    // 添加隔离记录
     handleAddRecord() {
       const date =  this.dateFormat(this.dialogList.nucleic_time.value)
       let state
@@ -436,12 +380,6 @@ export default {
       }
       const result = {
         code: this.dialogList.code.value,
-        name: this.dialogList.name.value,
-        sex: this.dialogList.sex.value,
-        class_name: this.dialogList.class_name.value,
-        phone: this.dialogList.phone.value,
-        start_time: this.dialogList.start_time.value,
-        end_time: this.dialogList.end_time.value,
         isolation_state: this.dialogList.isolation_state.value,
         nucleic_result: state,
         temperature: this.dialogList.temperature.value,
@@ -451,13 +389,130 @@ export default {
       console.log(result)
     },
     // 解除隔离
-    removeIsolationInfo() {
+    relieveIsolation() {
       const data = {
         code: '123'
       }
       DeleteIsolationInfo(data).then((res) => {
+        console.log('这是解除隔离')
         console.log(res)
       })
+    },
+    // 关键字查询
+    queryQuarantinedInfoByKey(e) {
+      this.data = []
+      this.queryInfo.keyword = e
+      this.getStuList()
+    },
+    // 选择页码
+    editPageNum(e) {
+      this.queryInfo.pageNum = e
+      this.getStuList()
+    },
+    // 选择当页最大条数
+    editPageSize(e) {
+      this.queryInfo.pageSize = e
+      this.getStuList()
+        [
+          {
+            code: 199200118,
+            name: '张三',
+            sex: 1,
+            class_name: '计科19',
+            phone: '198581044444',
+            start_time: '2022-05-04',
+            end_time: '2022-05-04',
+            isolation_state: '0',
+            nucleic_result: '阴性',
+            temperature: 36.5,
+            associates: '林林林',
+            nucleic_time: '2022-05-04'
+          },
+          {
+            code: 199200118,
+            name: '张三',
+            sex: 1,
+            class_name: '计科19',
+            phone: '198581044444',
+            start_time: '2022-05-04',
+            end_time: '2022-05-04',
+            isolation_state: 0,
+            nucleic_result: '阴性',
+            temperature: 36.5,
+            associates: '林林林',
+            nucleic_time: '2022-05-04'
+          },
+          {
+            code: 199200118,
+            name: '张三',
+            sex: 1,
+            class_name: '计科19',
+            phone: '198581044444',
+            start_time: '2022-05-04',
+            end_time: '2022-05-04',
+            isolation_state: 0,
+            nucleic_result: '阴性',
+            temperature: 36.5,
+            associates: '林林林',
+            nucleic_time: '2022-05-04'
+          },
+          {
+            code: 199200118,
+            name: '张三',
+            sex: 1,
+            class_name: '计科19',
+            phone: '198581044444',
+            start_time: '2022-05-04',
+            end_time: '2022-05-04',
+            isolation_state: 0,
+            nucleic_result: '阴性',
+            temperature: 36.5,
+            associates: '林林林',
+            nucleic_time: '2022-05-04'
+          },
+          {
+            code: 199200118,
+            name: '张三',
+            sex: 1,
+            class_name: '计科19',
+            phone: '198581044444',
+            start_time: '2022-05-04',
+            end_time: '2022-05-04',
+            isolation_state: 0,
+            nucleic_result: '阴性',
+            temperature: 36.5,
+            associates: '林林林',
+            nucleic_time: '2022-05-04'
+          },
+          {
+            code: 199200118,
+            name: '张三',
+            sex: 1,
+            class_name: '计科19',
+            phone: '198581044444',
+            start_time: '2022-05-04',
+            end_time: '2022-05-04',
+            isolation_state: 0,
+            nucleic_result: '阴性',
+            temperature: 67.5,
+            associates: '林林林',
+            nucleic_time: '2022-05-04'
+          },
+          {
+            code: 199200118,
+            name: '张三',
+            sex: 1,
+            class_name: '计科19',
+            phone: '198581044444',
+            start_time: '2022-05-04',
+            end_time: '2022-05-04',
+            isolation_state: 0,
+            nucleic_result: '阴性',
+            temperature: 36.5,
+            associates: '林林林',
+            nucleic_time: '2022-05-04'
+          }
+        ]
     }
   }
 }

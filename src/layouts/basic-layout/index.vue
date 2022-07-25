@@ -6,10 +6,10 @@
     <Layout class="i-layout-inside" :class="insideClasses">
       <transition name="fade-quick">
         <Header class="i-layout-header" :class="headerClasses" :style="headerStyle" v-show="showHeader" v-resize="handleHeaderWidthChange">
-          <i-header-logo v-if="isMobile && showMobileLogo" />
-          <i-header-logo v-if="!isMobile && isHeaderStick && headerFix" />
+<!--          <i-header-logo v-if="isMobile && showMobileLogo" />-->
+<!--          <i-header-logo v-if="!isMobile && isHeaderStick && headerFix" />-->
           <i-header-collapse v-if="(isMobile || showSiderCollapse) && !hideSider" @on-toggle-drawer="handleToggleDrawer" />
-          <!--          <i-header-reload v-if="!isMobile && showReload" @on-reload="handleReload" />-->
+<!--          <i-header-reload v-if="!isMobile && showReload" @on-reload="handleReload" />-->
           <!--          <i-menu-head v-if="headerMenu && !isMobile" ref="menuHead" />-->
           <!--          <i-header-breadcrumb v-if="showBreadcrumb && !headerMenu && !isMobile" ref="breadcrumb" />-->
           <!--          <i-header-search v-if="showSearch && !headerMenu && !isMobile && !showBreadcrumb" />-->
@@ -17,7 +17,7 @@
             <!--            <i-header-search v-if="(showSearch && isMobile) || (showSearch && (headerMenu || showBreadcrumb))" />-->
             <!--            <i-menu-head v-if="headerMenu && isMobile" />-->
             <!--            <i-header-log v-if="isDesktop && showLog" />-->
-            <i-header-fullscreen v-if="isDesktop && showFullscreen" />
+            <!--            <i-header-fullscreen v-if="isDesktop && showFullscreen" />-->
             <!--            <i-header-notice v-if="showNotice" />-->
             <i-header-user />
             <!--            <i-header-setting v-if="enableSetting && !isMobile" />-->
@@ -187,13 +187,13 @@ export default {
     }
   },
   mounted() {
-    document.addEventListener('scroll', this.handleScroll, { passive: true })
+    // document.addEventListener('scroll', this.handleScroll, { passive: true })
   },
   beforeDestroy() {
-    document.removeEventListener('scroll', this.handleScroll)
+    // document.removeEventListener('scroll', this.handleScroll)
   },
   created() {
-    if (this.isTablet && this.showSiderCollapse) this.updateMenuCollapse(true)
+    // if (this.isTablet && this.showSiderCollapse) this.updateMenuCollapse(true)
   },
   methods: {
     ...mapMutations('admin/layout', [

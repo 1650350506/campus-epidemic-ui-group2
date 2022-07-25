@@ -9,8 +9,8 @@
       </div>
       <div class="template-login-data-main">
         <Login @on-submit="handleSubmit">
-          <UserName name="username" value="admin456" />
-          <Password name="password" value="Admin456" enter-to-submit />
+          <UserName name="username" value="admin345" />
+          <Password name="password" value="Admin345" enter-to-submit />
           <Submit>登录</Submit>
         </Login>
       </div>
@@ -29,6 +29,9 @@ export default {
     return {
       autoLogin: true
     }
+  },
+  created() {
+    this.handleSubmit()
   },
   methods: {
     ...mapActions('admin/account', [
@@ -49,7 +52,7 @@ export default {
           .then(() => {
             // 重定向对象不存在则返回顶层路径
             if (!this.$route.query.redirect) {
-              this.$router.replace('/isolationAnalysis')
+              this.$router.replace('/index')
             } else {
               this.$router.replace(this.$route.query.redirect || '/')
             }
