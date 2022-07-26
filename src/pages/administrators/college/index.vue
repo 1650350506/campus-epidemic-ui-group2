@@ -3,7 +3,7 @@
     <Card :bordered="false" class="card" style="margin-top: 0">
       <!--       这是面包屑组件-->
       <i-header-breadcrumb  ref="breadcrumb" />
-      <h2>你好！ 管理员！</h2>
+      <h2 class="bread-title">你好！ 管理员！</h2>
     </Card>
     <Card class="card card-marginTop">
       <Search :keyValue="queryInfo.keyword" @selectFun="queryFacultyInfoByKey"></Search>
@@ -20,7 +20,9 @@
         <div class="select-text">已选择 <span style="color: #0e92e7; font-size: 18px">{{batchNum}}</span> 项</div>
         <Button class="btn" @click="batchSubmit" size="small">批量提交</Button>
       </div>
-      <Table :columns="columns" :data="data" :border="false" class="table"></Table>
+      <div class="table-box">
+        <Table :columns="columns" :data="data" :border="false" class="table"></Table>
+      </div>
       <Page :total="200" show-elevator show-sizer class-name="page" :page-size="queryInfo.pageSize" :current="queryInfo.pageNum" @on-change="editPageNum" @on-page-size-change="editPageSize"></Page>
     </Card>
     <Modal

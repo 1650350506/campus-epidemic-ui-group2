@@ -75,12 +75,12 @@ const frameIn = [
       {
         path: '/quarantinedManage',
         name: 'quarantinedManage',
-        component: () => import('@/pages/personnel/riskpremanage/premanage')
+        component: () => import('@/pages/administrators/riskpremanage/premanage')
       },
       {
         path: '/waitIsolation',
         name: 'waitIsolation',
-        component: () => import('@/pages/personnel/riskpremanage/waitisolation')
+        component: () => import('@/pages/administrators/riskpremanage/waitisolation')
       },
       {
         path: 'log',

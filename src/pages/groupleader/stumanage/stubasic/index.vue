@@ -301,7 +301,6 @@ export default {
     // 通过学生学号删除
     deleteStuInfoByCode(code) {
       DeleteStuInfo({ code: code }).then((res) => {
-        console.log('删除学生信息')
         console.log(res)
       })
     },

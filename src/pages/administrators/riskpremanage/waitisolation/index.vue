@@ -17,7 +17,9 @@
       <Search :keyValue="queryInfo.keyword" @selectFun="queryWaitIsolationInfoBykey"></Search>
     </Card>
     <Card class="card-marginTop card">
-      <Table border :columns="columns" :data="data" :border="false" class="table"></Table>
+      <div class="table-box">
+        <Table border :columns="columns" :data="data" :border="false" class="table"></Table>
+      </div>
       <Page :total="total" show-elevator show-sizer class-name="page"  @on-change="editPageNum" @on-page-size-change="editPageSize"></Page>
     </Card>
   </div>

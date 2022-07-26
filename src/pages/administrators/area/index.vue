@@ -3,31 +3,33 @@
     <Card :bordered="false"  class="card">
       <!--       这是面包屑组件-->
       <i-header-breadcrumb  ref="breadcrumb" />
-      <h2>你好！ 管理员！</h2>
+      <h2 class="bread-title">你好！ 管理员！</h2>
+    </Card>
+    <Card class="card">
+      <div class="search-module">
+        <div class="search-left">
+          <div>地区查询</div>
+          <Cascader style="width: 150px; margin: 0 10px 0 5px" :data="provinceData" v-model="provinceValue" placeholder="请选择省份" @on-change="loadData"></Cascader>
+          <Cascader style="width: 150px; margin: 0 10px 0 5px" :data="cityData" v-model="cityValue" placeholder="请选择城市" @on-change="loadData"></Cascader>
+          <Cascader style="width: 150px; margin: 0 10px 0 5px" :data="countyData" v-model="countyValue" placeholder="请选择区县" @on-change="loadData"></Cascader>
+          <Cascader style="width: 150px; margin: 0 10px 0 5px" :data="streetData" v-model="streetValue" placeholder="请选择街道" @on-change="loadData"></Cascader>
+        </div>
+        <Button class="btn" type="primary">查询</Button>
+        <Button>重置</Button>
+      </div>
     </Card>
     <Card class="card-marginTop card">
-      <div slot="title" class="search-module">
-        <div class="search-left">
-          <i class="ivu-icon ivu-icon-ios-search"></i>
-          <Cascader style="width: 300px" :data="place" v-model="placeValue" @on-change="loadData"></Cascader>
+
+      <div class="batch-box">
+        <div class="select-text">已选择 <span>{{batchSum}}</span>项</div>
+        <div class="group">
+          <RadioGroup  @on-change="chooseRiskGrade">
+            <Radio  v-for="(item, index) in riskGradeList" :key="index" :label="item"></Radio>
+          </RadioGroup>
         </div>
-        <Button type="primary" class="btn">查询</Button>
-        <Button class="btn">重置</Button>
+        <Button class="btn" type="ghost" @click="batchSubmit">批量提交</Button>
       </div>
-      <Card style="margin-bottom: 1em">
-        <div class="batch-box">
-          <div class="select-text">已选择 <span style="color: #d41944; font-size: 18px">{{batchNum}}</span> 项</div>
-          <div class="group">
-            <RadioGroup  @on-change="chooseRiskGrade">
-              <Radio  v-for="(item, index) in riskGradeList" :key="index" :label="item"></Radio>
-            </RadioGroup>
-          </div>
-          <Button class="btn" type="primary" @click="batchSubmit">批量提交</Button>
-        </div>
-      </Card>
-      <Table  :columns="columns2" :data="data2" :border="false" class="table"
-              @on-selection-change="selectItem"
-      ></Table>
+      <div class="table-box"> <Table  :columns="columns2" :data="data2" :border="false" class="table" @on-selection-change="selectItem"></Table></div>
       <Page :total="100" show-elevator show-sizer class-name="page"></Page>
     </Card>
   </div>
@@ -36,7 +38,7 @@
 <script>
 
 import iHeaderBreadcrumb from '@/layouts/basic-layout/header-breadcrumb'
-import { GetProvinceList } from '@api/administorators/riskArea'
+import { GetProvinceList, GetCityList, GetCountyList, GetStreetList } from '@api/administorators/riskArea'
 
 export default {
   name: 'index',
@@ -45,10 +47,17 @@ export default {
   },
   data() {
     return {
+      batchSum: 0,
       riskGrade: 0,
       riskGradeList: ['高风险', '中风险', '低风险'],
-      placeValue: [],
-      place: [],
+      provinceValue: '',
+      provinceData: [],
+      cityValue: '',
+      cityData: [],
+      countyValue: '',
+      countyData: [],
+      streetValue: '',
+      streetData: [],
       columns2: [
         {
           type: 'selection',
@@ -126,6 +135,7 @@ export default {
                 },
                 style: {
                   color: '#01b0ff',
+                  background: 'transparent',
                   border: '0px'
                 },
                 on: {
@@ -208,6 +218,7 @@ export default {
           risk_level: item.grade
         })
       })
+      this.batchSum = this.batchList.length
     },
     //  选择批量修改的等级
     chooseRiskGrade(index) {
@@ -231,27 +242,75 @@ export default {
     getProvinceList() {
       const arrays = []
       GetProvinceList().then((res) => {
+        console.log(res)
         res.forEach(ele => {
           arrays.push({
             level: 1,
             label: ele.label,
-            value: ele.value,
-            children: []
+            value: ele.value
           })
         })
-        this.place = arrays
-        console.log(this.place)
+        this.provinceData = arrays
       })
     },
-    loadData(item, selectedData) {
-      console.log(item)
-      console.log(selectedData)
-    },   //   console.log(item)
+    loadData(value, selectedData) {
+      console.log(value[0])
+      console.log(selectedData[0].level)
+      if (selectedData[0].level === 1) {
+        this.getCityListByValue(value[0])
+      } else if (selectedData[0].level === 2) {
+        this.getCountyListByValue(value[0])
+      } else if (selectedData[0].level === 3) {
+        this.getStreetListByValue(value[0])
+      } else if (selectedData[0].level === 4) {
+        this.getRiskAreaListByCode(value[0])
+      }
+    },
     getCityListByValue(val) {
-      // const valueList = { value: val[0] }
-      // GetCityList(valueList).then((res) => {
-      //   console.log(res)
-      // })
+      const valueList = { value: val }
+      const arrays = []
+      GetCityList(valueList).then((res) => {
+        res.forEach(ele => {
+          arrays.push({
+            level: 2,
+            label: ele.label,
+            value: ele.value
+          })
+        })
+      })
+      this.cityData = arrays
+    },
+    getCountyListByValue(val) {
+      const valueList = { value: val }
+      const arrays = []
+      GetCountyList(valueList).then((res) => {
+        res.forEach(ele => {
+          arrays.push({
+            level: 3,
+            label: ele.label,
+            value: ele.value
+          })
+        })
+      })
+      this.countyData = arrays
+    },
+    getStreetListByValue(val) {
+      const valueList = { value: val }
+      const arrays = []
+      GetStreetList(valueList).then((res) => {
+        res.forEach(ele => {
+          arrays.push({
+            level: 4,
+            label: ele.label,
+            value: ele.value
+          })
+        })
+      })
+      this.streetData = arrays
+    },
+    getRiskAreaListByCode(code) {
+      const container = { code: code }
+      console.log(container)
     }
   }
 }
@@ -259,33 +318,43 @@ export default {
 
 <style lang="less" scoped>
 .search-module {
-  width: 70%;
+  width: 100%;
   display: flex;
   .search-left {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-right: 2em;
+    margin-right: 1em;
     i {
       font-size: 2em;
       margin-right: 5px;
     }
   }
   .btn {
-    margin-right: 2em;
+    margin-right: 1em;
   }
 }
 .batch-box {
+  margin-bottom: 10px;
+  border: 1px solid #afd0ee;
+  background: #E6F7FF;
+  height: 40px;
+  border-radius: 5px;
   display: flex;
   align-items: center;
   .select-text {
-    margin-left: 1.2vw;
-  }
-  .group {
-    margin-left: 10px;
+    margin:0 1.2vw;
+    span {
+      color: #0e92e7;
+      font-size: 18px;
+      padding: 0 2px;
+    }
   }
   .btn {
     margin-left: 1vw;
+    border: 0;
+    background: transparent;
+    color: #1e93ff;
   }
 }
 </style>

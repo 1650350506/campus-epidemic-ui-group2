@@ -17,7 +17,9 @@
       <Search :keyValue="queryInfo.keyword" @selectFun="queryQuarantinedInfoByKey"></Search>
     </Card>
     <Card class="card-marginTop card">
-      <Table :border="false" :columns="columns" :data="data" class="table"></Table>
+      <div class="table-box">
+        <Table :border="false" :columns="columns" :data="data" class="table"></Table>
+      </div>
       <Page :total="100" show-elevator show-sizer class-name="page"  @on-change="editPageNum" @on-page-size-change="editPageSize"></Page>
     </Card>
     <CheckContent :checkSwitch="showDialogVisible" :checkList1="checkList1" @switchCheck="close"></CheckContent>

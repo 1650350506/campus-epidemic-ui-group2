@@ -3,9 +3,9 @@
     <Card :bordered="false"  class="card">
       <!--       这是面包屑组件-->
       <i-header-breadcrumb  ref="breadcrumb" />
-      <h2>你好！ 疫情防控小组组长！</h2>
+      <h2 class="bread-title">你好！ 疫情防控小组组长！</h2>
     </Card>
-    <Card class="card-marginTop card">
+    <Card class="card">
       <div slot="extra">
         风险等级查询
         <Select v-model="selectModel" style="width:200px" @on-change="queryListByGrade(selectModel)">
@@ -13,54 +13,60 @@
         </Select>
       </div>
       <Search :keyValue="queryInfo.keyword" @selectFun="queryStuInfoByKey"></Search>
-      <Table  border :columns="columns" :data="data" class="table"></Table>
+    </Card>
+    <Card class="card-marginTop card">
+      <div class="table-box">
+        <Table  :border="false" :columns="columns" :data="data"></Table>
+      </div>
       <Page :total="total" show-elevator show-sizer class-name="page"  @on-change="editPageNum" @on-page-size-change="editPageSize"></Page>
     </Card>
-    <Modal
-      v-model="showDialogVisible"
-      @on-cancel="showDialogVisible = false"
-      width="720"
-    >
-      <p slot="header" style="text-align: center">学生基本信息</p>
-      <div class="modal-container">
-        <div class="modal-item"  v-for="(item, index) in dialogList" :key="index">
-          <div class="null"></div><div class="star" style="{opacity: 0}"></div><div class="title" v-if="item">{{item.title}}：</div><div class="core">{{item.value}}</div>
-        </div>
-        <!--        <div v-show="dialogList.seven_goto.title === '近七天行程'" class="special">-->
-        <!--          <div class="null"></div><div class="star" style="{opacity: 0}"></div><div class="title" v-if="dialogList.seven_goto">{{dialogList.seven_goto.title}}：</div><div class="core">{{dialogList.seven_goto.value}}</div>-->
-        <!--        </div>-->
-      </div>
-      <div slot="footer">
-        <Button @click="showDialogVisible = false" type="primary">关闭</Button>
-      </div>
-    </Modal>
-    <Modal
-      v-model="updateDialogVisible"
-      @on-ok="handleUpdateStuInfo"
-      @on-cancel="updateDialogVisible = false"
-      width="720"
-    >
-      <p slot="header" style="text-align: center; font-size: 20px">学生基本信息</p>
-      <div class="modal-container">
-        <div class="modal-item" v-for="(item, index) in dialogList" :key="index">
-          <div class="null"></div><div class="star"></div><div class="title" v-if="item">{{item.title}}：</div> <div class="core"> <Input v-if="item.isEdit" v-model="item.value"></Input><span v-else>{{item.value}}</span>
-          </div>
-        </div>
-      </div>
-    </Modal>
+    <!--    <Modal-->
+    <!--      v-model="showDialogVisible"-->
+    <!--      @on-cancel="showDialogVisible = false"-->
+    <!--      width="720"-->
+    <!--    >-->
+    <!--      <p slot="header" style="text-align: center">学生基本信息</p>-->
+    <!--      <div class="modal-container">-->
+    <!--        <div class="modal-item"  v-for="(item, index) in dialogList" :key="index">-->
+    <!--          <div class="null"></div><div class="star" style="{opacity: 0}"></div><div class="title" v-if="item">{{item.title}}：</div><div class="core">{{item.value}}</div>-->
+    <!--        </div>-->
+    <!--        &lt;!&ndash;        <div v-show="dialogList.seven_goto.title === '近七天行程'" class="special">&ndash;&gt;-->
+    <!--        &lt;!&ndash;          <div class="null"></div><div class="star" style="{opacity: 0}"></div><div class="title" v-if="dialogList.seven_goto">{{dialogList.seven_goto.title}}：</div><div class="core">{{dialogList.seven_goto.value}}</div>&ndash;&gt;-->
+    <!--        &lt;!&ndash;        </div>&ndash;&gt;-->
+    <!--      </div>-->
+    <!--      <div slot="footer">-->
+    <!--        <Button @click="showDialogVisible = false" type="primary">关闭</Button>-->
+    <!--      </div>-->
+    <!--    </Modal>-->
+    <!--    <Modal-->
+    <!--      v-model="updateDialogVisible"-->
+    <!--      @on-ok="handleUpdateStuInfo"-->
+    <!--      @on-cancel="updateDialogVisible = false"-->
+    <!--      width="720"-->
+    <!--    >-->
+    <!--      <p slot="header" style="text-align: center; font-size: 20px">学生基本信息</p>-->
+    <!--      <div class="modal-container">-->
+    <!--        <div class="modal-item" v-for="(item, index) in dialogList" :key="index">-->
+    <!--          <div class="null"></div><div class="star"></div><div class="title" v-if="item">{{item.title}}：</div> <div class="core"> <Input v-if="item.isEdit" v-model="item.value"></Input><span v-else>{{item.value}}</span>-->
+    <!--          </div>-->
+    <!--        </div>-->
+    <!--      </div>-->
+    <!--    </Modal>-->
+    <CheckLocal :checkSwitch="showDialogVisible" @switchCheck="close"></CheckLocal>
   </div>
 </template>
 
 <script>
 import iHeaderBreadcrumb from '@/layouts/basic-layout/header-breadcrumb'
 import Search from '@/components/top/search'
+import CheckLocal from './checkLocal.vue'
 import {
   GetStuList, DeleteStuInfo
 } from '@api/group/stuManage'
 export default {
   name: 'index',
   components: {
-    iHeaderBreadcrumb, Search
+    iHeaderBreadcrumb, Search, CheckLocal
   },
   data() {
     return {
@@ -129,7 +135,7 @@ export default {
           key: 'name'
         },
         {
-          title: '班级',
+          title: '二级学院',
           key: 'className'
         },
         {
@@ -168,7 +174,7 @@ export default {
           }
         },
         {
-          title: '风险地区',
+          title: '涉及地区',
           key: 'riskArea',
           align: 'center',
           width: 200
@@ -187,7 +193,9 @@ export default {
                 },
                 style: {
                   marginRight: '5px',
-                  border: '0px'
+                  border: '0px',
+                  color: '#01b0ff',
+                  background: 'transparent'
                 },
                 on: {
                   click: () => {
@@ -217,6 +225,8 @@ export default {
                 },
                 style: {
                   marginRight: '5px',
+                  color: '#01b0ff',
+                  background: 'transparent',
                   border: '0px'
                 },
                 on: {
@@ -251,9 +261,6 @@ export default {
                   on: {
                     'on-ok': () => {
                       this.deleteStuInfoByCode(params.row.code)
-                    },
-                    // eslint-disable-next-line no-empty-function
-                    'on-cancel': () => {
                     }
                   }
                 }, [
@@ -292,14 +299,17 @@ export default {
     this.getStuList()
   },
   methods: {
+    close() {
+      this.showDialogVisible = false
+    },
     handleUpdateStuInfo() {
       console.log('用户更新')
     },
     // 通过学生学号删除
     deleteStuInfoByCode(code) {
       DeleteStuInfo({ code: code }).then((res) => {
-        console.log('删除学生信息')
-        console.log(res)
+        this.$Message.success('删除成功！')
+        this.getStuList()
       })
     },
     // 通过等级查询
@@ -397,9 +407,6 @@ export default {
   .btn {
     margin-right: 2em;
   }
-}
-.table {
-  margin-top: 2em;
 }
 .special {
   margin-top: 1em;
