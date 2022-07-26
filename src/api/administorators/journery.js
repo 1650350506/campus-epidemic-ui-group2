@@ -1,0 +1,24 @@
+import request from '@/plugins/request'
+import moduleName from '@/config/moduleName'
+
+export function GetJourneyInfoList(data) {
+  return request({
+    url: `${moduleName.doraemon_campus}/areaPersonnel/getStudentJourneyByCode`,
+    method: 'get',
+    urlType: 'test',
+    params: {
+      ...data
+    }
+  })
+}
+
+export function GetOutSchoolList(data) {
+  return request({
+    url: `${moduleName.doraemon_campus}/areaPersonnel/getOutSchoolByCode`,
+    method: 'get',
+    urlType: 'test',
+    params: {
+      ...data
+    }
+  })
+}

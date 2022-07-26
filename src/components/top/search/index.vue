@@ -2,7 +2,7 @@
   <div class="search-container">
     <div class="left-search">
       <i class="ivu-icon ivu-icon-ios-search"></i>
-      <Input  placeholder="请输入关键字" style="width: 300px" v-model="keyValue"></Input>
+      <Input  :placeholder="placeholderData" style="width: 340px" v-model="keyValue"></Input>
     </div>
     <Button type="primary" class="btn" @click="select">查询</Button>
     <Button class="btn" @click="keyValue = ''">重置</Button>
@@ -12,7 +12,12 @@
 <script>
 export default {
   name: 'index',
-  props: ['keyValue'],
+  props: ['keyValue', 'title'],
+  computed: {
+    placeholderData() {
+      return this.title
+    }
+  },
   methods: {
     select(e) {
       this.$emit('selectFun', this.keyValue)

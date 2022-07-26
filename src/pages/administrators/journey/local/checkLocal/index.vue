@@ -8,26 +8,27 @@
     >
       <p slot="header" style="text-align: left; font-size: 20px">查看</p>
       <div class="model-box">
-      <!--        <div class="top-box">-->
-      <!--          <div class="modal-item" v-for="(item, index) in checkList1" :key="index">-->
-      <!--            <div class="null"></div><div class="title">{{item.title}}:</div><div class="star"></div>-->
-      <!--            <div class="core">{{item.value}}</div>-->
-      <!--          </div>-->
-      <!--        </div>-->
-      <!--        <div class="mid-box">-->
-      <!--          <div class="mid-box-left">监测信息:</div>-->
-      <!--          <div style="flex-basis: 4%"></div>-->
-      <!--          <div class="mid-box-right">-->
-      <!--            <Table border :columns="columns" :data="data1" style="margin-top: 2em"></Table>-->
-      <!--          </div>-->
-      <!--        </div>-->
-      <!--        <div class="mid-box">-->
-      <!--          <div class="mid-box-left">服务记录:</div>-->
-      <!--          <div style="flex-basis: 4%"></div>-->
-      <!--          <div class="mid-box-right">-->
-      <!--            <Table border :columns="columns1" :data="data1" style="margin-top: 2em"></Table>-->
-      <!--          </div>-->
-      <!--        </div>-->
+        <div class="model-list-title">基础信息</div>
+        <div class="top-box">
+          <div class="modal-item" v-for="(item, index) in checkList1" :key="index">
+            <div class="null"></div><div class="title">{{item.title}}:</div><div class="star"></div>
+            <div class="core">{{item.value}}</div>
+          </div>
+        </div>
+        <div class="model-list-title">行程信息</div>
+        <div class="mid-box">
+          <div class="mid-box-left"></div>
+          <div class="mid-box-right">
+            <Table border :columns="columns"  height="110" :data="data"></Table>
+          </div>
+        </div>
+        <div class="model-list-title">出校信息</div>
+        <div class="mid-box">
+          <div class="mid-box-left"></div>
+          <div class="mid-box-right">
+            <Table border :columns="columns1" size="small" height="110" :data="data1"></Table>
+          </div>
+        </div>
       </div>
       <div slot="footer">
         <Button @click="close" type="primary">关闭</Button>

@@ -14,29 +14,32 @@
       </Col>
     </Row>
     <Card class="card">
-      <Search :keyValue="queryInfo.keyword" @selectFun="queryQuarantinedInfoByKey"></Search>
+      <Search title="请输入学生学号、学生姓名" :keyValue="queryInfo.keyword" @selectFun="queryQuarantinedInfoByKey"></Search>
     </Card>
     <Card class="card-marginTop card">
+      <Button type="primary" style="margin-bottom: 10px" @click="addDialogVisible = true">+ 新增 </Button>
       <div class="table-box">
-        <Table :border="false" :columns="columns" :data="data" class="table"></Table>
+        <Table :border="false"  :columns="columns" :data="data" class="table"></Table>
       </div>
       <Page :total="100" show-elevator show-sizer class-name="page"  @on-change="editPageNum" @on-page-size-change="editPageSize"></Page>
     </Card>
     <CheckContent :checkSwitch="showDialogVisible" :checkList1="checkList1" @switchCheck="close"></CheckContent>
     <AddContent :addSwitch="updateDialogVisible" :addList1="addInfoList1" @switchAdd="closeByAdd"></AddContent>
+    <NewContent :newSwitch="addDialogVisible" @addClose="closeByNew"></NewContent>
   </div>
 </template>
 
 <script>
 import iHeaderBreadcrumb from '@/layouts/basic-layout/header-breadcrumb'
 import Search from '@/components/top/search'
-import CheckContent from './CheckContent'
-import AddContent from './AddContent'
+import CheckContent from './checkModal'
+import AddContent from './addModal'
+import NewContent from './../newPre'
 import { DeleteIsolationInfo, GetIsolationInfoList } from '@api/personnel/riskpremanage'
 export default {
   name: 'index',
   components: {
-    iHeaderBreadcrumb, Search, CheckContent, AddContent
+    iHeaderBreadcrumb, Search, CheckContent, AddContent, NewContent
   },
   data() {
     return {
@@ -56,6 +59,7 @@ export default {
       ],
       showDialogVisible: false,
       updateDialogVisible: false,
+      addDialogVisible: true,
       checkList1: {
         name: {
           title: '姓名', value: '真的装'
@@ -63,7 +67,7 @@ export default {
         sex: {
           title: '性别', value: '男'
         },
-        dept_code: {
+        stuCollege: {
           title: '二级学院', value: '计算机学院'
         },
         classname: {
@@ -97,7 +101,7 @@ export default {
         sex: {
           title: '性别', value: '男'
         },
-        dept_code: {
+        stuCollege: {
           title: '二级学院', value: '计算机学院'
         },
         classname: {
@@ -160,8 +164,8 @@ export default {
           align: 'center'
         },
         {
-          title: '班级',
-          key: 'class_name',
+          title: '二级学院',
+          key: 'stuCollege',
           align: 'center'
         },
         {
@@ -212,12 +216,7 @@ export default {
         },
         {
           title: '开始隔离时间',
-          key: 'start_time',
-          align: 'center'
-        },
-        {
-          title: '隔离状态',
-          key: 'isolation_state',
+          key: 'startTime',
           align: 'center'
         },
         {
@@ -349,10 +348,14 @@ export default {
       queryInfo: {
         pageNum: 1,
         pageSize: 10,
-        keyword: ''
+        keyword: '',
+        state: 0
       },
       total: 0
     }
+  },
+  created() {
+    this.getWaitIsolationInfoList()
   },
   methods: {
     close(e) {
@@ -361,6 +364,9 @@ export default {
     },
     closeByAdd(e) {
       this.updateDialogVisible = false
+    },
+    closeByNew() {
+      this.addDialogVisible = false
     },
     dateFormat(time) {
       const date = new Date(time)
@@ -395,16 +401,29 @@ export default {
       }
       console.log(result)
     },
-    // 解除隔离
-    relieveIsolation() {
-      const data = {
-        code: '123'
-      }
-      DeleteIsolationInfo(data).then((res) => {
-        console.log('这是解除隔离')
+    // 查询已隔离或者未隔离信息
+    getWaitIsolationInfoList() {
+      GetIsolationInfoList(this.queryInfo).then((res) => {
         console.log(res)
+        res.data.forEach(function (item) {
+          item.startTime = this.dateFormat(item.startTime)
+        })
+        console.log(1)
+        console.log(res.data())
+        this.data = res.data
+        this.total = res.total
       })
     },
+    // // 解除隔离
+    // relieveIsolation() {
+    //   const data = {
+    //     code: '123'
+    //   }
+    //   DeleteIsolationInfo(data).then((res) => {
+    //     console.log('这是解除隔离')
+    //     console.log(res)
+    //   })
+    // },
     // 关键字查询
     queryQuarantinedInfoByKey(e) {
       this.data = []

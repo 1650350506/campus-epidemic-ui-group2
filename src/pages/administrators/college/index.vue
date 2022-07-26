@@ -6,7 +6,7 @@
       <h2 class="bread-title">你好！ 管理员！</h2>
     </Card>
     <Card class="card card-marginTop">
-      <Search :keyValue="queryInfo.keyword" @selectFun="queryFacultyInfoByKey"></Search>
+      <Search title="请输入职工工号、职工姓名、二级学院" :keyValue="queryInfo.keyword" @selectFun="queryFacultyInfoByKey"></Search>
       <div slot="extra">
         查询健康码颜色
         <Select v-model="healthyModel" style="width:200px" @on-change="queryListByHealthy(healthyModel)">

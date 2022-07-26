@@ -14,11 +14,12 @@
       </Col>
     </Row>
     <Card class="card">
-      <Search :keyValue="queryInfo.keyword" @selectFun="queryWaitIsolationInfoBykey"></Search>
+      <Search title="请输入学生学号、学生姓名" :keyValue="queryInfo.keyword" @selectFun="queryWaitIsolationInfoBykey"></Search>
     </Card>
     <Card class="card-marginTop card">
+      <Button type="primary" style="margin-bottom: 10px">+ 新增 </Button>
       <div class="table-box">
-        <Table border :columns="columns" :data="data" :border="false" class="table"></Table>
+        <Table  :columns="columns" :data="data" :border="false" class="table"></Table>
       </div>
       <Page :total="total" show-elevator show-sizer class-name="page"  @on-change="editPageNum" @on-page-size-change="editPageSize"></Page>
     </Card>

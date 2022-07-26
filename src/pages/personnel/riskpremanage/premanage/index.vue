@@ -347,10 +347,14 @@ export default {
       queryInfo: {
         pageNum: 1,
         pageSize: 10,
-        keyword: ''
+        keyword: '',
+        state: 1
       },
       total: 0
     }
+  },
+  created() {
+    this.getWaitIsolationInfoList()
   },
   methods: {
     close(e) {
@@ -393,13 +397,13 @@ export default {
       }
       console.log(result)
     },
+
     // 解除隔离
     relieveIsolation() {
       const data = {
         code: '123'
       }
       DeleteIsolationInfo(data).then((res) => {
-        console.log('这是解除隔离')
         console.log(res)
       })
     },
@@ -436,6 +440,7 @@ export default {
 .modal-container {
   margin: 20px 0;
   display: flex;
+  flex-direction: column;
   flex-wrap: wrap;
   .modal-item {
     width: 50%;

@@ -12,111 +12,73 @@
           <Option v-for="item in gradeList" :value="item" :key="item">{{ item }}</Option>
         </Select>
       </div>
-      <Search :keyValue="queryInfo.keyword" @selectFun="queryStuInfoByKey"></Search>
+      <Search title="请输入学生学号、学生姓名、二级学院" :keyValue="queryInfo.keyword" @selectFun="queryStuInfoByKey"></Search>
     </Card>
     <Card class="card-marginTop card">
+      <div class="batch-box">
+        <div class="select-text">已选择 <span style="color: #0e92e7; font-size: 18px">{{batchNum}}</span> 项</div>
+        <Button class="btn" @click="batchSubmit" size="small">删除</Button>
+      </div>
       <div class="table-box">
         <Table  :border="false" :columns="columns" :data="data" class="table"></Table>
       </div>
       <Page :total="total" show-elevator show-sizer class-name="page"  @on-change="editPageNum" @on-page-size-change="editPageSize"></Page>
     </Card>
-    <Modal
-      v-model="showDialogVisible"
-      @on-cancel="showDialogVisible = false"
-      width="720"
-    >
-      <p slot="header" style="text-align: center">学生基本信息</p>
-      <div class="modal-container">
-        <div class="modal-item"  v-for="(item, index) in dialogList" :key="index">
-          <div class="null"></div><div class="star" style="{opacity: 0}"></div><div class="title" v-if="item">{{item.title}}：</div><div class="core">{{item.value}}</div>
-        </div>
-        <!--        <div v-show="dialogList.seven_goto.title === '近七天行程'" class="special">-->
-        <!--          <div class="null"></div><div class="star" style="{opacity: 0}"></div><div class="title" v-if="dialogList.seven_goto">{{dialogList.seven_goto.title}}：</div><div class="core">{{dialogList.seven_goto.value}}</div>-->
-        <!--        </div>-->
-      </div>
-      <div slot="footer">
-        <Button @click="showDialogVisible = false" type="primary">关闭</Button>
-      </div>
-    </Modal>
-    <Modal
-      v-model="updateDialogVisible"
-      @on-ok="handleUpdateStuInfo"
-      @on-cancel="updateDialogVisible = false"
-      width="720"
-    >
-      <p slot="header" style="text-align: center; font-size: 20px">学生基本信息</p>
-      <div class="modal-container">
-        <div class="modal-item" v-for="(item, index) in dialogList" :key="index">
-          <div class="null"></div><div class="star"></div><div class="title" v-if="item">{{item.title}}：</div> <div class="core"> <Input v-if="item.isEdit" v-model="item.value"></Input><span v-else>{{item.value}}</span>
-          </div>
-        </div>
-      </div>
-    </Modal>
+    <CheckModal :checkSwitch="showDialogVisible" :checkList1="checkList1" @switchCheck="closeCheck"></CheckModal>
   </div>
 </template>
 
 <script>
 import iHeaderBreadcrumb from '@/layouts/basic-layout/header-breadcrumb'
 import Search from '@/components/top/search'
+import CheckModal from './checkModal'
 import {
   GetStuList, DeleteStuInfo
 } from '@api/group/stuManage'
 export default {
   name: 'index',
   components: {
-    iHeaderBreadcrumb, Search
+    iHeaderBreadcrumb, Search, CheckModal
   },
   data() {
     return {
+      batchNum: 0,
       selectModel: '默认',
       gradeList: [
         '默认', '只看中风险', '只看高风险'
       ],
       showDialogVisible: false,
-      updateDialogVisible: false,
-      dialogList: {
+      checkList1: {
         code: {
-          title: '学号', value: '199200118', isEdit: false
+          title: '学号', value: ''
         },
         name: {
-          title: '姓名', value: '阿非', isEdit: false
+          title: '姓名', value: ''
         },
         sex: {
-          title: '性别', value: 0, isEdit: false
+          title: '性别', value: 0
         },
         idCard: {
-          title: '身份证', value: '350311100010123456', isEdit: false
+          title: '身份证', value: ''
         },
         deptName: {
-          title: '二级学院', value: '计算机学院', isEdit: false
+          title: '二级学院', value: ''
         },
         className: {
-          title: '班级', value: '计科19', isEdit: false
-        },
-        riskArea: {
-          title: '风险地区', value: '', isEdit: false
-        },
-        riskLevel: {
-          title: '风险等级', value: 0, isEdit: false
-        },
-        quarantine: {
-          title: '隔离状态', value: '', isEdit: false
+          title: '班级', value: ''
         },
         phoneNumber: {
-          title: '手机号', value: '12345678900', isEdit: true
+          title: '手机号', value: ''
         },
         address: {
-          title: '居住地址', value: '杭州市临安区联胜街道', isEdit: true
+          title: '居住地址', value: ''
         },
         emergencyContact: {
-          title: '联系人', value: 'die', isEdit: true
+          title: '联系人', value: ''
         },
         emergencyContactPhone: {
-          title: '联系人电话', value: '12345467890', isEdit: true
+          title: '联系人电话', value: ''
         }
-        // seven_goto: {
-        //   title: '近七天行程', value: '杭州市上城区', isEdit: false
-        // }
       },
       columns: [
         {
@@ -133,8 +95,22 @@ export default {
           key: 'name'
         },
         {
-          title: '班级',
-          key: 'className'
+          title: '二级学院',
+          key: 'deptName'
+        },
+        {
+          title: '离校时间',
+          align: 'center',
+          key: 'leaveTime',
+          render: (h, params) => {
+            let timeName
+            if (params.row.leaveTime === null) {
+              timeName = '------'
+            } else {
+              timeName = params.row.leaveTime
+            }
+            return h('div', [timeName])
+          }
         },
         {
           title: '风险地区等级',
@@ -184,61 +160,28 @@ export default {
             return h('div', [
               h('Button', {
                 props: {
-                  // type: 'primary',
-                  size: 'small'
-                },
-                style: {
-                  marginRight: '5px',
-                  border: '0px'
-                },
-                on: {
-                  click: () => {
-                    this.updateDialogVisible = true
-                    this.dialogList.code.value = params.row.code
-                    this.dialogList.name.value = params.row.name
-                    this.dialogList.sex.value = params.row.sex
-                    this.dialogList.phoneNumber.value = params.row.phoneNumber
-                    this.dialogList.idCard.value = params.row.idCard
-                    this.dialogList.deptName.value = params.row.deptName
-                    this.dialogList.className.value = params.row.className
-                    this.dialogList.address.value = params.row.address
-                    this.dialogList.emergencyContact.value = params.row.emergencyContact
-                    this.dialogList.emergencyContactPhone.value = params.row.emergencyContactPhone
-                    // this.dialogList.seven_goto.value = params.row.seven_goto
-                    this.dialogList.address.isEdit = true
-                    this.dialogList.phoneNumber.isEdit = true
-                    this.dialogList.emergencyContact.isEdit = true
-                    this.dialogList.emergencyContactPhone.isEdit = true
-                  }
-                }
-              }, '编辑'),
-              h('Button', {
-                props: {
                   // type: 'success',
                   size: 'small'
                 },
                 style: {
                   marginRight: '5px',
-                  border: '0px'
+                  border: '0px',
+                  color: '#01b0ff',
+                  background: 'transparent'
                 },
                 on: {
                   click: () => {
                     this.showDialogVisible = true
-                    this.dialogList.code.value = params.row.code
-                    this.dialogList.name.value = params.row.name
-                    this.dialogList.age.value = params.row.age
-                    this.dialogList.sex.value = params.row.sex
-                    this.dialogList.phone.value = params.row.phone
-                    this.dialogList.id_card.value = params.row.id_card
-                    this.dialogList.dept_code.value = params.row.dept_code
-                    this.dialogList.class_name.value = params.row.class_name
-                    this.dialogList.address.value = params.row.address
-                    this.dialogList.emergencyContact.value = params.row.emergencyContact
-                    this.dialogList.emergencyContactPhone.value = params.row.emergencyContactPhone
-                    this.dialogList.address.isEdit = false
-                    this.dialogList.phoneNumber.isEdit = false
-                    this.dialogList.emergencyContact.isEdit = false
-                    this.dialogList.emergencyContactPhone.isEdit = false
+                    this.checkList1.code.value = params.row.code
+                    this.checkList1.name.value = params.row.name
+                    this.checkList1.sex.value = params.row.sex
+                    this.checkList1.phoneNumber.value = params.row.phoneNumber
+                    this.checkList1.idCard.value = params.row.idCard
+                    this.checkList1.deptName.value = params.row.deptName
+                    this.checkList1.className.value = params.row.className
+                    this.checkList1.address.value = params.row.address
+                    this.checkList1.emergencyContact.value = params.row.emergencyContact
+                    this.checkList1.emergencyContactPhone.value = params.row.emergencyContactPhone
                   }
                 }
               }, '查看'),
@@ -269,7 +212,9 @@ export default {
                     },
                     style: {
                       marginRight: '5px',
-                      border: '0px'
+                      border: '0px',
+                      color: '#01b0ff',
+                      background: 'transparent'
                     },
                     on: {
                     }
@@ -294,6 +239,13 @@ export default {
     this.getStuList()
   },
   methods: {
+    // 查看对话框开关
+    closeCheck() {
+      this.showDialogVisible = false
+    },
+    closeEdit() {
+      this.updateDialogVisible = false
+    },
     handleUpdateStuInfo() {
       console.log('用户更新')
     },
@@ -319,6 +271,8 @@ export default {
     // 获得学生基本信息
     getStuList() {
       GetStuList(this.queryInfo).then((res) => {
+        console.log(1)
+        console.log(res.data)
         this.data = res.data
         this.total = res.total
       })
@@ -429,6 +383,24 @@ export default {
     flex-basis: 64%;
     height: 90px;
     //border: 1px solid #5c6b77;
+  }
+}
+.batch-box {
+  border: 1px solid #afd0ee;
+  background: #E6F7FF;
+  margin: 10px 0;
+  height: 40px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  .select-text {
+    margin-left: 1.2vw;
+  }
+  .btn {
+    margin-left: 1vw;
+    background: transparent;
+    border: 0;
+    color: #1e93ff;
   }
 }
 </style>

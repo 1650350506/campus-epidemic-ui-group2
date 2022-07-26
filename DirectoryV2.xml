@@ -17,4 +17,7 @@
     <tree path="/src/pages/personnel/journeyrecord/inputmessage" title="信息录入"/>
     <tree path="/src/store" title="vuex"/>
     <tree path="/src/styles" title="全局样式"/>
+    <tree path="/src/pages/administrators/riskpremanage/premanage" title="风险人员管理"/>
+    <tree path="/src/pages/administrators/journey" title="学生行程信息"/>
+    <tree path="/src/pages/administrators/riskpremanage" title="风险行程信息"/>
 </trees>

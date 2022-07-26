@@ -12,46 +12,14 @@
           <Option v-for="item in gradeList" :value="item" :key="item">{{ item }}</Option>
         </Select>
       </div>
-      <Search :keyValue="queryInfo.keyword" @selectFun="queryStuInfoByKey"></Search>
+      <Search title="请输入学生学号、学生姓名、二级学院" :keyValue="queryInfo.keyword" @selectFun="queryStuInfoByKey"></Search>
     </Card>
     <Card class="card-marginTop card">
       <div class="table-box">
-        <Table  :border="false" :columns="columns" :data="data"></Table>
+        <Table :border="false" :columns="columns" :data="data"></Table>
       </div>
       <Page :total="total" show-elevator show-sizer class-name="page"  @on-change="editPageNum" @on-page-size-change="editPageSize"></Page>
     </Card>
-    <!--    <Modal-->
-    <!--      v-model="showDialogVisible"-->
-    <!--      @on-cancel="showDialogVisible = false"-->
-    <!--      width="720"-->
-    <!--    >-->
-    <!--      <p slot="header" style="text-align: center">学生基本信息</p>-->
-    <!--      <div class="modal-container">-->
-    <!--        <div class="modal-item"  v-for="(item, index) in dialogList" :key="index">-->
-    <!--          <div class="null"></div><div class="star" style="{opacity: 0}"></div><div class="title" v-if="item">{{item.title}}：</div><div class="core">{{item.value}}</div>-->
-    <!--        </div>-->
-    <!--        &lt;!&ndash;        <div v-show="dialogList.seven_goto.title === '近七天行程'" class="special">&ndash;&gt;-->
-    <!--        &lt;!&ndash;          <div class="null"></div><div class="star" style="{opacity: 0}"></div><div class="title" v-if="dialogList.seven_goto">{{dialogList.seven_goto.title}}：</div><div class="core">{{dialogList.seven_goto.value}}</div>&ndash;&gt;-->
-    <!--        &lt;!&ndash;        </div>&ndash;&gt;-->
-    <!--      </div>-->
-    <!--      <div slot="footer">-->
-    <!--        <Button @click="showDialogVisible = false" type="primary">关闭</Button>-->
-    <!--      </div>-->
-    <!--    </Modal>-->
-    <!--    <Modal-->
-    <!--      v-model="updateDialogVisible"-->
-    <!--      @on-ok="handleUpdateStuInfo"-->
-    <!--      @on-cancel="updateDialogVisible = false"-->
-    <!--      width="720"-->
-    <!--    >-->
-    <!--      <p slot="header" style="text-align: center; font-size: 20px">学生基本信息</p>-->
-    <!--      <div class="modal-container">-->
-    <!--        <div class="modal-item" v-for="(item, index) in dialogList" :key="index">-->
-    <!--          <div class="null"></div><div class="star"></div><div class="title" v-if="item">{{item.title}}：</div> <div class="core"> <Input v-if="item.isEdit" v-model="item.value"></Input><span v-else>{{item.value}}</span>-->
-    <!--          </div>-->
-    <!--        </div>-->
-    <!--      </div>-->
-    <!--    </Modal>-->
     <CheckLocal :checkSwitch="showDialogVisible" @switchCheck="close"></CheckLocal>
   </div>
 </template>
@@ -59,7 +27,7 @@
 <script>
 import iHeaderBreadcrumb from '@/layouts/basic-layout/header-breadcrumb'
 import Search from '@/components/top/search'
-import CheckLocal from './checkLocal.vue'
+import CheckLocal from './checkLocal/index'
 import {
   GetStuList, DeleteStuInfo
 } from '@api/group/stuManage'
@@ -116,9 +84,6 @@ export default {
         emergencyContactPhone: {
           title: '联系人电话', value: '12345467890', isEdit: true
         }
-        // seven_goto: {
-        //   title: '近七天行程', value: '杭州市上城区', isEdit: false
-        // }
       },
       columns: [
         {
@@ -188,38 +153,6 @@ export default {
             return h('div', [
               h('Button', {
                 props: {
-                  // type: 'primary',
-                  size: 'small'
-                },
-                style: {
-                  marginRight: '5px',
-                  border: '0px',
-                  color: '#01b0ff',
-                  background: 'transparent'
-                },
-                on: {
-                  click: () => {
-                    this.updateDialogVisible = true
-                    this.dialogList.code.value = params.row.code
-                    this.dialogList.name.value = params.row.name
-                    this.dialogList.sex.value = params.row.sex
-                    this.dialogList.phoneNumber.value = params.row.phoneNumber
-                    this.dialogList.idCard.value = params.row.idCard
-                    this.dialogList.deptName.value = params.row.deptName
-                    this.dialogList.className.value = params.row.className
-                    this.dialogList.address.value = params.row.address
-                    this.dialogList.emergencyContact.value = params.row.emergencyContact
-                    this.dialogList.emergencyContactPhone.value = params.row.emergencyContactPhone
-                    // this.dialogList.seven_goto.value = params.row.seven_goto
-                    this.dialogList.address.isEdit = true
-                    this.dialogList.phoneNumber.isEdit = true
-                    this.dialogList.emergencyContact.isEdit = true
-                    this.dialogList.emergencyContactPhone.isEdit = true
-                  }
-                }
-              }, '编辑'),
-              h('Button', {
-                props: {
                   // type: 'success',
                   size: 'small'
                 },
@@ -274,7 +207,9 @@ export default {
                     },
                     style: {
                       marginRight: '5px',
-                      border: '0px'
+                      border: '0px',
+                      color: '#01b0ff',
+                      background: 'transparent'
                     },
                     on: {
                     }
