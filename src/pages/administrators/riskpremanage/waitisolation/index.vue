@@ -1,46 +1,36 @@
 <template>
   <div>
-    <Card :bordered="false"  class="card">
+    <Card  :bordered="false"  class="card">
       <!--       这是面包屑组件-->
       <i-header-breadcrumb  ref="breadcrumb"  />
       <h2 style="margin-top: 10px;">你好！ xx学院防控人员杨刚！</h2>
     </Card>
-    <Row style="margin-top: 2em">
-      <Col :span="6" v-for="(item, index) in topList" :key="index" class="card-item">
-        <Card class="card">
-          <h2>{{item.name}}</h2>
-          <h1>{{item.num}}</h1>
-        </Card>
-      </Col>
-    </Row>
     <Card class="card">
       <Search title="请输入学生学号、学生姓名" :keyValue="queryInfo.keyword" @selectFun="queryWaitIsolationInfoBykey"></Search>
     </Card>
-    <Card class="card-marginTop card">
-      <Button type="primary" style="margin-bottom: 10px">+ 新增 </Button>
+    <Card class="card-marginTop card" dis-hover>
+      <Button type="primary" style="margin-bottom: 10px" @click="addDialogVisible = true">+ 新增 </Button>
       <div class="table-box">
         <Table  :columns="columns" :data="data" :border="false" class="table"></Table>
       </div>
       <Page :total="total" show-elevator show-sizer class-name="page"  @on-change="editPageNum" @on-page-size-change="editPageSize"></Page>
     </Card>
+    <NewContent :newSwitch="addDialogVisible" @addClose="closeByNew"></NewContent>
   </div>
 </template>
 
 <script>
 import iHeaderBreadcrumb from '@/layouts/basic-layout/header-breadcrumb'
 import Search from '@/components/top/search'
-import { GetIsolationInfoList } from '@api/personnel/riskpremanage'
+import { GetIsolationInfoList, EditIsolationState } from '@api/personnel/riskpremanage'
+import NewContent from './../newPre'
 export default {
   name: 'index',
   components: {
-    iHeaderBreadcrumb, Search
+    iHeaderBreadcrumb, Search, NewContent
   },
   data() {
     return {
-      topList: [
-        { name: '待隔离', num: 43 },
-        { name: '已隔离', num: 8 }
-      ],
       columns: [
         {
           title: '学生学号',
@@ -78,6 +68,7 @@ export default {
                 },
                 on: {
                   'on-ok': () => {
+                    this.editIsolationStateByCode(params.row.code)
                   },
                   // eslint-disable-next-line no-empty-function
                   'on-cancel': () => {
@@ -105,105 +96,8 @@ export default {
           }
         }
       ],
-      data: [
-        {
-          code: 199200118,
-          name: '张三',
-          sex: 1,
-          class_name: '计科19',
-          phone: '198581044444',
-          start_time: '2022-05-04',
-          end_time: '2022-05-04',
-          isolation_state: '0',
-          nucleic_result: '阳性',
-          temperature: 36.5,
-          associates: '林林林',
-          nucleic_time: '2022-05-04'
-        },
-        {
-          code: 199200118,
-          name: '张三',
-          sex: 1,
-          class_name: '计科19',
-          phone: '198581044444',
-          start_time: '2022-05-04',
-          end_time: '2022-05-04',
-          isolation_state: 0,
-          nucleic_result: '阴性',
-          temperature: 36.5,
-          associates: '林林林',
-          nucleic_time: '2022-05-04'
-        },
-        {
-          code: 199200118,
-          name: '张三',
-          sex: 1,
-          class_name: '计科19',
-          phone: '198581044444',
-          start_time: '2022-05-04',
-          end_time: '2022-05-04',
-          isolation_state: 0,
-          nucleic_result: '阴性',
-          temperature: 36.5,
-          associates: '林林林',
-          nucleic_time: '2022-05-04'
-        },
-        {
-          code: 199200118,
-          name: '张三',
-          sex: 1,
-          class_name: '计科19',
-          phone: '198581044444',
-          start_time: '2022-05-04',
-          end_time: '2022-05-04',
-          isolation_state: 0,
-          nucleic_result: '阴性',
-          temperature: 36.5,
-          associates: '林林林',
-          nucleic_time: '2022-05-04'
-        },
-        {
-          code: 199200118,
-          name: '张三',
-          sex: 1,
-          class_name: '计科19',
-          phone: '198581044444',
-          start_time: '2022-05-04',
-          end_time: '2022-05-04',
-          isolation_state: 0,
-          nucleic_result: '阴性',
-          temperature: 36.5,
-          associates: '林林林',
-          nucleic_time: '2022-05-04'
-        },
-        {
-          code: 199200118,
-          name: '张三',
-          sex: 1,
-          class_name: '计科19',
-          phone: '198581044444',
-          start_time: '2022-05-04',
-          end_time: '2022-05-04',
-          isolation_state: 0,
-          nucleic_result: '阴性',
-          temperature: 67.5,
-          associates: '林林林',
-          nucleic_time: '2022-05-04'
-        },
-        {
-          code: 199200118,
-          name: '张三',
-          sex: 1,
-          class_name: '计科19',
-          phone: '198581044444',
-          start_time: '2022-05-04',
-          end_time: '2022-05-04',
-          isolation_state: 0,
-          nucleic_result: '阴性',
-          temperature: 36.5,
-          associates: '林林林',
-          nucleic_time: '2022-05-04'
-        }],
+      addDialogVisible: false,
+      data: [],
       queryInfo: {
         pageNum: 1,
         pageSize: 10,
@@ -229,12 +123,25 @@ export default {
       obj.isolation_state = 1
       console.log(obj)
     },
+    closeByNew() {
+      this.addDialogVisible = false
+    },
     // 查询已隔离或者未隔离信息
     getWaitIsolationInfoList() {
       GetIsolationInfoList(this.queryInfo).then((res) => {
         console.log(res)
         this.data = res.data
         this.total = res.total
+      })
+    },
+    // 修改隔离状态
+    editIsolationStateByCode(code) {
+      const data = {
+        code: code
+      }
+      EditIsolationState(data).then((res) => {
+        console.log(res)
+        console.log('修改隔离状态')
       })
     },
     // 关键字查询隔离人员信息

@@ -43,7 +43,6 @@ export default {
         '默认', '只看中风险', '只看高风险'
       ],
       showDialogVisible: false,
-      updateDialogVisible: false,
       dialogList: {
         code: {
           title: '学号', value: '199200118', isEdit: false

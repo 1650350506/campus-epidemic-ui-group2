@@ -15,11 +15,22 @@ export function AccountLogin(data) {
     data
   })
 }
-export function Demo(data) {
+
+export function AccountReg(data) {
   return request({
-    url: `${moduleName.doraemon_demo}/analysis/total`,
-    method: 'get',
-    urlType: 'test',
-    data
+    url: `${moduleName.doraemon_oauth}/userManage/registerUser`,
+    method: 'post',
+    urlType: 'login',
+    params: {
+      ...data
+    }
   })
 }
+// export function Demo(data) {
+//   return request({
+//     url: `${moduleName.doraemon_demo}/analysis/total`,
+//     method: 'get',
+//     urlType: 'test',
+//     data
+//   })
+// }

@@ -1,77 +1,63 @@
 <template>
-  <div>
-    <Modal
-      v-model="checkSwitch"
-      @on-cancel="close"
-      width="720"
-      :styles="{top: '20px'}"
-    >
-      <p slot="header" style="text-align: left; font-size: 20px">查看</p>
-      <div class="model-box">
-        <div class="model-list-title">基础信息</div>
-        <div class="top-box">
-          <div class="modal-item" v-for="(item, index) in checkList1" :key="index">
-            <div class="null"></div><div class="title">{{item.title}}:</div><div class="star"></div>
-            <div class="core">{{item.value}}</div>
-          </div>
-        </div>
-        <div class="model-list-title">14天返校行程</div>
-        <div class="mid-box">
-          <div class="mid-box-left"></div>
-          <div class="mid-box-right">
-            <Table border :columns="columns"  height="110" :data="data"></Table>
-          </div>
-        </div>
-        <div class="model-list-title">日常出校信息</div>
-        <div class="mid-box">
-          <div class="mid-box-left"></div>
-          <div class="mid-box-right">
-            <Table border :columns="columns1" size="small" height="110" :data="data1"></Table>
-          </div>
+  <Modal
+    v-model="display"
+    @on-cancel="close"
+    width="720"
+  >
+    <p slot="header" style="text-align: center;font-size: 20px">教职工基本信息</p>
+    <div class="model-box">
+      <div class="model-list-title">基础信息</div>
+      <div class="top-box">
+        <div class="modal-item" v-for="(item, index) in checkList1" :key="index">
+          <div class="null"></div><div class="title">{{item.title}}:</div><div class="star"></div>
+          <div class="core">{{item.value}}</div>
         </div>
       </div>
-      <div slot="footer">
-        <Button @click="close" type="primary">关闭</Button>
+      <div class="model-list-title">通行信息</div>
+      <div class="mid-box">
+        <div class="mid-box-left"></div>
+        <div class="mid-box-right">
+          <Table border :columns="columns"  height="150" :data="data"></Table>
+        </div>
       </div>
-    </Modal>
-  </div>
+    </div>
+    <div slot="footer">
+      <Button @click="close" type="primary">关闭</Button>
+    </div>
+  </Modal>
 </template>
 
 <script>
 export default {
-  name: 'checkLocal',
-  props: ['checkSwitch', 'checkList1'],
+  name: 'index',
+  props: ['display', 'checkList1'],
   data() {
     return {
       columns: [
         {
-          title: '检测时间',
+          title: '进入时间',
           key: 'name'
         },
         {
-          title: '核酸结果',
+          title: '离开时间',
           key: 'age'
         },
         {
-          title: '检测结果',
+          title: '健康码颜色',
           key: 'address'
         }
       ],
-      columns1: [
+      data: [
         {
-          title: '隔离开始时间',
-          key: 'name'
+          name: '王小明',
+          age: 18,
+          address: '北京市朝阳区芍药居'
         },
         {
-          title: '隔离结束时间',
-          key: 'age'
+          name: '张小刚',
+          age: 25,
+          address: '北京市海淀区西二旗'
         },
-        {
-          title: '隔离原因',
-          key: 'address'
-        }
-      ],
-      data1: [
         {
           name: '李小红',
           age: 30,
@@ -87,7 +73,7 @@ export default {
   },
   methods: {
     close() {
-      this.$emit('switchCheck', false)
+      this.$emit('displayClose', false)
     }
   }
 }
@@ -152,5 +138,11 @@ export default {
   .footer-box {
     padding: 0 2em;
   }
+}
+.model-list-title {
+  margin-top: 5px;
+  margin-left: 7%;
+  font-size: 18px;
+  color: #000;
 }
 </style>

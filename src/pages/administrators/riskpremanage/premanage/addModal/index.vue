@@ -11,7 +11,7 @@
           <div class="modal-item" v-for="(item, index) in addList1" :key="index">
             <div class="null"></div><div class="title">{{item.title}}:</div><div class="star"></div>
             <div class="core"><Select v-if="item.title ==='关联防疫人员'" v-model="associatesModel" style="width:160px">
-              <Option v-for="item in associationList" :value="item" :key="item">{{ item }}</Option>
+              <Option v-for="item in associationList" :value="item.deptCode" :key="item">{{ item.name }}</Option>
             </Select><span v-else>{{item.value}}</span></div>
           </div>
         </div>
@@ -23,15 +23,15 @@
               <Date-picker type="datetime" placeholder="选择日期和时间" style="width: 200px"></Date-picker>
               <div>核酸结果：
                 <Radio-group v-model="disabledGroup">
-                  <Radio label="阴性"></Radio>
-                  <Radio label="阳性"></Radio>
+                  <Radio label="阴性" value="0"></Radio>
+                  <Radio label="阳性" value="1"></Radio>
                 </Radio-group>
               </div>
               <div>
                 测温结果：
                 <Radio-group v-model="disabledGroup">
-                  <Radio label="正常"></Radio>
-                  <Radio label="异常"></Radio>
+                  <Radio label="正常" value="36"></Radio>
+                  <Radio label="异常" value="38"></Radio>
                 </Radio-group>
               </div>
               <Button type="primary">添加</Button>
@@ -51,6 +51,8 @@
 </template>
 
 <script>
+import { GetEpidemicPreventionPersonnel, GetIsolationInfoListByCode } from '../../../../../api/personnel/riskpremanage'
+
 export default {
   name: 'AddContent',
   props: ['addSwitch', 'addList1'],
@@ -90,22 +92,22 @@ export default {
                 },
                 on: {
                   click: () => {
-                    this.updateDialogVisible = true
-                    this.dialogList.code.value = params.row.code
-                    this.dialogList.name.value = params.row.name
-                    this.dialogList.sex.value = params.row.sex
-                    this.dialogList.phoneNumber.value = params.row.phoneNumber
-                    this.dialogList.idCard.value = params.row.idCard
-                    this.dialogList.deptName.value = params.row.deptName
-                    this.dialogList.className.value = params.row.className
-                    this.dialogList.address.value = params.row.address
-                    this.dialogList.emergencyContact.value = params.row.emergencyContact
-                    this.dialogList.emergencyContactPhone.value = params.row.emergencyContactPhone
-                    // this.dialogList.seven_goto.value = params.row.seven_goto
-                    this.dialogList.address.isEdit = true
-                    this.dialogList.phoneNumber.isEdit = true
-                    this.dialogList.emergencyContact.isEdit = true
-                    this.dialogList.emergencyContactPhone.isEdit = true
+                    // this.updateDialogVisible = true
+                    // this.dialogList.code.value = params.row.code
+                    // this.dialogList.name.value = params.row.name
+                    // this.dialogList.sex.value = params.row.sex
+                    // this.dialogList.phoneNumber.value = params.row.phoneNumber
+                    // this.dialogList.idCard.value = params.row.idCard
+                    // this.dialogList.deptName.value = params.row.deptName
+                    // this.dialogList.className.value = params.row.className
+                    // this.dialogList.address.value = params.row.address
+                    // this.dialogList.emergencyContact.value = params.row.emergencyContact
+                    // this.dialogList.emergencyContactPhone.value = params.row.emergencyContactPhone
+                    // // this.dialogList.seven_goto.value = params.row.seven_goto
+                    // this.dialogList.address.isEdit = true
+                    // this.dialogList.phoneNumber.isEdit = true
+                    // this.dialogList.emergencyContact.isEdit = true
+                    // this.dialogList.emergencyContactPhone.isEdit = true
                   }
                 }
               }, '修改'),
@@ -119,7 +121,7 @@ export default {
                   },
                   on: {
                     'on-ok': () => {
-                      this.deleteStuInfoByCode(params.row.code)
+                      // this.deleteStuInfoByCode(params.row.code)
                     },
                     // eslint-disable-next-line no-empty-function
                     'on-cancel': () => {
@@ -159,15 +161,43 @@ export default {
           age: 26,
           address: '深圳市南山区深南大道'
         }
-      ]
+      ],
+      addInfo: {
+        code: '',
+        protectorName: '',
+        nucleicAcidTime: '',
+        nucleicAcidKey: 0,
+        temperature: 37
+      }
     }
   },
   created() {
-    this.associationList.push(this.addList1.associates.value)
+    // this.associationList.push(this.addList1.associates.value)
+    this.getEpidemicPreventionPersonnel()
   },
   methods: {
     close() {
       this.$emit('switchAdd', false)
+    },
+    getEpidemicPreventionPersonnel() {
+      GetEpidemicPreventionPersonnel().then(res => {
+        res.field.forEach(item => {
+          this.associationList.push({
+            deptCode: item.deptCode,
+            name: item.name
+          })
+        })
+      })
+    },
+    getIsolationInfoListByCode() {
+      const queryInfo = {
+        pageNum: '1',
+        pageSize: '10',
+        code: this.addList1.code
+      }
+      GetIsolationInfoListByCode(queryInfo).then( res => {
+        console.log(res)
+      })
     }
   }
 }

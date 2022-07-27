@@ -25,65 +25,39 @@
       </div>
       <Page :total="200" show-elevator show-sizer class-name="page" :page-size="queryInfo.pageSize" :current="queryInfo.pageNum" @on-change="editPageNum" @on-page-size-change="editPageSize"></Page>
     </Card>
-    <Modal
-      v-model="updateDialogVisible"
-      @on-ok="handleUpdateUserInfo"
-      @on-cancel="updateDialogVisible = false"
-      class-name="vertical-center-modal"
-      width="720"
-    >
-      <p slot="header" style="text-align: center; font-size: 20px">教职工基本信息</p>
-      <div class="modal-container">
-        <div class="modal-item" v-for="(item, index) in dialogList" :key="index">
-          <div class="null"></div><div class="star" :style="item.isEdit ? {}: {opacity: 0}"></div><div class="title">{{item.title}}：</div>
-          <div class="core"> <Input v-if="item.isEdit" v-model="item.value" style="font-size: 18px"></Input><span v-else-if="item.isEdit&&item.title==='性别'">{{item.value ? '女': '男'}}</span><span v-else>{{item.value}}</span>
-          </div>
-        </div>
-      </div>
-    </Modal>
-    <Modal
-      v-model="showDialogVisible"
-      @on-cancel="showDialogVisible = false"
-      width="720"
-    >
-      <p slot="header" style="text-align: center;font-size: 20px">教职工基本信息</p>
-      <div class="modal-container">
-        <div class="modal-item"v-for="(item, index) in dialogList" :key="index">
-          <div class="null"></div><div class="star" :style="item.isEdit ? {}: {opacity: 0}"></div><div class="title">{{item.title}}：</div><div class="core">{{item.value}}</div>
-        </div>
-      </div>
-      <div slot="footer">
-        <Button @click="showDialogVisible = false" type="primary">关闭</Button>
-      </div>
-    </Modal>
-    <add-faculty :showSwitch="addDialogVisible" @switchAdd="close"></add-faculty>
     <!--    <Modal-->
-    <!--      v-model="addDialogVisible"-->
-    <!--      @on-cancel="addDialogVisible = false"-->
+    <!--      v-model="updateDialogVisible"-->
+    <!--      @on-ok="handleUpdateUserInfo"-->
+    <!--      @on-cancel="updateDialogVisible = false"-->
+    <!--      class-name="vertical-center-modal"-->
     <!--      width="720"-->
     <!--    >-->
-    <!--      <p slot="header" style="text-align: center;font-size: 20px">新增人员</p>-->
+    <!--      <p slot="header" style="text-align: center; font-size: 20px">教职工基本信息</p>-->
     <!--      <div class="modal-container">-->
-    <!--        <div class="modal-item"v-for="(item, index) in adddialogList" :key="index">-->
-    <!--          <div class="null"></div><div class="star" :style="item.isEdit ? {}: {opacity: 0}"></div><div class="title">{{item.title}}：</div><div class="core">{{item.value}}</div>-->
+    <!--        <div class="modal-item" v-for="(item, index) in dialogList" :key="index">-->
+    <!--          <div class="null"></div><div class="star" :style="item.isEdit ? {}: {opacity: 0}"></div><div class="title">{{item.title}}：</div>-->
+    <!--          <div class="core"> <Input v-if="item.isEdit" v-model="item.value" style="font-size: 18px"></Input><span v-else-if="item.isEdit&&item.title==='性别'">{{item.value ? '女': '男'}}</span><span v-else>{{item.value}}</span>-->
+    <!--          </div>-->
     <!--        </div>-->
     <!--      </div>-->
-    <!--      <div slot="footer">-->
-    <!--        <Button @click="showDialogVisible = false" type="primary">关闭</Button>-->
-    <!--      </div>-->
     <!--    </Modal>-->
+    <check-modal :display="showDialogVisible" :checkList1="dialogList" @displayClose="closeCheck"></check-modal>
+    <edit-modal :editSwitch="updateDialogVisible" :editList1="dialogList" @editClose="closeEdit"></edit-modal>
+    <add-faculty :showSwitch="addDialogVisible" @switchAdd="close"></add-faculty>
   </div>
 </template>
 
 <script>
 import iHeaderBreadcrumb from '@/layouts/basic-layout/header-breadcrumb'
 import Search from '@/components/top/search'
-import addFaculty from './addFaculty'
+import addFaculty from './addModal'
+import checkModal from './check'
+import editModal from './edit'
 import { DeleteFacultyInfoByCode, GetFacultyInfo } from '@api/administorators/manage'
 export default {
   name: 'index',
   components: {
-    iHeaderBreadcrumb, Search, addFaculty
+    iHeaderBreadcrumb, Search, addFaculty, checkModal, editModal
   },
   data() {
     return {
@@ -181,9 +155,9 @@ export default {
                     this.dialogList.dept_code.value = params.row.dept_code
                     this.dialogList.system_post.value = params.row.system_post
                     this.dialogList.school_post.value = params.row.school_post
-                    this.dialogList.enter_time.value = params.row.enter_time
-                    this.dialogList.leave_time.value = params.row.leave_time
-                    this.dialogList.healthy_color.value = params.row.healthy_color
+                    // this.dialogList.enter_time.value = params.row.enter_time
+                    // this.dialogList.leave_time.value = params.row.leave_time
+                    // this.dialogList.healthy_color.value = params.row.healthy_color
                     this.dialogList.phone.isEdit = true
                     this.dialogList.system_post.isEdit = true
                     this.dialogList.school_post.isEdit = true
@@ -212,9 +186,9 @@ export default {
                     this.dialogList.dept_code.value = params.row.dept_code
                     this.dialogList.system_post.value = params.row.system_post
                     this.dialogList.school_post.value = params.row.school_post
-                    this.dialogList.enter_time.value = params.row.enter_time
-                    this.dialogList.leave_time.value = params.row.leave_time
-                    this.dialogList.healthy_color.value = params.row.healthy_color
+                    // this.dialogList.enter_time.value = params.row.enter_time
+                    // this.dialogList.leave_time.value = params.row.leave_time
+                    // this.dialogList.healthy_color.value = params.row.healthy_color
                     this.dialogList.phone.isEdit = false
                     this.dialogList.system_post.isEdit = false
                     this.dialogList.school_post.isEdit = false
@@ -335,15 +309,6 @@ export default {
         dept_code: {
           title: '二级学院', value: '', isEdit: false
         },
-        enter_time: {
-          title: '进入时间', value: '', isEdit: false
-        },
-        leave_time: {
-          title: '离开时间', value: '', isEdit: false
-        },
-        healthy_color: {
-          title: '健康码颜色', value: '', isEdit: false
-        },
         phone: {
           title: '手机号', value: '', isEdit: true
         },
@@ -370,6 +335,12 @@ export default {
   methods: {
     close(e) {
       this.addDialogVisible = false
+    },
+    closeCheck() {
+      this.showDialogVisible = false
+    },
+    closeEdit() {
+      this.updateDialogVisible = false
     },
     handleUpdateUserInfo() {
       this.dialogVisible = false

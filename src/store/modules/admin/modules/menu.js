@@ -10,7 +10,6 @@ import dashboard from '@/menu/modules/doraemon-dashboard'
 function filterMenu(menuList, access, lastList) {
   menuList.forEach(menu => {
     const menuAccess = menu.auth
-
     if (!menuAccess || includeArray(menuAccess, access)) {
       const newMenu = {}
       for (const i in menu) {

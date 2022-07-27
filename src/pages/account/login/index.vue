@@ -31,7 +31,7 @@ export default {
     }
   },
   created() {
-    this.handleSubmit()
+    // this.handleSubmit()
   },
   methods: {
     ...mapActions('admin/account', [

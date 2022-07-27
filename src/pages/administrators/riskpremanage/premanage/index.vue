@@ -3,17 +3,15 @@
     <Card :bordered="false"  class="card">
       <!--       这是面包屑组件-->
       <i-header-breadcrumb  ref="breadcrumb"  />
-      <h2 style="margin-top: 10px;">你好！ xx学院防控人员王老五！</h2>
+      <h2 style="margin-top: 10px;">你好！防控人员 WBG The shy!!!!!!!</h2>
     </Card>
-    <Row style="margin-top: 2em">
-      <Col :span="6" v-for="(item, index) in topList" :key="index" class="card-item">
-        <Card class="card">
-          <h2>{{item.name}}</h2>
-          <h1>{{item.num}}</h1>
-        </Card>
-      </Col>
-    </Row>
-    <Card class="card">
+    <div class="top-card">
+      <Card class="card" v-for="(item, index) in topList" :key="index">
+        <h1>{{item.name}}</h1>
+        <h1>{{item.num}}</h1>
+      </Card>
+    </div>
+    <Card class="card card-marginTop">
       <Search title="请输入学生学号、学生姓名" :keyValue="queryInfo.keyword" @selectFun="queryQuarantinedInfoByKey"></Search>
     </Card>
     <Card class="card-marginTop card">
@@ -35,7 +33,8 @@ import Search from '@/components/top/search'
 import CheckContent from './checkModal'
 import AddContent from './addModal'
 import NewContent from './../newPre'
-import { DeleteIsolationInfo, GetIsolationInfoList } from '@api/personnel/riskpremanage'
+import { DeleteIsolationInfo, GetIsolationInfoList, GetIsolationInfoListByCode } from '@api/personnel/riskpremanage'
+
 export default {
   name: 'index',
   components: {
@@ -45,7 +44,9 @@ export default {
     return {
       topList: [
         { name: '待隔离', num: 43 },
-        { name: '已隔离', num: 8 }
+        { name: '已隔离', num: 8 },
+        { name: '治疗中', num: 100 },
+        { name: '隔离结束', num: 10 }
       ],
       nucleicResult: [
         {
@@ -59,59 +60,62 @@ export default {
       ],
       showDialogVisible: false,
       updateDialogVisible: false,
-      addDialogVisible: true,
+      addDialogVisible: false,
       checkList1: {
         name: {
-          title: '姓名', value: '真的装'
+          title: '姓名', value: ''
         },
         sex: {
-          title: '性别', value: '男'
+          title: '性别', value: ''
         },
         stuCollege: {
-          title: '二级学院', value: '计算机学院'
+          title: '二级学院', value: ''
         },
         classname: {
-          title: '班级', value: '计科191'
+          title: '班级', value: ''
         },
-        phone: {
-          title: '手机号', value: '199200118'
+        phoneNumber: {
+          title: '手机号', value: ''
         },
-        associates: {
-          title: '关联防疫人员', value: '飞尔德'
+        protectorName: {
+          title: '关联防疫人员', value: ''
         },
-        isolation_address: {
-          title: '隔离地点', value: 'B119'
+        isolationLocation: {
+          title: '隔离地点', value: ''
         },
-        isolation_state: {
-          title: '隔离状态', value: '抢救中'
+        state: {
+          title: '隔离状态', value: ''
         },
-        state_time: {
-          title: '开始时间', value: '2022-07-13'
+        startTime: {
+          title: '开始时间', value: ''
         },
-        end_time: {
-          title: '结束时间', value: '2022-07-01'
+        endTime: {
+          title: '结束时间', value: ''
         }
       },
       checkList2: [],
       checkList3: [],
       addInfoList1: {
+        code: {
+          title: '学号', value: ''
+        },
         name: {
-          title: '姓名', value: '真的装'
+          title: '姓名', value: ''
         },
         sex: {
-          title: '性别', value: '男'
+          title: '性别', value: ''
         },
         stuCollege: {
-          title: '二级学院', value: '计算机学院'
+          title: '二级学院', value: ''
         },
         classname: {
-          title: '班级', value: '计科191'
+          title: '班级', value: ''
         },
-        phone: {
-          title: '手机号', value: '199200118'
+        phoneNumber: {
+          title: '手机号', value: ''
         },
         associates: {
-          title: '关联防疫人员', value: '飞尔德'
+          title: '关联防疫人员', value: ''
         }
       },
       dialogList: {
@@ -211,8 +215,17 @@ export default {
         },
         {
           title: '核酸结果',
-          key: 'nucleic_result',
-          align: 'center'
+          key: 'nucleicacidkey',
+          align: 'center',
+          render: (h, params) => {
+            let key
+            if (params.row.nucleicacidkey === 0) {
+              key = '阴性'
+            } else if (params.row.nucleicacidkey === 1) {
+              key = '阳性'
+            }
+            return h('span', key)
+          }
         },
         {
           title: '开始隔离时间',
@@ -238,23 +251,23 @@ export default {
                 },
                 on: {
                   click: () => {
+                    this.getProtectorNameByCode(params.row.code)
                     this.showDialogVisible = true
-                    // this.dialogList.code.value = params.row.code
-                    // this.dialogList.name.value = params.row.name
-                    // this.dialogList.sex.value = params.row.sex
-                    // this.dialogList.class_name.value = params.row.class_name
-                    // this.dialogList.phone.value = params.row.phone
-                    // this.dialogList.start_time.value = params.row.start_time
-                    // this.dialogList.end_time.value = params.row.end_time
-                    // this.dialogList.isolation_state.value = params.row.isolation_state
-                    // this.dialogList.nucleic_result.value = params.row.nucleic_result
-                    // this.dialogList.temperature.value = params.row.temperature
-                    // this.dialogList.associates.value = params.row.associates
-                    // this.dialogList.nucleic_time.value = params.row.nucleic_time
-                    // this.dialogList.nucleic_result.isEdit = false
-                    // this.dialogList.temperature.isEdit = false
-                    // this.dialogList.associates.isEdit = false
-                    // this.dialogList.nucleic_time.isEdit = false
+                    console.log(params.row)
+                    this.checkList1.name.value = params.row.name
+                    this.checkList1.sex.value = params.row.sex
+                    if (params.row.sex === 0) {
+                      this.checkList1.sex.value = '男'
+                    } else {
+                      this.checkList1.sex.value = '女'
+                    }
+                    this.checkList1.stuCollege.value = params.row.stuCollege
+                    this.checkList1.classname.value = params.row.classname
+                    this.checkList1.phoneNumber.value = params.row.phoneNumber
+                    this.checkList1.isolationLocation.value = params.row.isolationLocation
+                    this.checkList1.state.value = this.topList[params.row.state].name
+                    this.checkList1.startTime.value = params.row.startTime
+                    this.checkList1.endTime.value = params.row.endTime
                   }
                 }
               }, '查看'),
@@ -308,22 +321,17 @@ export default {
                 on: {
                   click: () => {
                     this.updateDialogVisible = true
-                    this.dialogList.code.value = params.row.code
-                    this.dialogList.name.value = params.row.name
-                    this.dialogList.sex.value = params.row.sex
-                    this.dialogList.class_name.value = params.row.class_name
-                    this.dialogList.phone.value = params.row.phone
-                    this.dialogList.start_time.value = params.row.start_time
-                    this.dialogList.end_time.value = params.row.end_time
-                    this.dialogList.isolation_state.value = params.row.isolation_state
-                    this.dialogList.nucleic_result.value = params.row.nucleic_result
-                    this.dialogList.temperature.value = params.row.temperature
-                    this.dialogList.associates.value = params.row.associates
-                    this.dialogList.nucleic_time.value = params.row.nucleic_time
-                    this.dialogList.nucleic_result.isEdit = true
-                    this.dialogList.temperature.isEdit = true
-                    this.dialogList.associates.isEdit = true
-                    this.dialogList.nucleic_time.isEdit = true
+                    this.addInfoList1.code.value = params.row.code
+                    this.addInfoList1.name.value = params.row.name
+                    this.addInfoList1.sex.value = params.row.sex
+                    this.addInfoList1.stuCollege.value = params.row.stuCollege
+                    if (params.row.sex === 0) {
+                      this.addInfoList1.sex.value = '男'
+                    } else {
+                      this.addInfoList1.sex.value = '女'
+                    }
+                    this.addInfoList1.classname.value = params.row.classname
+                    this.addInfoList1.phoneNumber.value = params.row.phoneNumber
                   }
                 }
               }, '增加隔离记录')
@@ -331,31 +339,18 @@ export default {
           }
         }
       ],
-      data: [{
-        code: 199200118,
-        name: '张三',
-        sex: 1,
-        class_name: '计科19',
-        phone: '198581044444',
-        start_time: '2022-05-04',
-        end_time: '2022-05-04',
-        isolation_state: 0,
-        nucleic_result: '阴性',
-        temperature: 67.5,
-        associates: '林林林',
-        nucleic_time: '2022-05-04'
-      }],
+      data: [],
       queryInfo: {
         pageNum: 1,
         pageSize: 10,
         keyword: '',
-        state: 0
+        state: 1
       },
       total: 0
     }
   },
   created() {
-    this.getWaitIsolationInfoList()
+    this.getIsolationInfoList()
   },
   methods: {
     close(e) {
@@ -382,48 +377,40 @@ export default {
       // 拼接
       return `${year}-${month}-${day}`
     },
-    // 添加隔离记录
-    handleAddRecord() {
-      const date =  this.dateFormat(this.dialogList.nucleic_time.value)
-      let state
-      if (this.dialogList.nucleic_result.value[0] === '阴性') {
-        state = 0
-      } else if (this.dialogList.nucleic_result.value[0] === '阳性') {
-        state = 1
+    // 获得隔离人员的关联人员
+    getProtectorNameByCode(code) {
+      const queryInfo = {
+        pageNum: '1',
+        pageSize: '1',
+        code: code
       }
-      const result = {
-        code: this.dialogList.code.value,
-        isolation_state: this.dialogList.isolation_state.value,
-        nucleic_result: state,
-        temperature: this.dialogList.temperature.value,
-        associates: this.dialogList.associates.value,
-        nucleic_time: date
-      }
-      console.log(result)
+      GetIsolationInfoListByCode(queryInfo).then(res => {
+        this.checkList1.protectorName.value = res.data[0].protectorName
+      })
     },
     // 查询已隔离或者未隔离信息
-    getWaitIsolationInfoList() {
+    getIsolationInfoList() {
       GetIsolationInfoList(this.queryInfo).then((res) => {
         console.log(res)
-        res.data.forEach(function (item) {
-          item.startTime = this.dateFormat(item.startTime)
-        })
-        console.log(1)
-        console.log(res.data())
+        // res.data.forEach(function (item) {
+        //   item.startTime = this.dateFormat(item.startTime)
+        // })
         this.data = res.data
         this.total = res.total
+        console.log(2)
+        console.log(this.data)
       })
     },
     // // 解除隔离
-    // relieveIsolation() {
-    //   const data = {
-    //     code: '123'
-    //   }
-    //   DeleteIsolationInfo(data).then((res) => {
-    //     console.log('这是解除隔离')
-    //     console.log(res)
-    //   })
-    // },
+    relieveIsolation(e) {
+      const data = {
+        code: e
+      }
+      DeleteIsolationInfo(data).then((res) => {
+        this.$Message.success('解除隔离成功!')
+        this.getIsolationInfoList()
+      })
+    },
     // 关键字查询
     queryQuarantinedInfoByKey(e) {
       this.data = []
@@ -445,12 +432,18 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.card-item {
-  margin-right: 2em;
+.top-card {
+  height: 18vh;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+
   .card {
-    height: 120px;
-    h1 {
-      font-size: 3em;
+    width: 20%;
+    height: 100%;
+    margin-left: 6.6%;
+    &:nth-of-type(4n+1) {
+      margin-left: 0;
     }
   }
 }

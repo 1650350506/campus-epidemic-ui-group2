@@ -20,4 +20,6 @@
     <tree path="/src/pages/administrators/riskpremanage/premanage" title="风险人员管理"/>
     <tree path="/src/pages/administrators/journey" title="学生行程信息"/>
     <tree path="/src/pages/administrators/riskpremanage" title="风险行程信息"/>
+    <tree path="/src/pages/administrators/journey/local" title="本地行程"/>
+    <tree path="/src/pages/administrators/journey/cross" title="跨市行程"/>
 </trees>

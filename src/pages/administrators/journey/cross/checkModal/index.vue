@@ -15,18 +15,18 @@
             <div class="core">{{item.value}}</div>
           </div>
         </div>
-        <div class="model-list-title">行程信息</div>
+        <div class="model-list-title">14天返校行程</div>
         <div class="mid-box">
           <div class="mid-box-left"></div>
           <div class="mid-box-right">
-            <Table border :columns="columns"  height="110" :data="data"></Table>
+            <Table border :columns="columns"  height="160" :data="data"></Table>
           </div>
         </div>
-        <div class="model-list-title">出校信息</div>
+        <div class="model-list-title">日常出校信息</div>
         <div class="mid-box">
           <div class="mid-box-left"></div>
           <div class="mid-box-right">
-            <Table border :columns="columns1" size="small" height="110" :data="data1"></Table>
+            <Table border :columns="columns1" size="small" height="160" :data="data1"></Table>
           </div>
         </div>
       </div>

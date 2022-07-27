@@ -49,9 +49,9 @@
         <div class="modal-item">
           <div class="null"></div><div class="title"><span>二级学院:</span></div><div class="star"></div>
           <div class="core"><Select v-model="addList1.dept_code" style="width:190px">
-            <Option v-for="item in cityList" :value="item.value" :key="item">
-              {{ item.label }}
-            </Option>
+<!--            <Option v-for="item in cityList" :value="item.value" :key="item">-->
+<!--              {{ item.label }}-->
+<!--            </Option>-->
           </Select>
           </div>
         </div>
@@ -78,6 +78,8 @@
 </template>
 
 <script>
+import { AccountReg } from '../../../../api/account'
+
 export default {
   name: 'addFaculty',
   props: ['showSwitch'],
@@ -96,6 +98,17 @@ export default {
         school_post: '',
         system_post: 1547742937243193372
       },
+      addUserInfo: {
+        account: 'testAdmin',
+        deptId: '1548935972324904988',
+        mobile: '19858104444',
+        name: '姜程璐',
+        pwd: 'Admin111',
+        resetPwd: false,
+        roles: ['1547742937243193372'],
+        selfAccount: false,
+        switchUser: false
+      },
       deptList: []
     }
   },
@@ -109,7 +122,9 @@ export default {
     },
     //  这是对自己服务的方法()
     addFacultyInfo() {
-
+      AccountReg(this.addUserInfo).then(res => {
+        console.log(res)
+      })
     }
   }
 }
@@ -150,7 +165,7 @@ export default {
     .title {
       color: #050505;
       font-weight: 500;
-      font-size: 18px;
+      font-size: 16px;
       flex-basis: 30%;
       text-align: right;
       line-height: 30px;

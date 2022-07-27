@@ -37,6 +37,8 @@
 </template>
 
 <script>
+import { GetIsolationInfoList } from '../../../../../api/personnel/riskpremanage'
+
 export default {
   name: 'CheckContent',
   props: ['checkSwitch', 'checkList1'],
@@ -84,9 +86,25 @@ export default {
       ]
     }
   },
+  updated() {
+    this.getIsolationInfoList()
+  },
   methods: {
     close() {
       this.$emit('switchCheck', false)
+    },
+    // 服务记录
+    getIsolationInfoList() {
+      const queryInfo = {
+        pageNum: '1',
+        pageSize: '10',
+        keyword: this.checkList1.code.value,
+        state: ''
+      }
+      GetIsolationInfoList(queryInfo).then(res => {
+        console.log(res)
+        console.log('这是服务记录')
+      })
     }
   }
 }

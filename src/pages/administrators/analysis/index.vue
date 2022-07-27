@@ -254,6 +254,9 @@ export default {
           },
           axisTick: {
             show: false
+          },
+          axisLabel: {
+            rotate: 45
           }
         },
         yAxis: {
@@ -422,12 +425,14 @@ export default {
         const arr2 = Object.values(res.field)
         const arr = []
         console.log(res.field)
-        arr1.forEach((item, index) => {
-          arr.push({
-            name: item,
-            value: arr2[index]
-          })
-        })
+        for (let i = 0; i < arr1.length; i++) {
+          if (i < 7) {
+            arr.push({
+              name: arr1[i],
+              value: arr2[i]
+            })
+          }
+        }
         console.log(1)
         console.log(arr)
         this.option1.series[0].data = arr
@@ -508,7 +513,7 @@ i {
   font-size: 4em;
 }
 .chart-mid {
-  height: 40vw;
+  height: 42vw;
   width: 100%;
   border-radius: 10px;
   display: flex;
@@ -521,7 +526,7 @@ i {
   }
 }
 .chart-bottom {
-  height: 28vw;
+  height: 30vw;
   .card {
     height: 100%;
     width: 100%;
