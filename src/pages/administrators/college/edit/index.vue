@@ -16,12 +16,14 @@
     </div>
     <div slot="footer">
       <Button @click="close">关闭</Button>
-      <Button  type="primary">确定</Button>
+      <Button  type="primary" @click="updateMsg">确定</Button>
     </div>
   </Modal>
 </template>
 
 <script>
+import { UpdateFacultyInfo } from '../../../../api/administorators/manage'
+
 export default {
   name: 'index',
   props: ['editSwitch', 'editList1'],
@@ -68,6 +70,17 @@ export default {
   methods: {
     close() {
       this.$emit('editClose', false)
+    },
+    updateMsg() {
+      const data = {
+        code: this.editList1.code,
+        phone: this.editList1.phone,
+        schoolPost: this.editList1.schoolPost,
+        systemPost: this.editList1.systemPost
+      }
+      UpdateFacultyInfo(data).then(() => {
+        this.$Message.success('修改教职工信息成功！')
+      })
     }
   }
 }

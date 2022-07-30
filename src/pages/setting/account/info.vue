@@ -47,7 +47,7 @@
           <FormItem prop='name' label='用户姓名:'>
             <Input v-model='userInfo.name' />
           </FormItem>
-          <FormItem prop='mobile' label='手机:'>
+          <FormItem label='手机:'>
             <Input v-model='userInfo.mobile' />
           </FormItem>
           <FormItem prop='email' label='联系邮箱:'>
@@ -121,10 +121,10 @@ export default {
       },
       userInfo: {
         id: '',
-        userName: '',
-        name: '',
-        mobile: '',
-        email: '',
+        userName: 'admin345',
+        name: '李四',
+        mobile: '19858104401',
+        email: '1309426309@qq.com',
         enterpriseId: '',
         enterpriseName: '',
         uniqueCode: 10010001,
@@ -141,19 +141,19 @@ export default {
         name: [
           { required: true, message: '用户姓名不能为空!', trigger: 'blur' }
         ],
-        mobile: [
-          { required: true, message: '手机号码不能为空！', trigger: 'blur' },
-          {
-                        validator: (rule, value, callback) => { //eslint-disable-line
-              const reg = /^((13|14|15|17|18)[0-9]{1}\d{8})$/
-              const reg2 = /^\d{3,4}-\d{7,8}$/
-              if (!reg.test(value) && !reg2.test(value) && value) {
-                callback(new Error('手机号码格式不正确！'))
-              }
-              callback()
-            }
-          }
-        ],
+        // mobile: [
+        //   { required: true, message: '手机号码不能为空！', trigger: 'blur' },
+        //   {
+        //                 validator: (rule, value, callback) => { //eslint-disable-line
+        //       const reg = /^((13|14|15|17|18)[0-9]{1}\d{8})$/
+        //       const reg2 = /^\d{3,4}-\d{7,8}$/
+        //       if (!reg.test(value) && !reg2.test(value) && value) {
+        //         callback(new Error('手机号码格式不正确！'))
+        //       }
+        //       callback()
+        //     }
+        //   }
+        // ],
         email: [
           { required: true, message: '联系邮箱不能为空！', trigger: 'blur' },
           { type: 'email', message: '邮箱格式不正确！', trigger: 'blur' }

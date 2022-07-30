@@ -39,7 +39,7 @@
       <div class="footer-item">
         <div class="title">隔离状态:</div>
         <div class="null"></div>
-        <Select v-model="addInfo.isolationState" style="width:200px">
+        <Select v-model="addInfo.state" style="width:200px">
           <Option  value="0">待隔离</Option>
           <Option  value="1">隔离中</Option>
           <Option  value="2">隔离结束</Option>
@@ -60,7 +60,7 @@
 </template>
 
 <script>
-import { GetIsolationInfoListByCode } from '../../../../api/personnel/riskpremanage'
+import { GetIsolationInfoListByCode, NewIsolatePre } from '../../../../api/personnel/riskpremanage'
 
 export default {
   name: 'index',
@@ -93,12 +93,23 @@ export default {
         address: '',
         isolationLocation: '',
         isolationReason: '',
-        isolationState: 0,
+        state: 0,
         startTime: ''
       }
     }
   },
   methods: {
+    dateFormat(time) {
+      const date = new Date(time)
+      const year = date.getFullYear()
+      const month = date.getMonth() + 1 < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1
+      const day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate()
+      const hours = date.getHours() < 10 ? `0${date.getHours()}` : date.getHours()
+      const minutes = date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes()
+      const seconds = date.getSeconds() < 10 ? `0${date.getSeconds()}` : date.getSeconds()
+      // 拼接
+      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
+    },
     close() {
       this.$emit('addClose', false)
     },
@@ -108,7 +119,11 @@ export default {
       })
     },
     addIsolatePersonnelInfo() {
+      this.addInfo.startTime = this.dateFormat(this.addInfo.startTime)
       console.log(this.addInfo)
+      NewIsolatePre(this.addInfo).then(res => {
+        this.$Message.success('新增隔离人员成功！')
+      })
       this.close()
     }
   }

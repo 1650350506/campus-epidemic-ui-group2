@@ -32,12 +32,23 @@ export function GetCountyList(data) {
 }
 // 获取街道
 export function GetStreetList(data) {
+
+}
+
+export function UpdateRiskAreaByCode(data) {
   return request({
-    url: `${moduleName.doraemon_campus}/areaRisk/queryTownByCounty`,
-    method: 'get',
+    url: `${moduleName.doraemon_campus}/riskArea/updateRiskAreaByCode`,
+    method: 'post',
     urlType: 'test',
-    params: {
-      ...data
-    }
+    data
+  })
+}
+// 批量修改风险地区
+export function BatchUpdateRiskAreaByCode(data) {
+  return request({
+    url: `${moduleName.doraemon_campus}/riskArea/changeRiskAreaList`,
+    method: 'post',
+    urlType: 'test',
+    data
   })
 }

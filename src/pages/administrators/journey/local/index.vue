@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div  style="margin:84px 24px 0 24px">
     <Card :bordered="false"  class="card">
       <!--       这是面包屑组件-->
       <i-header-breadcrumb  ref="breadcrumb" />
@@ -12,15 +12,25 @@
           <Option v-for="item in gradeList" :value="item" :key="item">{{ item }}</Option>
         </Select>
       </div>
-      <Search title="请输入学生学号、学生姓名、二级学院" :keyValue="queryInfo.keyword" @selectFun="queryStuInfoByKey"></Search>
+      <Search title="请输入学生学号、学生姓名、二级学院" :keyValue="queryInfo.key" @selectFun="queryStuInfoByKey"></Search>
     </Card>
     <Card class="card-marginTop card">
+      <div class="batch-box">
+        <div class="select-text">已选择 <span style="color: #0e92e7; font-size: 18px">{{batchNum}}</span> 项</div>
+        <Poptip
+          confirm
+          title="您确认批量删除这些数据吗？"
+          @on-ok="batchSubmit"
+        >
+          <div class="btn">批量删除</div>
+        </Poptip>
+      </div>
       <div class="table-box">
-        <Table :border="false" :columns="columns" :data="data"></Table>
+        <Table :border="false" :columns="columns" :data="data" @on-selection-change="selectItem"></Table>
       </div>
       <Page :total="total" show-elevator show-sizer class-name="page"  @on-change="editPageNum" @on-page-size-change="editPageSize"></Page>
     </Card>
-    <CheckLocal :checkSwitch="showDialogVisible" @switchCheck="close"></CheckLocal>
+    <CheckLocal :checkSwitch="showDialogVisible" :checkList1="checkList1" :crossList="crossList" @switchCheck="close"></CheckLocal>
   </div>
 </template>
 
@@ -29,8 +39,11 @@ import iHeaderBreadcrumb from '@/layouts/basic-layout/header-breadcrumb'
 import Search from '@/components/top/search'
 import CheckLocal from './checkLocal/index'
 import {
-  GetStuList, DeleteStuInfo
+  GetLocalStuList,  DeleteLocalStuInfo
+  , GetLocalStuInfoByCode
 } from '@api/group/stuManage'
+import { BatchDelBatchDailyCodeList } from '../../../../api/administorators/journery'
+
 export default {
   name: 'index',
   components: {
@@ -38,11 +51,45 @@ export default {
   },
   data() {
     return {
+      batchNum: 0,
       selectModel: '默认',
       gradeList: [
         '默认', '只看中风险', '只看高风险'
       ],
       showDialogVisible: false,
+      outList: [],
+      checkList1: {
+        code: {
+          title: '学号', value: ''
+        },
+        name: {
+          title: '姓名', value: ''
+        },
+        sex: {
+          title: '性别', value: ''
+        },
+        idCard: {
+          title: '身份证', value: ''
+        },
+        secondCollage: {
+          title: '二级学院', value: ''
+        },
+        className: {
+          title: '班级', value: ''
+        },
+        phone: {
+          title: '手机号', value: ''
+        },
+        address: {
+          title: '居住地址', value: ''
+        },
+        emergencyContact: {
+          title: '联系人', value: ''
+        },
+        emergencyContactPhone: {
+          title: '联系人电话', value: ''
+        }
+      },
       dialogList: {
         code: {
           title: '学号', value: '199200118', isEdit: false
@@ -100,7 +147,7 @@ export default {
         },
         {
           title: '二级学院',
-          key: 'className'
+          key: 'secondCollage'
         },
         {
           title: '风险地区等级',
@@ -139,7 +186,7 @@ export default {
         },
         {
           title: '涉及地区',
-          key: 'riskArea',
+          key: 'whereDetail',
           align: 'center',
           width: 200
         },
@@ -164,21 +211,7 @@ export default {
                 on: {
                   click: () => {
                     this.showDialogVisible = true
-                    this.dialogList.code.value = params.row.code
-                    this.dialogList.name.value = params.row.name
-                    this.dialogList.age.value = params.row.age
-                    this.dialogList.sex.value = params.row.sex
-                    this.dialogList.phone.value = params.row.phone
-                    this.dialogList.id_card.value = params.row.id_card
-                    this.dialogList.dept_code.value = params.row.dept_code
-                    this.dialogList.class_name.value = params.row.class_name
-                    this.dialogList.address.value = params.row.address
-                    this.dialogList.emergencyContact.value = params.row.emergencyContact
-                    this.dialogList.emergencyContactPhone.value = params.row.emergencyContactPhone
-                    this.dialogList.address.isEdit = false
-                    this.dialogList.phoneNumber.isEdit = false
-                    this.dialogList.emergencyContact.isEdit = false
-                    this.dialogList.emergencyContactPhone.isEdit = false
+                    this.getLocalStuInfoByCode(params.row.code)
                   }
                 }
               }, '查看'),
@@ -223,16 +256,35 @@ export default {
       queryInfo: {
         pageNum: 1,
         pageSize: 10,
-        keyword: '',
-        riskLevel: ''
+        key: '',
+        risk: null
       },
-      total: 0
+      total: 0,
+      batchList: [],
+      crossList: []
+
     }
   },
   created() {
-    this.getStuList()
+    this.getLocalStuList()
   },
   methods: {
+    selectItem(e) {
+      this.batchList = []
+      e.forEach((item, index) => {
+        console.log(item)
+        this.batchList.push(item.code)
+      })
+    },
+    batchSubmit() {
+      const data = {
+        codes: this.batchList
+      }
+      BatchDelBatchDailyCodeList(data).then(() => {
+        this.$Message.success('批量删除学生本市行程信息成功！')
+        this.getLocalStuList()
+      })
+    },
     close() {
       this.showDialogVisible = false
     },
@@ -241,26 +293,26 @@ export default {
     },
     // 通过学生学号删除
     deleteStuInfoByCode(code) {
-      DeleteStuInfo({ code: code }).then((res) => {
-        this.$Message.success('删除成功！')
-        this.getStuList()
+      DeleteLocalStuInfo({ code: code }).then((res) => {
+        this.$Message.success('删除本市学生信息成功！')
+        this.getLocalStuList()
       })
     },
     // 通过等级查询
     queryListByGrade(grade) {
       if (grade === '默认') {
-        this.queryInfo.riskLevel = ''
+        this.queryInfo.risk = null
       } else if (grade === '只看中风险') {
-        this.queryInfo.riskLevel = '1'
+        this.queryInfo.risk = 1
       } else if (grade === '只看高风险') {
-        this.queryInfo.riskLevel = '2'
+        this.queryInfo.risk = 2
       }
-      this.getStuList()
-      console.log(grade)
+      this.getLocalStuList()
     },
     // 获得学生基本信息
-    getStuList() {
-      GetStuList(this.queryInfo).then((res) => {
+    getLocalStuList() {
+      GetLocalStuList(this.queryInfo).then((res) => {
+        console.log(res)
         this.data = res.data
         this.total = res.total
       })
@@ -268,18 +320,48 @@ export default {
     // 关键字查询
     queryStuInfoByKey(e) {
       this.data = []
-      this.queryInfo.keyword = e
-      this.getStuList()
+      this.queryInfo.key = e
+      this.getLocalStuList()
     },
     // 选择页码
     editPageNum(e) {
       this.queryInfo.pageNum = e
-      this.getStuList()
+      this.getLocalStuList()
     },
     // 选择当页最大条数
     editPageSize(e) {
       this.queryInfo.pageSize = e
-      this.getStuList()
+      this.getLocalStuList()
+    },
+    //   点击查看里面的基本信息
+    getLocalStuInfoByCode(code) {
+      GetLocalStuInfoByCode({ code: code }).then(res => {
+        console.log(res)
+        this.checkList1.code.value = res.code
+        this.checkList1.name.value = res.name
+        this.checkList1.sex.value = res.sex
+        if (res.sex === 0) {
+          this.checkList1.sex.value = '男'
+        } else if (res.sex === 1) {
+          this.checkList1.sex.value = '女'
+        }
+        this.checkList1.phone.value = res.phone
+        this.checkList1.idCard.value = res.idCard
+        this.checkList1.secondCollage.value = res.secondCollage
+        this.checkList1.className.value = res.className
+        this.checkList1.address.value = res.address
+        this.checkList1.emergencyContact.value = res.emergencyContact
+        this.checkList1.emergencyContactPhone.value = res.emergencyContactPhone
+        this.crossList = res.crossRecirdList
+        res.dailyRecordList.forEach(item => {
+          this.outList.push({
+            startTime: item.startTime,
+            endTime: item.endTIme,
+            travelRecord: item.travelRecord.toString(),
+            whereDetail: item.whereDetail
+          })
+        })
+      })
     }
   }
 }
@@ -371,6 +453,25 @@ export default {
     flex-basis: 64%;
     height: 90px;
     //border: 1px solid #5c6b77;
+  }
+}
+.batch-box {
+  border: 1px solid #afd0ee;
+  background: #E6F7FF;
+  margin: 10px 0;
+  height: 40px;
+  border-radius: 5px;
+  display: flex;
+  align-items: center;
+  .select-text {
+    margin-left: 1.2vw;
+  }
+  .btn {
+    cursor: pointer;
+    margin-left: 1vw;
+    background: transparent;
+    border: 0;
+    color: #1e93ff;
   }
 }
 </style>

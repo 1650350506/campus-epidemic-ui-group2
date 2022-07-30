@@ -46,22 +46,6 @@ const frameIn = [
         name: 'highestPre',
         component: () => import('@/pages/administrators/college')
       },
-      // {
-      //   path: '/journey',
-      //   name: '',
-      //   children: [
-      //     {
-      //       path: '/local',
-      //       name: '',
-      //       component: () => import('@/pages/administrators/journey/local')
-      //     },
-      //     {
-      //       path: '/cross',
-      //       name: '',
-      //       component: () => import('@/pages/administrators/journey/cross')
-      //     }
-      //   ]
-      // },
       {
         path: '/riskPreMessage',
         name: 'riskPreMessage',
@@ -81,6 +65,21 @@ const frameIn = [
         path: '/waitIsolation',
         name: 'waitIsolation',
         component: () => import('@/pages/administrators/riskpremanage/waitisolation')
+      },
+      {
+        path: '/back',
+        name: 'back',
+        component: () => import('@/pages/student/back')
+      },
+      {
+        path: '/leave',
+        name: 'leave',
+        component: () => import('@/pages/student/leave')
+      },
+      {
+        path: '/record',
+        name: 'record',
+        component: () => import('@/pages/student/record')
       },
       {
         path: 'log',

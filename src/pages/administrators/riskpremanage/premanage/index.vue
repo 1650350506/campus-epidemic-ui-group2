@@ -1,14 +1,16 @@
 <template>
-  <div>
+  <div  style="margin:84px 24px 0 24px">
     <Card :bordered="false"  class="card">
       <!--       这是面包屑组件-->
       <i-header-breadcrumb  ref="breadcrumb"  />
-      <h2 style="margin-top: 10px;">你好！防控人员 WBG The shy!!!!!!!</h2>
+      <h2 style="margin-top: 10px;">你好！管理员</h2>
     </Card>
     <div class="top-card">
       <Card class="card" v-for="(item, index) in topList" :key="index">
-        <h1>{{item.name}}</h1>
-        <h1>{{item.num}}</h1>
+        <div @click="showList(index)">
+          <h1>{{item.name}}</h1>
+          <h1>{{item.num}}</h1>
+        </div>
       </Card>
     </div>
     <Card class="card card-marginTop">
@@ -19,10 +21,10 @@
       <div class="table-box">
         <Table :border="false"  :columns="columns" :data="data" class="table"></Table>
       </div>
-      <Page :total="100" show-elevator show-sizer class-name="page"  @on-change="editPageNum" @on-page-size-change="editPageSize"></Page>
+      <Page :total="total" show-elevator show-sizer class-name="page"  @on-change="editPageNum" @on-page-size-change="editPageSize"></Page>
     </Card>
-    <CheckContent :checkSwitch="showDialogVisible" :checkList1="checkList1" @switchCheck="close"></CheckContent>
-    <AddContent :addSwitch="updateDialogVisible" :addList1="addInfoList1" @switchAdd="closeByAdd"></AddContent>
+    <CheckContent :checkSwitch="showDialogVisible" :msgList="msgData" :serviceList="serviceData" :checkList1="checkList1" @switchCheck="close"></CheckContent>
+    <AddContent :addSwitch="updateDialogVisible" :msgList="msgData" :addList1="addInfoList1" @switchAdd="closeByAdd" @update="updateRecord"></AddContent>
     <NewContent :newSwitch="addDialogVisible" @addClose="closeByNew"></NewContent>
   </div>
 </template>
@@ -33,7 +35,7 @@ import Search from '@/components/top/search'
 import CheckContent from './checkModal'
 import AddContent from './addModal'
 import NewContent from './../newPre'
-import { DeleteIsolationInfo, GetIsolationInfoList, GetIsolationInfoListByCode } from '@api/personnel/riskpremanage'
+import { DeleteIsolationInfo, GetIsolationInfoList, GetIsolationInfoListByCode, GetTreatedTotal, GetQuarantinedTotal, GetToBeTotal, GetIsolatedTotal } from '@api/personnel/riskpremanage'
 
 export default {
   name: 'index',
@@ -43,10 +45,10 @@ export default {
   data() {
     return {
       topList: [
-        { name: '待隔离', num: 43 },
-        { name: '已隔离', num: 8 },
-        { name: '治疗中', num: 100 },
-        { name: '隔离结束', num: 10 }
+        { name: '待隔离', num: -1 },
+        { name: '已隔离', num: -1 },
+        { name: '治疗中', num: -1 },
+        { name: '隔离结束', num: -1 }
       ],
       nucleicResult: [
         {
@@ -143,18 +145,9 @@ export default {
         state: {
           title: '隔离状态', value: '', isEdit: false
         },
-        // nucleic_result: {
-        //   title: '核酸结果', value: '', isEdit: false
-        // },
         temperature: {
           title: '体温', value: 0, isEdit: false
         }
-        // associates: {
-        //   title: '关联防疫人员', value: '', isEdit: false
-        // },
-        // nucleic_time: {
-        //   title: '核酸时间', value: '', isEdit: false
-        // }
       },
       columns: [
         {
@@ -251,7 +244,9 @@ export default {
                 },
                 on: {
                   click: () => {
+                    this.getIsolationInfoListByCode(params.row.code)
                     this.getProtectorNameByCode(params.row.code)
+                    this.getIsolationServiceInfoList(params.row.code)
                     this.showDialogVisible = true
                     console.log(params.row)
                     this.checkList1.name.value = params.row.name
@@ -322,6 +317,7 @@ export default {
                   click: () => {
                     this.updateDialogVisible = true
                     this.addInfoList1.code.value = params.row.code
+                    this.getIsolationInfoListByCode(params.row.code)
                     this.addInfoList1.name.value = params.row.name
                     this.addInfoList1.sex.value = params.row.sex
                     this.addInfoList1.stuCollege.value = params.row.stuCollege
@@ -340,6 +336,8 @@ export default {
         }
       ],
       data: [],
+      msgData: [],
+      serviceData: [],
       queryInfo: {
         pageNum: 1,
         pageSize: 10,
@@ -351,6 +349,10 @@ export default {
   },
   created() {
     this.getIsolationInfoList()
+    this.getTreatedTotal()
+    this.getTobeTotal()
+    this.getQuarantinedTotal()
+    this.getIsolatedTotalTotal()
   },
   methods: {
     close(e) {
@@ -366,39 +368,34 @@ export default {
     dateFormat(time) {
       const date = new Date(time)
       const year = date.getFullYear()
-      /* 在日期格式中，月份是从0开始的，因此要加0
-       * 使用三元表达式在小于10的前面加0，以达到格式统一  如 09:11:05
-       * */
       const month = date.getMonth() + 1 < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1
       const day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate()
       const hours = date.getHours() < 10 ? `0${date.getHours()}` : date.getHours()
       const minutes = date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes()
       const seconds = date.getSeconds() < 10 ? `0${date.getSeconds()}` : date.getSeconds()
       // 拼接
-      return `${year}-${month}-${day}`
+      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
     },
     // 获得隔离人员的关联人员
     getProtectorNameByCode(code) {
       const queryInfo = {
         pageNum: '1',
-        pageSize: '1',
+        pageSize: '10',
         code: code
       }
       GetIsolationInfoListByCode(queryInfo).then(res => {
-        this.checkList1.protectorName.value = res.data[0].protectorName
+        // this.checkList1.protectorName.value = res.data[0].protectorName
+        console.log(1)
+        console.log(res)
+        // console.log(this.checkList1.protectorName.value)
+        console.log(1)
       })
     },
     // 查询已隔离或者未隔离信息
     getIsolationInfoList() {
       GetIsolationInfoList(this.queryInfo).then((res) => {
-        console.log(res)
-        // res.data.forEach(function (item) {
-        //   item.startTime = this.dateFormat(item.startTime)
-        // })
         this.data = res.data
         this.total = res.total
-        console.log(2)
-        console.log(this.data)
       })
     },
     // // 解除隔离
@@ -411,21 +408,89 @@ export default {
         this.getIsolationInfoList()
       })
     },
+    // 获取隔离信息
+    getIsolationInfoListByCode(code) {
+      const queryInfo = {
+        pageNum: '1',
+        pageSize: '10',
+        code: code
+      }
+      this.msgData = []
+      GetIsolationInfoListByCode(queryInfo).then(res => {
+        res.data.forEach(item => {
+          this.msgData.push({
+            code: item.code,
+            nucleicAcidTime: item.nucleicAcidTime,
+            nucleicAcidKey: item.nucleicAcidKey,
+            temperature: item.temperature
+          })
+        })
+        console.log(this.msgData)
+      })
+    },
+    // 服务记录
+    getIsolationServiceInfoList(code) {
+      const queryInfo = {
+        pageNum: '1',
+        pageSize: '10',
+        keyword: code,
+        state: ''
+      }
+      GetIsolationInfoList(queryInfo).then(res => {
+        this.serviceData = []
+        res.data.forEach(item => {
+          this.serviceData.push({
+            code: item.code,
+            startTime: item.startTime,
+            endTime: item.endTime,
+            isolationReason: item.isolationReason
+          })
+        })
+      })
+    },
+    // 返回子组件最新的隔离记录
+    updateRecord(e) {
+      this.getIsolationInfoListByCode(e)
+    },
     // 关键字查询
     queryQuarantinedInfoByKey(e) {
       this.data = []
       this.queryInfo.keyword = e
-      this.getStuList()
+      this.getIsolationInfoList()
     },
     // 选择页码
     editPageNum(e) {
       this.queryInfo.pageNum = e
-      this.getStuList()
+      this.getIsolationInfoList()
     },
     // 选择当页最大条数
     editPageSize(e) {
       this.queryInfo.pageSize = e
-      this.getStuList()
+      this.getIsolationInfoList()
+    },
+    getTreatedTotal() {
+      GetTreatedTotal().then(res => {
+        this.topList[2].num = res.field
+      })
+    },
+    getTobeTotal() {
+      GetToBeTotal().then(res => {
+        this.topList[0].num = res.field
+      })
+    },
+    getQuarantinedTotal() {
+      GetQuarantinedTotal().then(res => {
+        this.topList[1].num = res.field
+      })
+    },
+    getIsolatedTotalTotal() {
+      GetIsolatedTotal().then(res => {
+        this.total[3].num = res.field
+      })
+    },
+    showList(index) {
+      this.queryInfo.state = index
+      this.getIsolationInfoList()
     }
   }
 }
@@ -470,7 +535,6 @@ export default {
     .title {
       flex-basis: 30%;
       text-align-last: justify;
-      //text-justify: distribute-all-lines;
     }
     .core {
       flex-basis: 46%;

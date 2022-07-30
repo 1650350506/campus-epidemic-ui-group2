@@ -26,11 +26,4 @@ export function AccountReg(data) {
     }
   })
 }
-// export function Demo(data) {
-//   return request({
-//     url: `${moduleName.doraemon_demo}/analysis/total`,
-//     method: 'get',
-//     urlType: 'test',
-//     data
-//   })
-// }
+

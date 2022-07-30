@@ -1,12 +1,12 @@
 <template>
-  <div>
+  <div  style="margin:84px 24px 0 24px">
     <Card :bordered="false" class="card" style="margin-top: 0">
       <!--       这是面包屑组件-->
       <i-header-breadcrumb  ref="breadcrumb" />
       <h2 class="bread-title">你好！ 管理员！</h2>
     </Card>
     <Card class="card card-marginTop">
-      <Search title="请输入职工工号、职工姓名、二级学院" :keyValue="queryInfo.keyword" @selectFun="queryFacultyInfoByKey"></Search>
+      <Search title="请输入职工工号、职工姓名、二级学院" :keyValue="queryInfo.key" @selectFun="queryFacultyInfoByKey"></Search>
       <div slot="extra">
         查询健康码颜色
         <Select v-model="healthyModel" style="width:200px" @on-change="queryListByHealthy(healthyModel)">
@@ -18,29 +18,19 @@
       <Button type="primary" @click="addDialogVisible = true">+ 新增</Button>
       <div class="batch-box">
         <div class="select-text">已选择 <span style="color: #0e92e7; font-size: 18px">{{batchNum}}</span> 项</div>
-        <Button class="btn" @click="batchSubmit" size="small">批量提交</Button>
+        <Poptip
+          confirm
+          title="您确认批量删除这些数据吗？"
+          @on-ok="batchSubmit"
+        >
+          <div class="btn">批量提交</div>
+        </Poptip>
       </div>
       <div class="table-box">
-        <Table :columns="columns" :data="data" :border="false" class="table"></Table>
+        <Table :columns="columns" :data="data" :border="false" class="table" @on-selection-change="selectItem"></Table>
       </div>
-      <Page :total="200" show-elevator show-sizer class-name="page" :page-size="queryInfo.pageSize" :current="queryInfo.pageNum" @on-change="editPageNum" @on-page-size-change="editPageSize"></Page>
+      <Page :total="total" show-elevator show-sizer class-name="page" :page-size="queryInfo.pageSize" :current="queryInfo.pageNum"  @on-change="editPageNum" @on-page-size-change="editPageSize"></Page>
     </Card>
-    <!--    <Modal-->
-    <!--      v-model="updateDialogVisible"-->
-    <!--      @on-ok="handleUpdateUserInfo"-->
-    <!--      @on-cancel="updateDialogVisible = false"-->
-    <!--      class-name="vertical-center-modal"-->
-    <!--      width="720"-->
-    <!--    >-->
-    <!--      <p slot="header" style="text-align: center; font-size: 20px">教职工基本信息</p>-->
-    <!--      <div class="modal-container">-->
-    <!--        <div class="modal-item" v-for="(item, index) in dialogList" :key="index">-->
-    <!--          <div class="null"></div><div class="star" :style="item.isEdit ? {}: {opacity: 0}"></div><div class="title">{{item.title}}：</div>-->
-    <!--          <div class="core"> <Input v-if="item.isEdit" v-model="item.value" style="font-size: 18px"></Input><span v-else-if="item.isEdit&&item.title==='性别'">{{item.value ? '女': '男'}}</span><span v-else>{{item.value}}</span>-->
-    <!--          </div>-->
-    <!--        </div>-->
-    <!--      </div>-->
-    <!--    </Modal>-->
     <check-modal :display="showDialogVisible" :checkList1="dialogList" @displayClose="closeCheck"></check-modal>
     <edit-modal :editSwitch="updateDialogVisible" :editList1="dialogList" @editClose="closeEdit"></edit-modal>
     <add-faculty :showSwitch="addDialogVisible" @switchAdd="close"></add-faculty>
@@ -53,7 +43,9 @@ import Search from '@/components/top/search'
 import addFaculty from './addModal'
 import checkModal from './check'
 import editModal from './edit'
-import { DeleteFacultyInfoByCode, GetFacultyInfo } from '@api/administorators/manage'
+import { DeleteFacultyInfoByCode, GetFacultyInfo, GetFacultyInfoByCode } from '@api/administorators/manage'
+import { BatchDeleteFacultyInfoByCodeList } from '../../../api/administorators/manage'
+
 export default {
   name: 'index',
   components: {
@@ -62,11 +54,11 @@ export default {
   data() {
     return {
       batchNum: 0,
+      total: 0,
       queryInfo: {
         pageNum: 1,
         pageSize: 10,
-        keyword: '',
-        healthy_color: null
+        key: ''
       },
       healthyModel: '默认',
       healthyList: ['默认', '绿码', '黄码', '红码'],
@@ -92,18 +84,18 @@ export default {
         },
         {
           title: '当前职务',
-          key: 'system_post'
+          key: 'systemPost'
         },
         {
           title: '二级学院',
-          key: 'dept_code'
+          key: 'secondCollage'
         },
         {
           title: '健康吗颜色',
           key: 'healthy_color',
           render: (h, params) => {
-            let types
-            let typeName
+            let types = 'success'
+            let typeName = '绿码'
             if (params.row.healthy_color === '绿码') {
               types = 'success'
               typeName = '绿码'
@@ -177,21 +169,8 @@ export default {
                 },
                 on: {
                   click: () => {
+                    this.getFacultyInfoByCode(params.row.code)
                     this.showDialogVisible = true
-                    this.dialogList.code.value = params.row.code
-                    this.dialogList.name.value = params.row.name
-                    this.dialogList.sex.value = params.row.sex
-                    this.dialogList.phone.value = params.row.phone
-                    this.dialogList.id_card.value = params.row.id_card
-                    this.dialogList.dept_code.value = params.row.dept_code
-                    this.dialogList.system_post.value = params.row.system_post
-                    this.dialogList.school_post.value = params.row.school_post
-                    // this.dialogList.enter_time.value = params.row.enter_time
-                    // this.dialogList.leave_time.value = params.row.leave_time
-                    // this.dialogList.healthy_color.value = params.row.healthy_color
-                    this.dialogList.phone.isEdit = false
-                    this.dialogList.system_post.isEdit = false
-                    this.dialogList.school_post.isEdit = false
                   }
                 }
               }, '查看'),
@@ -235,58 +214,7 @@ export default {
           }
         }
       ],
-      data: [
-        {
-          code: 199200118,
-          name: '张三1',
-          sex: '男',
-          id_card: '2131231231231',
-          phone: '123123213',
-          system_post: '防疫小组组长',
-          school_post: '校长',
-          dept_code: '计算机学院',
-          enter_time: '2022-05-02',
-          leave_time: '2022-04-11',
-          healthy_color: '红码'
-        },
-        {
-          code: 199200118,
-          name: '张三1',
-          sex: 1,
-          id_card: '2131231231231',
-          phone: '123123213',
-          system_post: '防疫小组组长',
-          school_post: '校长',
-          dept_code: '计算机学院',
-          enter_time: '2022-05-02',
-          leave_time: '2022-04-11',
-          healthy_color: 0
-        },
-        {
-          code: 199200118,
-          name: '张三1',
-          sex: 1,
-          id_card: '2131231231231',
-          phone: '123123213',
-          system_post: '防疫小组组长',
-          school_post: '校长',
-          dept_code: '计算机学院',
-          enter_time: '2022-05-02',
-          leave_time: '2022-04-11',
-          healthy_color: 2
-        },
-        {
-          code: 199200118,
-          name: '张三1',
-          age: '18',
-          sex: 1,
-          id_card: '12312312',
-          phone: '123123213',
-          system_post: '防疫小组组长',
-          school_post: '校长',
-          dept_code: '计算机学院'
-        }
-      ],
+      data: [],
       //  对话框显示
       is_Edit: false,
       showDialogVisible: false,
@@ -303,19 +231,19 @@ export default {
         sex: {
           title: '性别', value: '', isEdit: false
         },
-        id_card: {
+        idCard: {
           title: '身份证', value: '', isEdit: false
         },
-        dept_code: {
+        deptCode: {
           title: '二级学院', value: '', isEdit: false
         },
         phone: {
           title: '手机号', value: '', isEdit: true
         },
-        system_post: {
+        systemPost: {
           title: '当前职务', value: '', isEdit: true
         },
-        school_post: {
+        schoolPost: {
           title: '校内职务', value: '', isEdit: true
         }
       },
@@ -329,10 +257,19 @@ export default {
         roles: [1547742937243193372],
         selfAccount: false,
         switchUser: false
-      }
+      },
+      batchList: []
     }
   },
+  created() {
+    this.getFacultyList()
+  },
   methods: {
+    batchSubmit() {
+      BatchDeleteFacultyInfoByCodeList(this.batchList).then(() => {
+        this.$Message.success('批量删除防控人员成功')
+      })
+    },
     close(e) {
       this.addDialogVisible = false
     },
@@ -342,19 +279,11 @@ export default {
     closeEdit() {
       this.updateDialogVisible = false
     },
-    handleUpdateUserInfo() {
-      this.dialogVisible = false
-      const results = {
-        code: this.dialogList.code.value,
-        phone: this.dialogList.phone.value,
-        system_post: this.dialogList.system_post.value,
-        school_post: this.dialogList.school_post.value
-      }
-      console.log(results)
-    },
     //  删除工作人员信息
     deleteFacultyInfoByCode(code) {
-      DeleteFacultyInfoByCode({ code: code }).then(res => {
+      const data = { code: code }
+      DeleteFacultyInfoByCode(data).then(res => {
+        this.$Message.success('删除防控人员成功')
         console.log(res)
       })
     },
@@ -373,21 +302,50 @@ export default {
     },
     // 查询工作人员列表
     getFacultyList() {
-      GetFacultyInfo.then((res) => {
-        console.log(res)
+      GetFacultyInfo(this.queryInfo).then((res) => {
+        this.total = res.total
+        this.data = res.data
         /* 这里把数据里面的性别和健康码颜色都文字化 */
+      })
+    },
+    // 查询信息信息
+    getFacultyInfoByCode(code) {
+      GetFacultyInfoByCode({ code: code }).then(res => {
+        console.log(res)
+        this.dialogList.code.value = res.code
+        this.dialogList.name.value = res.name
+        if (res.sex === 0) {
+          this.dialogList.sex.value = '男'
+        } else if (res.sex === 1) {
+          this.dialogList.sex.value = '女'
+        }
+        this.dialogList.idCard.value = res.idCard
+        this.dialogList.deptCode.value = res.deptCode
+        this.dialogList.phone.value = res.phone
+        this.dialogList.systemPost.value = res.systemPost
+        this.dialogList.schoolPost.value = res.schoolPost
       })
     },
     //  关键字查询工作人员信息
     queryFacultyInfoByKey(e) {
       this.data = []
-      this.queryInfo.keyword = e
+      this.queryInfo.key = e
+      this.getFacultyList()
+    },
+    selectItem(e) {
+      this.batchList = []
+      e.forEach((item, index) => {
+        console.log(item)
+        this.batchList.push(item.code)
+      })
     },
     editPageNum(e) {
       this.queryInfo.pageNum = e
+      this.getFacultyList()
     },
     editPageSize(e) {
       this.queryInfo.pageSize = e
+      this.getFacultyList()
     }
   }
 }
@@ -431,6 +389,7 @@ i {
     margin-left: 1.2vw;
   }
   .btn {
+    cursor: pointer;
     margin-left: 1vw;
     background: transparent;
     border: 0;

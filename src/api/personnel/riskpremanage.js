@@ -39,9 +39,9 @@ export function DeleteIsolationInfo(data) {
 export function EditIsolationState(data) {
   return request({
     url: `${moduleName.doraemon_campus}/riskPersonnel/notice`,
-    method: 'post',
+    method: 'put',
     urlType: 'test',
-    params: data
+    params: { ...data }
   })
 }
 
@@ -51,5 +51,57 @@ export function GetEpidemicPreventionPersonnel() {
     url: `${moduleName.doraemon_campus}/areaPersonnel/getEpidemicPreventionPersonnel`,
     method: 'get',
     urlType: 'test'
+  })
+}
+// 添加隔离记录
+export function AddIsolationRecord(data) {
+  console.log('data', data)
+  return request({
+    url: `${moduleName.doraemon_campus}/riskPersonnel/addIsolaterecord`,
+    method: 'post',
+    urlType: 'test',
+    data
+  })
+}
+
+// 获得卡片的数据（治疗中）
+export function GetTreatedTotal() {
+  return request({
+    url: `${moduleName.doraemon_campus}/areaPersonnel/selectPeopleTreatedNumber`,
+    method: 'get',
+    urlType: 'test'
+  })
+}
+// 获得卡片的数据（待隔离）
+export function GetToBeTotal() {
+  return request({
+    url: `${moduleName.doraemon_campus}/areaPersonnel/toBeIsolateperson`,
+    method: 'get',
+    urlType: 'test'
+  })
+}
+// 获得卡片的数据（已隔离）
+export function GetQuarantinedTotal() {
+  return request({
+    url: `${moduleName.doraemon_campus}/areaPersonnel/QuarantinedIsolateperson`,
+    method: 'get',
+    urlType: 'test'
+  })
+}
+// 获得卡片隔离结束数据
+export function GetIsolatedTotal() {
+  return request({
+    url: `${moduleName.doraemon_campus}/areaPersonnel/selectIsolatedPersonEndNumber`,
+    method: 'get',
+    urlType: 'test'
+  })
+}
+// 新增隔离人员
+export function NewIsolatePre(data) {
+  return request({
+    url: `${moduleName.doraemon_campus}/riskPersonnel/addIsolatePersonnel`,
+    method: 'post',
+    urlType: 'test',
+    data
   })
 }

@@ -1,9 +1,9 @@
 <template>
-  <div>
+  <div style="margin:84px 24px 0 24px">
     <Card :bordered="false"  class="card">
       <!--       这是面包屑组件-->
       <i-header-breadcrumb  ref="breadcrumb" />
-      <h2>你好！ 管理员！</h2>
+      <h2 style="margin-top: 10px;">你好！ 管理员！</h2>
     </Card>
     <!--        <i class="ivu-icon ivu-icon-ios-refresh" slot="extra"></i>-->
     <div class="chart-top">
@@ -56,6 +56,8 @@ import {
   GetNewIsolationTotal,
   GetRelieveIsolationTotal
 } from '@api/administorators/analysis'
+import { GetUserInfo } from '../../../api/system/user'
+
 const echarts = require('echarts')
 
 export default {
@@ -66,7 +68,7 @@ export default {
   data() {
     return {
       bgColorList: [
-        '#FB9528', '#53A2FF', '#48D684'
+        '#f4a858', '#7cb5f8', '#7df7b0'
       ],
       topList: [
         { name: '总隔离人数', num: 0, icon: 'iconfont icon-computeChart' },

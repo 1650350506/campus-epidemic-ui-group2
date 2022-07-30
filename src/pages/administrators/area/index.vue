@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div  style="margin:84px 24px 0 24px">
     <Card :bordered="false"  class="card">
       <!--       这是面包屑组件-->
       <i-header-breadcrumb  ref="breadcrumb" />
@@ -14,8 +14,7 @@
           <Cascader style="width: 150px; margin: 0 10px 0 5px" :data="countyData" v-model="countyValue" placeholder="请选择区县" @on-change="loadData"></Cascader>
           <Cascader style="width: 150px; margin: 0 10px 0 5px" :data="streetData" v-model="streetValue" placeholder="请选择街道" @on-change="loadData"></Cascader>
         </div>
-        <Button class="btn" type="primary">查询</Button>
-        <Button>重置</Button>
+        <Button @click="reset">重置</Button>
       </div>
     </Card>
     <Card class="card-marginTop card">
@@ -27,7 +26,13 @@
             <Radio  v-for="(item, index) in riskGradeList" :key="index" :label="item"></Radio>
           </RadioGroup>
         </div>
-        <Button class="btn" type="ghost" @click="batchSubmit">批量提交</Button>
+        <Poptip
+          confirm
+          title="您确认批量提交这些数据吗？"
+          @on-ok="batchSubmit"
+        >
+          <div class="btn">批量提交</div>
+        </Poptip>
       </div>
       <div class="table-box"> <Table  :columns="columns2" :data="data2" :border="false" class="table" @on-selection-change="selectItem"></Table></div>
       <Page :total="100" show-elevator show-sizer class-name="page"></Page>
@@ -38,7 +43,8 @@
 <script>
 
 import iHeaderBreadcrumb from '@/layouts/basic-layout/header-breadcrumb'
-import { GetProvinceList, GetCityList, GetCountyList, GetStreetList } from '@api/administorators/riskArea'
+import { GetProvinceList, GetCityList, GetCountyList, GetStreetList, UpdateRiskAreaByCode } from '@api/administorators/riskArea'
+import { BatchUpdateRiskAreaByCode } from '../../../api/administorators/riskArea'
 
 export default {
   name: 'index',
@@ -73,7 +79,7 @@ export default {
         {
           title: '地区编号',
           align: 'left',
-          key: 'uid'
+          key: 'code'
         },
         {
           title: '地区名称',
@@ -85,12 +91,12 @@ export default {
           title: '风险等级',
           align: 'left',
           width: '340',
-          key: 'grade',
+          key: 'riskLevel',
           render: (h, params) => {
-            const arr = [{ grade: '低风险', checked: false },
-              { grade: '中风险', checked: false },
-              { grade: '高风险', checked: false }]
-            const temp = params.row.grade
+            const arr = [{ riskLevel: '低风险', checked: false },
+              { riskLevel: '中风险', checked: false },
+              { riskLevel: '高风险', checked: false }]
+            const temp = params.row.riskLevel
             if (temp === 0) {
               arr[0].checked = true
             } else if (temp === 1) {
@@ -103,12 +109,12 @@ export default {
             arr.forEach((item, index) => {
               CheckboxList.push(h('Radio', {
                 props: {
-                  label: item.grade,
+                  label: item.riskLevel,
                   value: item.checked
                 },
                 on: {
                   'on-change': (e) => {
-                    this.data2[params.index].grade = index
+                    this.data2[params.index].riskLevel = index
                   }
                 }
               }, item))
@@ -128,53 +134,67 @@ export default {
           key: 'action',
           align: 'center',
           render: (h, params) => {
-            return h('div', [
+            return h('div', [h('Poptip', {
+              props: {
+                placement: 'top-start',
+                confirm: true,
+                transfer: true,
+                title: '确定修改这些风险地区吗？'
+              },
+              on: {
+                'on-ok': () => {
+                  this.submitInfo(params.row)
+                },
+                // eslint-disable-next-line no-empty-function
+                'on-cancel': () => {
+                }
+              }
+            }, [
               h('Button', {
+                class: 'deleteHover',
                 props: {
                   size: 'small'
                 },
                 style: {
                   color: '#01b0ff',
-                  background: 'transparent',
+                  marginRight: '5px',
                   border: '0px'
                 },
                 on: {
-                  click: () => {
-                    this.submitInfo(params.row)
-                  }
                 }
               }, '提交')
+            ])
             ])
           }
         }
       ],
       data2: [
         {
-          uid: 199200118,
+          code: 199200118,
           name: '浙江省杭州市余杭区无常街道后山路',
-          grade: 0,
+          riskLevel: 0,
           update: '2022-05-01'
         },
         {
-          uid: 199200118,
+          code: 199200118,
           name: '浙江省杭州市余杭区无常街道后山路',
-          grade: 1,
+          riskLevel: 1,
           update: '2022-05-01'
         },
         {
-          uid: 199200118,
+          code: 199200118,
           name: '浙江省杭州市余杭区无常街道后山路',
-          grade: 2,
+          riskLevel: 2,
           update: '2022-05-01'
         },
         {
-          uid: 199200118,
+          code: 199200118,
           name: '浙江省杭州市余杭区无常街道后山路',
-          grade: 2,
+          riskLevel: 2,
           update: '2022-05-01'
         },
         {
-          uid: 199200118,
+          code: 199200118,
           name: '浙江省杭州市余杭区无常街道后山路',
           grade: 2,
           update: '2022-05-01'
@@ -192,8 +212,7 @@ export default {
           update: '2022-05-01'
         }
       ],
-      batchList: [
-      ]
+      batchList: []
     }
   },
   created() {
@@ -203,20 +222,22 @@ export default {
     // 批量提交
     batchSubmit() {
       console.log(this.riskGrade)
-      this.batchList.forEach((item) => {
-        item.risk_level = this.riskGrade
+      const data = {
+        list: this.batchList,
+        riskLevel: this.riskGrade
+      }
+      console.log(data)
+      BatchUpdateRiskAreaByCode(data).then(res => {
+        console.log(res)
+        this.$Message.success('批量修改风险地区成功！')
       })
-      console.log(this.batchList)
     },
     // 表格
     selectItem(e) {
       this.batchList = []
       e.forEach((item, index) => {
         console.log(item)
-        this.batchList.push({
-          code: item.uid,
-          risk_level: item.grade
-        })
+        this.batchList.push(item.code)
       })
       this.batchSum = this.batchList.length
     },
@@ -235,9 +256,13 @@ export default {
     submitInfo(info) {
       const RiskInfo = {
         code: info.code,
-        risk_level: info.risk_level
+        riskLevel: info.riskLevel
       }
-    //  post请求
+      console.log(RiskInfo)
+      //  post请求
+      UpdateRiskAreaByCode(RiskInfo).then(res => {
+        this.$Message('修改风险等级成功!')
+      })
     },
     getProvinceList() {
       const arrays = []
@@ -252,6 +277,12 @@ export default {
         })
         this.provinceData = arrays
       })
+    },
+    reset() {
+      this.provinceValue = ''
+      this.cityValue = ''
+      this.countyValue = ''
+      this.streetValue = ''
     },
     loadData(value, selectedData) {
       console.log(value[0])
@@ -351,6 +382,7 @@ export default {
     }
   }
   .btn {
+    cursor: pointer;
     margin-left: 1vw;
     border: 0;
     background: transparent;

@@ -69,7 +69,7 @@ export default {
           key: 'destinationInformation'
         },
         {
-          title: '途径地点',
+          title: '途经地点',
           key: 'waypoint'
         }
       ],
@@ -115,7 +115,6 @@ export default {
             waypoint: item.waypoint
           })
         })
-        // console.log(this.data)
       })
     }
   }

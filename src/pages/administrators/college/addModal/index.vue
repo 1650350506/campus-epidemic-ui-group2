@@ -49,9 +49,6 @@
         <div class="modal-item">
           <div class="null"></div><div class="title"><span>二级学院:</span></div><div class="star"></div>
           <div class="core"><Select v-model="addList1.dept_code" style="width:190px">
-<!--            <Option v-for="item in cityList" :value="item.value" :key="item">-->
-<!--              {{ item.label }}-->
-<!--            </Option>-->
           </Select>
           </div>
         </div>

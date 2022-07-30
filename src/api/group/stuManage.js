@@ -11,10 +11,43 @@ export function GetStuList(data) {
     }
   })
 }
+// 获得本市学生的基本信息
+export function GetLocalStuList(data) {
+  return request({
+    url: `${moduleName.doraemon_campus}/travelRecord/queryTravelRecordByKey`,
+    method: 'get',
+    urlType: 'test',
+    params: {
+      ...data
+    }
+  })
+}
 // 通过code 删除学生
 export function DeleteStuInfo(data) {
   return request({
     url: `${moduleName.doraemon_campus}/riskPersonnel/delStudentByCode`,
+    method: 'get',
+    urlType: 'test',
+    params: {
+      ...data
+    }
+  })
+}
+// 通过code 删除本市学生
+export function DeleteLocalStuInfo(data) {
+  return request({
+    url: `${moduleName.doraemon_campus}/travelRecord/delDailyByCode`,
+    method: 'get',
+    urlType: 'test',
+    params: {
+      ...data
+    }
+  })
+}
+// 本市的学生基本信息通过code获取
+export function GetLocalStuInfoByCode(data) {
+  return request({
+    url: `${moduleName.doraemon_campus}/travelRecord/queryDailyDetailByCode`,
     method: 'get',
     urlType: 'test',
     params: {

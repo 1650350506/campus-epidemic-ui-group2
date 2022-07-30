@@ -6,7 +6,11 @@ export function updateUser(data) {
   return request({
     url: `${moduleName.doraemon_user}/user/update`,
     method: 'post',
-    data
+    urlType: 'login',
+    headers: {
+      'Content-Type': 'application/json;charset=UTF-8'
+    },
+    data: JSON.stringify(data)
   })
 }
 
@@ -27,3 +31,11 @@ export function getVoByUserName(data) {
     }
   })
 }
+
+// export function GetUserInfo() {
+//   return request({
+//     url: `${moduleName.doraemon_code}/userAppResource/getUserInfo`,
+//     method: 'get',
+//     urlType: 'login'
+//   })
+// }

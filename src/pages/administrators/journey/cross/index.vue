@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div  style="margin:84px 24px 0 24px">
     <Card :bordered="false"  class="card">
       <!--       这是面包屑组件-->
       <i-header-breadcrumb  ref="breadcrumb" />
@@ -17,10 +17,16 @@
     <Card class="card-marginTop card">
       <div class="batch-box">
         <div class="select-text">已选择 <span style="color: #0e92e7; font-size: 18px">{{batchNum}}</span> 项</div>
-        <Button class="btn" @click="batchSubmit" size="small">删除</Button>
+        <Poptip
+          confirm
+          title="您确认批量删除这些数据吗？"
+          @on-ok="batchSubmit"
+        >
+          <div class="btn">批量删除</div>
+        </Poptip>
       </div>
       <div class="table-box">
-        <Table  :border="false" :columns="columns" :data="data" class="table"></Table>
+        <Table  :border="false" :columns="columns" :data="data" class="table" @on-selection-change="selectItem"></Table>
       </div>
       <Page :total="total" show-elevator show-sizer class-name="page"  @on-change="editPageNum" @on-page-size-change="editPageSize"></Page>
     </Card>
@@ -232,13 +238,23 @@ export default {
         keyword: '',
         riskLevel: ''
       },
-      total: 0
+      total: 0,
+      batchList: []
     }
   },
   created() {
     this.getStuList()
   },
   methods: {
+    selectItem(e) {
+      this.batchList = []
+      e.forEach((item, index) => {
+        console.log(item)
+        this.batchList.push(item.code)
+      })
+    },
+    batchSubmit() {
+    },
     // 查看对话框开关
     closeCheck() {
       this.showDialogVisible = false
@@ -397,6 +413,7 @@ export default {
     margin-left: 1.2vw;
   }
   .btn {
+    cursor: pointer;
     margin-left: 1vw;
     background: transparent;
     border: 0;

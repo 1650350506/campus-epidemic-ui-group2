@@ -54,21 +54,19 @@ service.interceptors.request.use(
     if (config.urlType === 'login') {
       config.baseURL = '/api'
       config.headers.Authorization = 'Basic dXNlcmNlbnRlcjoxMTg2MDQ1ZDU1OTlkZTZlZjJjYTI4MjM0N2E1NWNhMg=='
-    } else {
+    } else if (config.urlType === 'test') {
       config.baseURL = '/test'
       config.headers.Authorization = util.cookies.get('token')
     }
-    console.log(config)
     const mete = (config.meta || {})
     // 在请求发送之前做一些处理
     const token = util.cookies.get('token')
     // 让每个请求携带token-- ['X-Token']为自定义key 请根据实际情况自行修改
     config.headers.auth = `bearer ${token}`
-    if (config.method === 'post' && mete.isSerialize !== false) {
+    if (config.method === 'post' && mete.isSerialize !== false && config.urlType !== '/test') {
       config.data = serialize(config.data)
       // encode 解决提交中文乱码 post
       config.data = encodeURI(config.data)
-      console.log(config)
     }
     return config
   },
@@ -83,9 +81,10 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   response => {
     const { url } = response.config
-
+    console.log(response.data)
     // dataAxios 是 axios 返回数据中的 data
     const dataAxios = response.data
+    console.log(response)
     // 这个状态码是和后端约定的
     const { code } = dataAxios
 

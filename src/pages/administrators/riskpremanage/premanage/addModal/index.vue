@@ -8,11 +8,9 @@
       <p slot="header" style="text-align: left">添加隔离记录</p>
       <div class="model-box">
         <div class="top-box">
-          <div class="modal-item" v-for="(item, index) in addList1" :key="index">
+          <div class="modal-item" v-for="(item, index) in addList1" :key="index" v-show="item.title !== '关联防疫人员'">
             <div class="null"></div><div class="title">{{item.title}}:</div><div class="star"></div>
-            <div class="core"><Select v-if="item.title ==='关联防疫人员'" v-model="associatesModel" style="width:160px">
-              <Option v-for="item in associationList" :value="item.deptCode" :key="item">{{ item.name }}</Option>
-            </Select><span v-else>{{item.value}}</span></div>
+            <div class="core"><span>{{item.value}}</span></div>
           </div>
         </div>
         <div class="mid-box">
@@ -20,27 +18,33 @@
           <div style="flex-basis: 2%"></div>
           <div class="mid-box-right">
             <div class="add-condition">
-              <Date-picker type="datetime" placeholder="选择日期和时间" style="width: 200px"></Date-picker>
+              <Date-picker type="datetime" v-model="addInfo.nucleicAcidTime" placeholder="选择日期和时间" style="width: 200px"></Date-picker>
+              <div>关联防疫人员:
+                <Select  v-model="addInfo.protector" style="width:90px">
+                  <Option v-for="(item, index) in associationList" :value="item.deptCode" :key="index">{{ item.name }}</Option>
+                </Select>
+              </div>
               <div>核酸结果：
-                <Radio-group v-model="disabledGroup">
+                <Radio-group v-model="addInfo.nucleicAcidKey">
                   <Radio label="阴性" value="0"></Radio>
                   <Radio label="阳性" value="1"></Radio>
                 </Radio-group>
               </div>
               <div>
                 测温结果：
-                <Radio-group v-model="disabledGroup">
+                <Radio-group v-model="addInfo.temperature">
                   <Radio label="正常" value="36"></Radio>
                   <Radio label="异常" value="38"></Radio>
                 </Radio-group>
               </div>
-              <Button type="primary">添加</Button>
-              <br>
+            </div>
+            <div class="btn">
+              <Button type="primary" @click="addRecord">添加</Button>
             </div>
           </div>
         </div>
         <div class="footer-box">
-          <Table border :columns="columns" :data="data1" style="margin-top: 2em"></Table>
+          <Table border :columns="columns" size="small" :data="msgList" style="margin: 2em 0 0 2em;"></Table>
         </div>
       </div>
       <div slot="footer">
@@ -51,11 +55,15 @@
 </template>
 
 <script>
-import { GetEpidemicPreventionPersonnel, GetIsolationInfoListByCode } from '../../../../../api/personnel/riskpremanage'
+import {
+  AddIsolationRecord,
+  GetEpidemicPreventionPersonnel,
+  GetIsolationInfoList
+} from '../../../../../api/personnel/riskpremanage'
 
 export default {
   name: 'AddContent',
-  props: ['addSwitch', 'addList1'],
+  props: ['addSwitch', 'addList1', 'msgList'],
   data() {
     return {
       associationList: [],
@@ -63,54 +71,27 @@ export default {
       columns: [
         {
           title: '监测时间',
-          key: 'time'
+          key: 'nucleicAcidTime',
+          align: 'left',
+          width: '180'
         },
         {
           title: '核酸结果',
-          key: 'age'
+          align: 'left',
+          key: 'nucleicAcidKey'
         },
         {
           title: '测温结果',
-          key: 'address'
+          align: 'left',
+          key: 'temperature'
         },
         {
           title: '操作',
           key: 'action',
-          width: 200,
+          width: 150,
           align: 'center',
           render: (h, params) => {
             return h('div', [
-              h('Button', {
-                props: {
-                  // type: 'primary',
-                  size: 'small'
-                },
-                style: {
-                  marginRight: '5px',
-                  border: '0px',
-                  color: '#01b0ff'
-                },
-                on: {
-                  click: () => {
-                    // this.updateDialogVisible = true
-                    // this.dialogList.code.value = params.row.code
-                    // this.dialogList.name.value = params.row.name
-                    // this.dialogList.sex.value = params.row.sex
-                    // this.dialogList.phoneNumber.value = params.row.phoneNumber
-                    // this.dialogList.idCard.value = params.row.idCard
-                    // this.dialogList.deptName.value = params.row.deptName
-                    // this.dialogList.className.value = params.row.className
-                    // this.dialogList.address.value = params.row.address
-                    // this.dialogList.emergencyContact.value = params.row.emergencyContact
-                    // this.dialogList.emergencyContactPhone.value = params.row.emergencyContactPhone
-                    // // this.dialogList.seven_goto.value = params.row.seven_goto
-                    // this.dialogList.address.isEdit = true
-                    // this.dialogList.phoneNumber.isEdit = true
-                    // this.dialogList.emergencyContact.isEdit = true
-                    // this.dialogList.emergencyContactPhone.isEdit = true
-                  }
-                }
-              }, '修改'),
               [
                 h('Poptip', {
                   props: {
@@ -150,23 +131,12 @@ export default {
           }
         }
       ],
-      data1: [
-        {
-          name: '李小红',
-          age: 30,
-          address: '上海市浦东新区世纪大道'
-        },
-        {
-          name: '周小伟',
-          age: 26,
-          address: '深圳市南山区深南大道'
-        }
-      ],
+      data1: [],
       addInfo: {
         code: '',
-        protectorName: '',
-        nucleicAcidTime: '',
         nucleicAcidKey: 0,
+        nucleicAcidTime: '',
+        protector: '',
         temperature: 37
       }
     }
@@ -176,9 +146,30 @@ export default {
     this.getEpidemicPreventionPersonnel()
   },
   methods: {
+    dateFormat(time) {
+      const date = new Date(time)
+      const year = date.getFullYear()
+      /* 在日期格式中，月份是从0开始的，因此要加0
+       * 使用三元表达式在小于10的前面加0，以达到格式统一  如 09:11:05
+       * */
+      const month = date.getMonth() + 1 < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1
+      const day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate()
+      const hours = date.getHours() < 10 ? `0${date.getHours()}` : date.getHours()
+      const minutes = date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes()
+      const seconds = date.getSeconds() < 10 ? `0${date.getSeconds()}` : date.getSeconds()
+      // 拼接
+      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
+    },
+    getStuCode() {
+      if (this.msgList.length > 0) {
+        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
+        this.addInfo.code = this.msgList[0].code
+      }
+    },
     close() {
       this.$emit('switchAdd', false)
     },
+    // 获取全部的关联人员
     getEpidemicPreventionPersonnel() {
       GetEpidemicPreventionPersonnel().then(res => {
         res.field.forEach(item => {
@@ -189,14 +180,24 @@ export default {
         })
       })
     },
-    getIsolationInfoListByCode() {
-      const queryInfo = {
-        pageNum: '1',
-        pageSize: '10',
-        code: this.addList1.code
+    //  新增隔离记录
+    addRecord() {
+      this.getStuCode()
+      this.addInfo.nucleicAcidTime = this.dateFormat(this.addInfo.nucleicAcidTime)
+      if (this.addInfo.nucleicAcidKey === '阴性') {
+        this.addInfo.nucleicAcidKey = 0
+      } else if (this.addInfo.nucleicAcidKey === '阳性') {
+        this.addInfo.nucleicAcidKey = 1
       }
-      GetIsolationInfoListByCode(queryInfo).then( res => {
-        console.log(res)
+      if (this.addInfo.temperature === '正常') {
+        this.addInfo.temperature = 36
+      } else if (this.addInfo.temperature === '异常') {
+        this.addInfo.temperature = 38
+      }
+      console.log(this.addInfo)
+      AddIsolationRecord(this.addInfo).then(res => {
+        this.$Message.success('添加隔离记录成功')
+        this.$emit('update', this.addInfo.code)
       })
     }
   }
@@ -238,7 +239,9 @@ export default {
     }
   }
   .mid-box {
+    margin: 1em 0 0;
     display: flex;
+    //background: #cccdd7;
     .mid-box-left {
       margin-top: 1em;
       color: #050505;
@@ -248,6 +251,7 @@ export default {
       flex-basis: 20%;
     }
     .mid-box-right {
+      margin-top: 5%;
       flex-basis: 72%;
       .add-condition {
         margin-top: 1em;
@@ -262,5 +266,9 @@ export default {
   .footer-box {
     padding: 0 2em;
   }
+}
+.btn {
+  display: flex;
+  justify-content: end;
 }
 </style>

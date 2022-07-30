@@ -19,14 +19,14 @@
         <div class="mid-box">
           <div class="mid-box-left"></div>
           <div class="mid-box-right">
-            <Table border :columns="columns"  height="110" :data="data"></Table>
+            <Table border :columns="columns"  height="110" :data="crossList"></Table>
           </div>
         </div>
         <div class="model-list-title">日常出校信息</div>
         <div class="mid-box">
           <div class="mid-box-left"></div>
           <div class="mid-box-right">
-            <Table border :columns="columns1" size="small" height="110" :data="data1"></Table>
+            <Table border :columns="columns1" size="small" height="150" :data="data1"></Table>
           </div>
         </div>
       </div>
@@ -40,37 +40,34 @@
 <script>
 export default {
   name: 'checkLocal',
-  props: ['checkSwitch', 'checkList1'],
+  props: ['checkSwitch', 'checkList1', 'crossList'],
   data() {
     return {
       columns: [
         {
-          title: '检测时间',
-          key: 'name'
-        },
-        {
-          title: '核酸结果',
-          key: 'age'
-        },
-        {
-          title: '检测结果',
-          key: 'address'
+          title: '行程地点',
+          align: 'center'
         }
       ],
       columns1: [
         {
-          title: '隔离开始时间',
-          key: 'name'
+          title: '离校时间',
+          key: 'startTime'
         },
         {
-          title: '隔离结束时间',
-          key: 'age'
+          title: '入校时间',
+          key: 'endTime'
         },
         {
-          title: '隔离原因',
-          key: 'address'
+          title: '去向信息',
+          key: 'whereDetail'
+        },
+        {
+          title: '途经地点',
+          key: 'travelRecord'
         }
       ],
+      data: [],
       data1: [
         {
           name: '李小红',

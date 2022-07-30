@@ -22,3 +22,11 @@ export function GetOutSchoolList(data) {
     }
   })
 }
+export function BatchDelBatchDailyCodeList(data) {
+  return request({
+    url: `${moduleName.doraemon_campus}/travelRecord/delBatchDailyCodes`,
+    method: 'post',
+    urlType: 'test',
+    data
+  })
+}

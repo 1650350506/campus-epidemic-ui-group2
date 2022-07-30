@@ -1,9 +1,9 @@
 <template>
-  <div>
+  <div  style="margin:84px 24px 0 24px">
     <Card  :bordered="false"  class="card">
       <!--       这是面包屑组件-->
       <i-header-breadcrumb  ref="breadcrumb"  />
-      <h2 style="margin-top: 10px;">你好！ xx学院防控人员杨刚！</h2>
+      <h2 style="margin-top: 10px;">你好！管理员！</h2>
     </Card>
     <Card class="card">
       <Search title="请输入学生学号、学生姓名" :keyValue="queryInfo.keyword" @selectFun="queryWaitIsolationInfoBykey"></Search>
@@ -140,8 +140,9 @@ export default {
         code: code
       }
       EditIsolationState(data).then((res) => {
-        console.log(res)
-        console.log('修改隔离状态')
+        this.$Message.success('修改隔离状态成功!')
+        this.queryInfo.keyword = ''
+        this.getWaitIsolationInfoList()
       })
     },
     // 关键字查询隔离人员信息

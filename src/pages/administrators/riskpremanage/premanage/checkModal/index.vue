@@ -18,14 +18,14 @@
           <div class="mid-box-left">监测信息:</div>
           <div style="flex-basis: 4%"></div>
           <div class="mid-box-right">
-            <Table border :columns="columns" :data="data1" style="margin-top: 2em"></Table>
+            <Table border :columns="columns" :data="msgList" height="220" style="margin-top: 2em"></Table>
           </div>
         </div>
         <div class="mid-box">
           <div class="mid-box-left">服务记录:</div>
           <div style="flex-basis: 4%"></div>
           <div class="mid-box-right">
-            <Table border :columns="columns1" :data="data1" style="margin-top: 2em"></Table>
+            <Table border :columns="columns1" :data="serviceList" height="120" style="margin-top: 2em"></Table>
           </div>
         </div>
       </div>
@@ -41,35 +41,38 @@ import { GetIsolationInfoList } from '../../../../../api/personnel/riskpremanage
 
 export default {
   name: 'CheckContent',
-  props: ['checkSwitch', 'checkList1'],
+  props: ['checkSwitch', 'checkList1', 'msgList', 'serviceList'],
   data() {
     return {
       columns: [
         {
           title: '检测时间',
-          key: 'name'
+          key: 'nucleicAcidTime',
+          width: '180'
         },
         {
           title: '核酸结果',
-          key: 'age'
+          key: 'nucleicAcidKey'
         },
         {
           title: '检测结果',
-          key: 'address'
+          key: 'temperature'
         }
       ],
       columns1: [
         {
           title: '隔离开始时间',
-          key: 'name'
+          key: 'startTime',
+          width: '160'
         },
         {
           title: '隔离结束时间',
-          key: 'age'
+          key: 'endTime',
+          width: '160'
         },
         {
           title: '隔离原因',
-          key: 'address'
+          key: 'isolationReason'
         }
       ],
       data1: [
@@ -86,26 +89,15 @@ export default {
       ]
     }
   },
-  updated() {
-    this.getIsolationInfoList()
+  mounted() {
+    console.log(this.msgData)
+    console.log('这是查看')
   },
   methods: {
     close() {
       this.$emit('switchCheck', false)
-    },
-    // 服务记录
-    getIsolationInfoList() {
-      const queryInfo = {
-        pageNum: '1',
-        pageSize: '10',
-        keyword: this.checkList1.code.value,
-        state: ''
-      }
-      GetIsolationInfoList(queryInfo).then(res => {
-        console.log(res)
-        console.log('这是服务记录')
-      })
     }
+
   }
 }
 </script>
