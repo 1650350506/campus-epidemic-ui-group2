@@ -30,7 +30,7 @@
       </div>
       <Page :total="total" show-elevator show-sizer class-name="page"  @on-change="editPageNum" @on-page-size-change="editPageSize"></Page>
     </Card>
-    <CheckLocal :checkSwitch="showDialogVisible" :checkList1="checkList1" :crossList="crossList" @switchCheck="close"></CheckLocal>
+    <CheckLocal :checkSwitch="showDialogVisible" :checkList1="checkList1" :crossList="crossList" :outList="outList" @switchCheck="close"></CheckLocal>
   </div>
 </template>
 
@@ -42,7 +42,7 @@ import {
   GetLocalStuList,  DeleteLocalStuInfo
   , GetLocalStuInfoByCode
 } from '@api/group/stuManage'
-import { BatchDelBatchDailyCodeList } from '../../../../api/administorators/journery'
+import { BatchDelBatchDailyCodeList, BatchDelLocalBatchDailyCodeList } from '../../../../api/administorators/journery'
 
 export default {
   name: 'index',
@@ -196,7 +196,8 @@ export default {
           width: 200,
           align: 'center',
           render: (h, params) => {
-            return h('div', [
+            return h('div', {
+            }, [
               h('Button', {
                 props: {
                   // type: 'success',
@@ -275,12 +276,13 @@ export default {
         console.log(item)
         this.batchList.push(item.code)
       })
+      this.batchNum = this.batchList.length
     },
     batchSubmit() {
       const data = {
         codes: this.batchList
       }
-      BatchDelBatchDailyCodeList(data).then(() => {
+      BatchDelLocalBatchDailyCodeList(data).then(() => {
         this.$Message.success('批量删除学生本市行程信息成功！')
         this.getLocalStuList()
       })
@@ -356,11 +358,13 @@ export default {
         res.dailyRecordList.forEach(item => {
           this.outList.push({
             startTime: item.startTime,
-            endTime: item.endTIme,
+            endTime: item.endTime,
             travelRecord: item.travelRecord.toString(),
             whereDetail: item.whereDetail
           })
         })
+        console.log('out')
+        console.log(this.outList)
       })
     }
   }

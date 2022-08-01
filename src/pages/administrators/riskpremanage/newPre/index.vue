@@ -7,13 +7,13 @@
     :styles="{top: '20px'}"
   >
     <p slot="header" style="text-align: left; font-size: 20px; margin-left: 4%">添加隔离人员</p>
-    <Input v-model="queryValue" placeholder="请输入学号查询" style="width: 200px; margin-right: 10px; margin-left: 4%"></Input> <Button type="primary" @click="getIsolationInfoListByCode">查询</Button>
+    <Input v-model="queryValue" placeholder="请输入学号查询" style="width: 200px; margin-right: 10px; margin-left: 4%"></Input> <Button type="primary" @click="getStuInfoListByCode">查询</Button>
     <div class="mid-box">
       <div class="top">基本信息</div>
       <div class="modal-container">
         <div class="modal-item" v-for="(item, index) in checkList1" :key="index">
           <div class="null"></div><div class="title">{{item.title}}:</div><div class="star"></div>
-          <div class="core">{{item.value}}</div>
+          <div class="core" style=" flex-basis: 50%;">{{item.value}}</div>
         </div>
       </div>
     </div>
@@ -60,7 +60,7 @@
 </template>
 
 <script>
-import { GetIsolationInfoListByCode, NewIsolatePre } from '../../../../api/personnel/riskpremanage'
+import { GetStuInfoByCode, NewIsolatePre } from '../../../../api/personnel/riskpremanage'
 
 export default {
   name: 'index',
@@ -75,16 +75,16 @@ export default {
         sex: {
           title: '性别', value: ''
         },
-        dept_code: {
+        deptName: {
           title: '二级学院', value: ''
         },
         code: {
           title: '学号', value: ''
         },
-        class_name: {
+        className: {
           title: '班级', value: ''
         },
-        phone: {
+        phoneNumber: {
           title: '手机号', value: ''
         }
       },
@@ -113,9 +113,22 @@ export default {
     close() {
       this.$emit('addClose', false)
     },
-    getIsolationInfoListByCode() {
-      GetIsolationInfoListByCode({ code: this.queryValue }).then(res => {
+    getStuInfoListByCode() {
+      GetStuInfoByCode({ code: this.queryValue }).then(res => {
+        console.log('学生基本信息')
         console.log(res)
+        this.checkList1.code.value = res.field.code
+        if (res.field.sex === 0) {
+          this.checkList1.sex.value = '男'
+        } else {
+          this.checkList1.sex.value = '女'
+        }
+        this.checkList1.deptName.value = res.field.deptName
+        this.checkList1.name.value = res.field.name
+        this.checkList1.className.value = res.field.className
+        this.checkList1.phoneNumber.value = res.field.phoneNumber
+        this.addInfo.code = res.field.code
+        this.addInfo.address = res.field.address
       })
     },
     addIsolatePersonnelInfo() {

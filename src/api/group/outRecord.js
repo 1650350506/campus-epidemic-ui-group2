@@ -5,7 +5,7 @@ export function GetOutRecordList(data) {
   return request({
     // url: `${moduleName.doraemon_campus}/student/queryPageBase`,
     method: 'get',
-    urlType: 'test',
+    urlType: 'jixian',
     params: {
       ...data
     }

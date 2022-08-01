@@ -54,20 +54,20 @@ service.interceptors.request.use(
     if (config.urlType === 'login') {
       config.baseURL = '/api'
       config.headers.Authorization = 'Basic dXNlcmNlbnRlcjoxMTg2MDQ1ZDU1OTlkZTZlZjJjYTI4MjM0N2E1NWNhMg=='
-    } else if (config.urlType === 'test') {
-      config.baseURL = '/test'
+      const mete = (config.meta || {})
+      // 在请求发送之前做一些处理
+      if (config.method === 'post' && mete.isSerialize !== false) {
+        config.data = serialize(config.data)
+        // encode 解决提交中文乱码 post
+        config.data = encodeURI(config.data)
+      }
+    } else if (config.urlType === 'jixian') {
+      config.baseURL = '/jixian'
       config.headers.Authorization = util.cookies.get('token')
     }
-    const mete = (config.meta || {})
-    // 在请求发送之前做一些处理
     const token = util.cookies.get('token')
     // 让每个请求携带token-- ['X-Token']为自定义key 请根据实际情况自行修改
     config.headers.auth = `bearer ${token}`
-    if (config.method === 'post' && mete.isSerialize !== false && config.urlType !== '/test') {
-      config.data = serialize(config.data)
-      // encode 解决提交中文乱码 post
-      config.data = encodeURI(config.data)
-    }
     return config
   },
   error => {
@@ -105,11 +105,11 @@ service.interceptors.response.use(
           return dataAxios.data
         case 400:
           // [ 示例 ] 其它和后台约定的 code
-          errorCreate(`${dataAxios.msg}: ${response.config.url}`)
+          errorCreate(`${dataAxios.msg}`)
           break
         default:
           // 不是正确的 code
-          errorCreate(`${dataAxios.msg}: ${response.config.url}`)
+          errorCreate(`${dataAxios.msg}`)
           break
       }
     }

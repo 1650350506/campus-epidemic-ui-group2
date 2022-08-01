@@ -5,7 +5,7 @@ export function GetAllIsolationTotal(data) {
   return request({
     url: `${moduleName.doraemon_campus}/analysis/totalPerson`,
     method: 'get',
-    urlType: 'test',
+    urlType: 'jixian',
     data
   })
 }
@@ -14,7 +14,7 @@ export function GetNewIsolationTotal(data) {
   return request({
     url: `${moduleName.doraemon_campus}/analysis/add`,
     method: 'get',
-    urlType: 'test',
+    urlType: 'jixian',
     data
   })
 }
@@ -23,7 +23,7 @@ export function GetRelieveIsolationTotal(data) {
   return request({
     url: `${moduleName.doraemon_campus}/analysis/relieve`,
     method: 'get',
-    urlType: 'test',
+    urlType: 'jixian',
     data
   })
 }
@@ -32,7 +32,7 @@ export function GetEachCollegeTotal(data) {
   return request({
     url: `${moduleName.doraemon_campus}/analysis/relieve`,
     method: 'get',
-    urlType: 'test',
+    urlType: 'jixian',
     data
   })
 }
@@ -41,7 +41,7 @@ export function GetIsolationListByDate(data) {
   return request({
     url: `${moduleName.doraemon_campus}/analysis/newlyAnalysis`,
     method: 'get',
-    urlType: 'test',
+    urlType: 'jixian',
     params: {
       ...data
     }
@@ -52,7 +52,7 @@ export function GetEachEpidemicListAnalysis(data) {
   return request({
     url: `${moduleName.doraemon_campus}/analysis/epidemic`,
     method: 'get',
-    urlType: 'test',
+    urlType: 'jixian',
     params: {
       ...data
     }
@@ -63,7 +63,7 @@ export function GetEachIsolationListAnalysis(data) {
   return request({
     url: `${moduleName.doraemon_campus}/analysis/isolate`,
     method: 'get',
-    urlType: 'test',
+    urlType: 'jixian',
     params: {
       ...data
     }

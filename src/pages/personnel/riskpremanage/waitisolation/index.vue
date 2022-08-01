@@ -17,7 +17,7 @@
       <Search :keyValue="queryInfo.keyword" @selectFun="queryWaitIsolationInfoBykey"></Search>
     </Card>
     <Card class="card-marginTop card">
-      <Table border :columns="columns" :data="data" :border="false" class="table"></Table>
+      <Table  :columns="columns" :data="data" :border="false" class="table"></Table>
       <Page :total="total" show-elevator show-sizer class-name="page"  @on-change="editPageNum" @on-page-size-change="editPageSize"></Page>
     </Card>
   </div>
@@ -56,7 +56,7 @@ export default {
         },
         {
           title: '联系方式',
-          key: 'phone',
+          key: 'phoneNumber',
           align: 'center'
         },
         {
@@ -102,105 +102,7 @@ export default {
           }
         }
       ],
-      data: [
-        {
-          code: 199200118,
-          name: '张三',
-          sex: 1,
-          class_name: '计科19',
-          phone: '198581044444',
-          start_time: '2022-05-04',
-          end_time: '2022-05-04',
-          isolation_state: '0',
-          nucleic_result: '阳性',
-          temperature: 36.5,
-          associates: '林林林',
-          nucleic_time: '2022-05-04'
-        },
-        {
-          code: 199200118,
-          name: '张三',
-          sex: 1,
-          class_name: '计科19',
-          phone: '198581044444',
-          start_time: '2022-05-04',
-          end_time: '2022-05-04',
-          isolation_state: 0,
-          nucleic_result: '阴性',
-          temperature: 36.5,
-          associates: '林林林',
-          nucleic_time: '2022-05-04'
-        },
-        {
-          code: 199200118,
-          name: '张三',
-          sex: 1,
-          class_name: '计科19',
-          phone: '198581044444',
-          start_time: '2022-05-04',
-          end_time: '2022-05-04',
-          isolation_state: 0,
-          nucleic_result: '阴性',
-          temperature: 36.5,
-          associates: '林林林',
-          nucleic_time: '2022-05-04'
-        },
-        {
-          code: 199200118,
-          name: '张三',
-          sex: 1,
-          class_name: '计科19',
-          phone: '198581044444',
-          start_time: '2022-05-04',
-          end_time: '2022-05-04',
-          isolation_state: 0,
-          nucleic_result: '阴性',
-          temperature: 36.5,
-          associates: '林林林',
-          nucleic_time: '2022-05-04'
-        },
-        {
-          code: 199200118,
-          name: '张三',
-          sex: 1,
-          class_name: '计科19',
-          phone: '198581044444',
-          start_time: '2022-05-04',
-          end_time: '2022-05-04',
-          isolation_state: 0,
-          nucleic_result: '阴性',
-          temperature: 36.5,
-          associates: '林林林',
-          nucleic_time: '2022-05-04'
-        },
-        {
-          code: 199200118,
-          name: '张三',
-          sex: 1,
-          class_name: '计科19',
-          phone: '198581044444',
-          start_time: '2022-05-04',
-          end_time: '2022-05-04',
-          isolation_state: 0,
-          nucleic_result: '阴性',
-          temperature: 67.5,
-          associates: '林林林',
-          nucleic_time: '2022-05-04'
-        },
-        {
-          code: 199200118,
-          name: '张三',
-          sex: 1,
-          class_name: '计科19',
-          phone: '198581044444',
-          start_time: '2022-05-04',
-          end_time: '2022-05-04',
-          isolation_state: 0,
-          nucleic_result: '阴性',
-          temperature: 36.5,
-          associates: '林林林',
-          nucleic_time: '2022-05-04'
-        }],
+      data: [],
       queryInfo: {
         pageNum: 1,
         pageSize: 10,
@@ -230,6 +132,7 @@ export default {
     getWaitIsolationInfoList() {
       GetIsolationInfoList(this.queryInfo).then((res) => {
         console.log(res)
+        console.log(1)
         this.data = res.data
         this.total = res.total
       })

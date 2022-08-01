@@ -14,6 +14,9 @@
           <Submit>登录</Submit>
         </Login>
       </div>
+      <Button @click="StuBack">返校扫码</Button>
+      <Button @click="StuRecord">14天行程记录</Button>
+      <Button @click="StuLeave">离校扫码</Button>
     </div>
     <i-copyright class="template-login-data-copyright" />
   </div>
@@ -52,7 +55,7 @@ export default {
           .then(() => {
             // 重定向对象不存在则返回顶层路径
             if (!this.$route.query.redirect) {
-              this.$router.replace('/index')
+              this.$router.replace('/quarantinedManage')
             } else {
               this.$router.replace(this.$route.query.redirect || '/')
             }
@@ -63,6 +66,73 @@ export default {
             this.$Message.error(error.message)
           })
       }
+    },
+    Stu
+        () {
+      const username = 'admin456'
+      let password = 'Admin456'
+      password = md5(password)
+      this.login({
+        username,
+        password
+      })
+        .then(() => {
+          // 重定向对象不存在则返回顶层路径
+          if (!this.$route.query.redirect) {
+            this.$router.replace('/back')
+          } else {
+            this.$router.replace(this.$route.query.redirect || '/')
+          }
+        })
+        .catch(error => {
+          // 异常情况
+          this.$log.error(error)
+          this.$Message.error(error.message)
+        })
+    },
+    StuRecord() {
+      const username = 'admin456'
+      let password = 'Admin456'
+      password = md5(password)
+      this.login({
+        username,
+        password
+      })
+        .then(() => {
+          // 重定向对象不存在则返回顶层路径
+          if (!this.$route.query.redirect) {
+            this.$router.replace('/record')
+          } else {
+            this.$router.replace(this.$route.query.redirect || '/')
+          }
+        })
+        .catch(error => {
+          // 异常情况
+          this.$log.error(error)
+          this.$Message.error(error.message)
+        })
+    },
+    StuLeave() {
+      const username = 'admin456'
+      let password = 'Admin456'
+      password = md5(password)
+      this.login({
+        username,
+        password
+      })
+        .then(() => {
+          // 重定向对象不存在则返回顶层路径
+          if (!this.$route.query.redirect) {
+            this.$router.replace('/leave')
+          } else {
+            this.$router.replace(this.$route.query.redirect || '/')
+          }
+        })
+        .catch(error => {
+          // 异常情况
+          this.$log.error(error)
+          this.$Message.error(error.message)
+        })
     }
   }
 }

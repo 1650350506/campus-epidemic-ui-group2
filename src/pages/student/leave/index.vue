@@ -2,7 +2,7 @@
   <div class="page-container">
     <div class="top-box">
       <div class="top-title">
-        <i class="ivu-icon ivu-icon-ios-close"></i>
+        <i class="ivu-icon ivu-icon-ios-close" @click="backHome"></i>
         <h2>出校信息填写</h2>
       </div>
       <img class="img-style" src="../../../assets/images/top.png" alt="">
@@ -54,6 +54,8 @@
   </div>
 </template>
 <script>
+import { GetCityList, GetProvinceList } from '@api/administorators/riskArea'
+
 export default {
   name: 'dashboard-console',
   data() {
@@ -103,7 +105,47 @@ export default {
     },
     handleRemove(index) {
       this.formItem.region.items.splice(index, 1)
-    }
+    },
+    backHome() {
+      this.$router.replace('/login')
+    },
+    getProvinceList() {
+      const arrays = []
+      GetProvinceList().then((res) => {
+        console.log(res)
+        res.forEach(ele => {
+          arrays.push({
+            level: 1,
+            label: ele.label,
+            value: ele.value,
+            children: []
+          })
+        })
+        this.data = arrays
+        console.log(this.data)
+      })
+    },
+    loadData(value, selectedData) {
+      this.getCityListByValue(value[0])
+    },
+    getCityListByValue(val) {
+      const valueList = { value: val }
+      const arrays = []
+      GetCityList(valueList).then((res) => {
+        res.forEach(ele => {
+          arrays.push({
+            level: 2,
+            label: ele.label,
+            value: ele.value
+          })
+        })
+      })
+      for (let i = 0; i < this.data.length; i++) {
+        if (this.data[i].value === val) {
+          this.data[i].children = arrays
+        }
+      }
+    },
   }
 }
 </script>

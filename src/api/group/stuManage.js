@@ -5,7 +5,7 @@ export function GetStuList(data) {
   return request({
     url: `${moduleName.doraemon_campus}/areaPersonnel/queryPageBase`,
     method: 'get',
-    urlType: 'test',
+    urlType: 'jixian',
     params: {
       ...data
     }
@@ -16,7 +16,7 @@ export function GetLocalStuList(data) {
   return request({
     url: `${moduleName.doraemon_campus}/travelRecord/queryTravelRecordByKey`,
     method: 'get',
-    urlType: 'test',
+    urlType: 'jixian',
     params: {
       ...data
     }
@@ -27,7 +27,7 @@ export function DeleteStuInfo(data) {
   return request({
     url: `${moduleName.doraemon_campus}/riskPersonnel/delStudentByCode`,
     method: 'get',
-    urlType: 'test',
+    urlType: 'jixian',
     params: {
       ...data
     }
@@ -38,7 +38,7 @@ export function DeleteLocalStuInfo(data) {
   return request({
     url: `${moduleName.doraemon_campus}/travelRecord/delDailyByCode`,
     method: 'get',
-    urlType: 'test',
+    urlType: 'jixian',
     params: {
       ...data
     }
@@ -49,7 +49,7 @@ export function GetLocalStuInfoByCode(data) {
   return request({
     url: `${moduleName.doraemon_campus}/travelRecord/queryDailyDetailByCode`,
     method: 'get',
-    urlType: 'test',
+    urlType: 'jixian',
     params: {
       ...data
     }

@@ -212,10 +212,10 @@ export default {
           align: 'center',
           render: (h, params) => {
             let key
-            if (params.row.nucleicacidkey === 0) {
-              key = '阴性'
-            } else if (params.row.nucleicacidkey === 1) {
+            if (params.row.nucleicacidkey === 1) {
               key = '阳性'
+            } else {
+              key = '阴性'
             }
             return h('span', key)
           }
@@ -385,10 +385,8 @@ export default {
       }
       GetIsolationInfoListByCode(queryInfo).then(res => {
         // this.checkList1.protectorName.value = res.data[0].protectorName
-        console.log(1)
         console.log(res)
         // console.log(this.checkList1.protectorName.value)
-        console.log(1)
       })
     },
     // 查询已隔离或者未隔离信息
@@ -419,6 +417,7 @@ export default {
       GetIsolationInfoListByCode(queryInfo).then(res => {
         res.data.forEach(item => {
           this.msgData.push({
+            id: item.id,
             code: item.code,
             nucleicAcidTime: item.nucleicAcidTime,
             nucleicAcidKey: item.nucleicAcidKey,
@@ -468,11 +467,6 @@ export default {
       this.queryInfo.pageSize = e
       this.getIsolationInfoList()
     },
-    getTreatedTotal() {
-      GetTreatedTotal().then(res => {
-        this.topList[2].num = res.field
-      })
-    },
     getTobeTotal() {
       GetToBeTotal().then(res => {
         this.topList[0].num = res.field
@@ -483,9 +477,14 @@ export default {
         this.topList[1].num = res.field
       })
     },
+    getTreatedTotal() {
+      GetTreatedTotal().then(res => {
+        this.topList[2].num = res.field
+      })
+    },
     getIsolatedTotalTotal() {
       GetIsolatedTotal().then(res => {
-        this.total[3].num = res.field
+        this.topList[3].num = res.field
       })
     },
     showList(index) {

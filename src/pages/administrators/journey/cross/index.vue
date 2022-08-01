@@ -16,7 +16,7 @@
     </Card>
     <Card class="card-marginTop card">
       <div class="batch-box">
-        <div class="select-text">已选择 <span style="color: #0e92e7; font-size: 18px">{{batchNum}}</span> 项</div>
+        <div class="select-text">已选择 <span style="color: #0e92e7; font-size: 18px">{{batchSum}}</span> 项</div>
         <Poptip
           confirm
           title="您确认批量删除这些数据吗？"
@@ -41,6 +41,7 @@ import CheckModal from './checkModal'
 import {
   GetStuList, DeleteStuInfo
 } from '@api/group/stuManage'
+import { BatchDelCrossBatchDailyCodeList } from '@api/administorators/journery'
 export default {
   name: 'index',
   components: {
@@ -48,7 +49,7 @@ export default {
   },
   data() {
     return {
-      batchNum: 0,
+      batchSum: 0,
       selectModel: '默认',
       gradeList: [
         '默认', '只看中风险', '只看高风险'
@@ -252,8 +253,13 @@ export default {
         console.log(item)
         this.batchList.push(item.code)
       })
+      this.batchSum = this.batchList.length
     },
     batchSubmit() {
+      console.log(this.batchList)
+      BatchDelCrossBatchDailyCodeList({ codeList: this.batchList }).then(res => {
+        this.$Message.success('批量删除成功！')
+      })
     },
     // 查看对话框开关
     closeCheck() {

@@ -26,7 +26,7 @@
         <div class="mid-box">
           <div class="mid-box-left"></div>
           <div class="mid-box-right">
-            <Table border :columns="columns1" size="small" height="150" :data="data1"></Table>
+            <Table border :columns="columns1" size="small" height="150" :data="outList"></Table>
           </div>
         </div>
       </div>
@@ -40,7 +40,7 @@
 <script>
 export default {
   name: 'checkLocal',
-  props: ['checkSwitch', 'checkList1', 'crossList'],
+  props: ['checkSwitch', 'checkList1', 'crossList', 'outList'],
   data() {
     return {
       columns: [

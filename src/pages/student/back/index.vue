@@ -2,7 +2,7 @@
   <div class="page-container">
     <div class="top-box">
       <div class="top-title">
-        <i class="ivu-icon ivu-icon-ios-close"></i>
+        <i class="ivu-icon ivu-icon-ios-close" @click="backHome"></i>
         <h2>返校信息填写</h2>
       </div>
       <img class="img-style" src="../../../assets/images/top.png" alt="">
@@ -26,34 +26,82 @@
       <div class="whereabouts">
         <div class="form-goto">
           <span>获取定位</span>
+          <!--          <baidu-map class="map" center="杭州">-->
+          <!--            <bm-geolocation anchor="BMAP_ANCHOR_BOTTOM_RIGHT" :showAddressBar="true" :autoLocation="true" locationSuccess="getAddress"></bm-geolocation>-->
+          <!--          </baidu-map>-->
           <Button class="position-btn" type="primary">获取定位</Button>
         </div>
-        <div class="form-goto">
-          <span>行程范围</span>
-          <Radio-group>
-            <Radio label="本市"></Radio>
-            <Radio label="跨市"></Radio>
-          </Radio-group>
+        <div class="form-address">
+          <span>途经地点  (跨市同学填写)</span>
+          <Form ref="formDynamic" style="height: 30vh; overflow-y: auto" :model="formDynamic" :label-width="90">
+            <Form-item
+              v-for="(item, index) in formDynamic.items"
+              :key="item"
+              :label="'地区' + (index + 1)"
+              :prop="'items.' + index + '.value'"
+              :rules="{required: true, message: '地点' + (index + 1) +'不能为空', trigger: 'blur'}"
+            >
+              <Row>
+                <Col span="18">
+                  <Cascader :data="data" v-model="item.value" @on-change="loadData"></Cascader>
+                </Col>
+                <Col span="3" offset="1">
+                  <Button type="error" @click="handleRemove(index)">删除</Button>
+                </Col>
+              </Row>
+            </Form-item>
+            <Form-item>
+              <Row>
+                <Col span="12">
+                  <Button type="dashed" long @click="handleAdd" icon="plus-round">新增</Button>
+                </Col>
+              </Row>
+            </Form-item>
+          </Form>
         </div>
-        <Button class="btn" type="primary">提交</Button>
+        <Button class="btn" type="primary" @click="subMsg">提交</Button>
       </div>
     </div>
   </div>
 </template>
 <script>
+import AMapLoader from '@amap/amap-jsapi-loader'
+import { CheckStudent } from '@api/stu/stu'
+import { GetCityList, GetProvinceList } from '@api/administorators/riskArea'
 export default {
   name: 'dashboard-console',
   data() {
     return {
+      formDynamic: {
+        items: [
+          {
+            value: ''
+          }
+        ]
+      },
       formItem: {
         code: '',
         name: ''
       }
     }
   },
-  computed: {
+  created() {
+    this.getProvinceList()
   },
   methods: {
+    subMsg() {
+      // "code": "",
+      // "name": "",
+      // "travelRecord": "",
+      // "travelRecordList": [],
+    },
+    getAddress(point, AddressComponent, marker) {
+      console.log(1)
+      console.log(point)
+      console.log(AddressComponent)
+      console.log(marker)
+      console.log(1)
+    },
     handleSubmit(name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
@@ -67,20 +115,68 @@ export default {
       this.$refs[name].resetFields()
     },
     handleAdd() {
-      this.formItem.region.items.push({
+      this.formDynamic.items.push({
         value: ''
       })
     },
     handleRemove(index) {
-      this.formItem.region.items.splice(index, 1)
+      this.formDynamic.items.splice(index, 1)
     },
     queryMsg() {
-    //  查询是不是数据库数据
+      CheckStudent(this.formItem).then((res) => {
+        if (res === 0) {
+          this.$Message.success('学生信息校验失败！请检查是否输入正确！')
+        }
+      })
+    },
+    backHome() {
+      this.$router.replace('/login')
+    },
+    getProvinceList() {
+      const arrays = []
+      GetProvinceList().then((res) => {
+        console.log(res)
+        res.forEach(ele => {
+          arrays.push({
+            level: 1,
+            label: ele.label,
+            value: ele.value,
+            children: []
+          })
+        })
+        this.data = arrays
+        console.log(this.data)
+      })
+    },
+    loadData(value, selectedData) {
+      this.getCityListByValue(value[0])
+    },
+    getCityListByValue(val) {
+      const valueList = { value: val }
+      const arrays = []
+      GetCityList(valueList).then((res) => {
+        res.forEach(ele => {
+          arrays.push({
+            level: 2,
+            label: ele.label,
+            value: ele.value
+          })
+        })
+      })
+      for (let i = 0; i < this.data.length; i++) {
+        if (this.data[i].value === val) {
+          this.data[i].children = arrays
+        }
+      }
     }
   }
 }
 </script>
 <style  lang="less" scoped>
+.map {
+  width: 100%;
+  height: 400px;
+}
 .page-container {
   display: flex;
   flex-direction: column;
@@ -161,6 +257,14 @@ export default {
         color: #000;
         display: flex;
         align-items: center;
+        span {
+          margin-left: 6%;
+          margin-right: 1%;
+        }
+      }
+      .form-address {
+        font-size: 1.4em;
+        color: #000;
         span {
           margin-left: 6%;
           margin-right: 1%;

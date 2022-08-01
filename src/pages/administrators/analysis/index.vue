@@ -335,18 +335,8 @@ export default {
   },
   mounted() {
     this.updateOptions()
-    // this.updateOptions1()
+    this.updateOptions1()
     this.updateOptions2()
-    // const myChart1 = echarts.init(document.getElementById('main2'))
-    // const result1 = _.merge(this.option1.series.data, this.option1)
-    // myChart1.setOption(result1)
-    // this.optionsAve()
-    // const myChart2 = echarts.init(document.getElementById('main3'))
-    // const result2 = _.merge(this.option2.series.data, this.option2)
-    // myChart2.setOption(result2)
-    // const myChart3 = echarts.init(document.getElementById('top'))
-    // const result3 = _.merge(this.option3.series.data, this.option3)
-    // myChart3.setOption(result3)
   },
   created() {
     this.getOldIsolationListByDate()
@@ -396,7 +386,6 @@ export default {
     getReliveIsolationTotal() {
       GetRelieveIsolationTotal().then((res) => {
         this.topList[2].num = res.field
-        // this.topList[2].num = res.field
       })
     },
     getOldIsolationListByDate() {
@@ -435,8 +424,6 @@ export default {
             })
           }
         }
-        console.log(1)
-        console.log(arr)
         this.option1.series[0].data = arr
         // console.log(this.option.series)
         this.updateOptions2()

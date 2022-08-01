@@ -2,7 +2,7 @@
   <div class="page-container">
     <div class="top-box">
       <div class="top-title">
-        <i class="ivu-icon ivu-icon-ios-close"></i>
+        <i class="ivu-icon ivu-icon-ios-close" @click="backHome"></i>
         <h2>14天返校行程</h2>
       </div>
       <img class="img-style" src="../../../assets/images/top.png" alt="">
@@ -18,24 +18,24 @@
             </Form-item>
             <Form-item>
               <div class="form-label">姓名</div>
-              <Input type="text" v-model="formItem.code"></Input>
+              <Input type="text" v-model="formItem.name" @on-blur="checkStu"></Input>
             </Form-item>
           </Form>
         </div>
       </div>
       <div class="whereabouts">
         <div class="form-title">14天内行程</div>
-        <Form ref="formDynamic" style="max-height: 25vh; overflow-y: auto" :model="formDynamic" :label-width="90">
+        <Form ref="formDynamic" style="height: 30vh; overflow-y: auto" :model="formDynamic" :label-width="90">
           <Form-item
             v-for="(item, index) in formDynamic.items"
             :key="item"
-            :label="'行程轨迹' + (index + 1)"
+            :label="'行程记录' + (index + 1)"
             :prop="'items.' + index + '.value'"
             :rules="{required: true, message: '行程轨迹' + (index + 1) +'不能为空', trigger: 'blur'}"
           >
             <Row>
               <Col span="18">
-                <Cascader :data="data" v-model="item.value"></Cascader>
+                <Cascader :data="data" v-model="item.value" @on-change="loadData"></Cascader>
               </Col>
               <Col span="4" offset="1">
                 <Button type="error" @click="handleRemove(index)">删除</Button>
@@ -51,11 +51,14 @@
           </Form-item>
         </Form>
       </div>
-      <Button type="primary" style="margin: 0 10%">提交</Button>
+      <Button type="primary" style="margin: 0 10%; height: 6vh" @click="recordSubmit">提交</Button>
     </div>
   </div>
 </template>
 <script>
+import { GetCityList, GetProvinceList } from '@api/administorators/riskArea'
+import { CheckStudent, SubStuRecord } from '@api/stu/stu'
+
 export default {
   name: 'dashboard-console',
   data() {
@@ -69,37 +72,26 @@ export default {
       },
       formItem: {
         code: '',
-        name: '',
-        classCode: '',
-        sex: 0,
-        phoneNumber: '',
-        idCard: '',
-        address: '',
-        emergencyContact: '',
-        emergencyContactPhone: '',
-        region: {
-          items: [
-            { value: '' }
-          ]
-        },
-        imgUrl: '',
-        healthUrl: ''
-      }
+        name: ''
+      },
+      data: []
     }
   },
-  computed: {
-    label() {
-      return this.formItem.sex ? '男' : '女'
-    }
+  created() {
+    this.getProvinceList()
   },
   methods: {
-    handleSubmit(name) {
-      this.$refs[name].validate((valid) => {
-        if (valid) {
-          this.$Message.success('提交成功!')
-        } else {
-          this.$Message.error('表单验证失败!')
-        }
+    recordSubmit() {
+      const arrays = []
+      this.formDynamic.items.forEach((item) => {
+        arrays.push(item.value[1])
+      })
+      const list = {
+        code: this.formItem.code,
+        cityList: arrays
+      }
+      SubStuRecord(list).then(res => {
+        console.log('提交成功')
       })
     },
     handleReset(name) {
@@ -112,6 +104,53 @@ export default {
     },
     handleRemove(index) {
       this.formDynamic.items.splice(index, 1)
+    },
+    checkStu() {
+      CheckStudent(this.formItem).then((res) => {
+        if (res === 0) {
+          this.$Message.success('学生信息校验失败！请检查是否输入正确！')
+        }
+      })
+    },
+    getProvinceList() {
+      const arrays = []
+      GetProvinceList().then((res) => {
+        console.log(res)
+        res.forEach(ele => {
+          arrays.push({
+            level: 1,
+            label: ele.label,
+            value: ele.value,
+            children: []
+          })
+        })
+        this.data = arrays
+        console.log(this.data)
+      })
+    },
+    loadData(value, selectedData) {
+      this.getCityListByValue(value[0])
+    },
+    getCityListByValue(val) {
+      const valueList = { value: val }
+      const arrays = []
+      GetCityList(valueList).then((res) => {
+        res.forEach(ele => {
+          arrays.push({
+            level: 2,
+            label: ele.label,
+            value: ele.value
+          })
+        })
+      })
+      for (let i = 0; i < this.data.length; i++) {
+        if (this.data[i].value === val) {
+          this.data[i].children = arrays
+        }
+      }
+    },
+    backHome() {
+      this.$router.replace('/login')
     }
   }
 }

@@ -47,10 +47,15 @@ import TableImportExport from '@/components/table-import-export/table-import-exp
 // 多功能菜单
 import iSidebar from '@/components/sidebar/sidebar.min'
 
+// 百度Api
+import BaiduMap from 'vue-baidu-map'
+
 Vue.use(TableImportExport)
 Vue.use(iSidebar)
 Vue.use(plugins)
-
+Vue.use(BaiduMap, {
+  ak: 'CDueQBNhXZXXTrAZhLr0CxKvGUUWlvyT'
+})
 Vue.use(ViewUI)
 Vue.use(iViewPro)
 Vue.component('i-link', iLink)

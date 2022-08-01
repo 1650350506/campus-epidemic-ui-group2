@@ -73,13 +73,14 @@ export default {
     },
     updateMsg() {
       const data = {
-        code: this.editList1.code,
-        phone: this.editList1.phone,
-        schoolPost: this.editList1.schoolPost,
-        systemPost: this.editList1.systemPost
+        code: this.editList1.code.value,
+        phone: this.editList1.phone.value,
+        schoolPost: this.editList1.schoolPost.value,
+        systemPost: this.editList1.systemPost.value
       }
       UpdateFacultyInfo(data).then(() => {
         this.$Message.success('修改教职工信息成功！')
+        this.close()
       })
     }
   }

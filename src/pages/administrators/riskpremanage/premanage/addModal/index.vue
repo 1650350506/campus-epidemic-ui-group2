@@ -4,6 +4,7 @@
       v-model="addSwitch"
       @on-cancel="close"
       width="720"
+      :styles="{top: '20px'}"
     >
       <p slot="header" style="text-align: left">添加隔离记录</p>
       <div class="model-box">
@@ -44,7 +45,7 @@
           </div>
         </div>
         <div class="footer-box">
-          <Table border :columns="columns" size="small" :data="msgList" style="margin: 2em 0 0 2em;"></Table>
+          <Table border :columns="columns" size="small" :data="msgList" height="300" style="margin: 2em 0 0 2em;"></Table>
         </div>
       </div>
       <div slot="footer">
@@ -56,7 +57,7 @@
 
 <script>
 import {
-  AddIsolationRecord,
+  AddIsolationRecord, DeleteRecordById,
   GetEpidemicPreventionPersonnel,
   GetIsolationInfoList
 } from '../../../../../api/personnel/riskpremanage'
@@ -98,11 +99,11 @@ export default {
                     placement: 'top-start',
                     confirm: true,
                     transfer: true,
-                    title: '确定删除这条数据吗？'
+                    title: '确定删除这条隔离记录吗？'
                   },
                   on: {
                     'on-ok': () => {
-                      // this.deleteStuInfoByCode(params.row.code)
+                      this.deleteIsolateRecordById(params.row.id, params.row.code)
                     },
                     // eslint-disable-next-line no-empty-function
                     'on-cancel': () => {
@@ -174,7 +175,7 @@ export default {
       GetEpidemicPreventionPersonnel().then(res => {
         res.field.forEach(item => {
           this.associationList.push({
-            deptCode: item.deptCode,
+            deptCode: item.code,
             name: item.name
           })
         })
@@ -194,10 +195,15 @@ export default {
       } else if (this.addInfo.temperature === '异常') {
         this.addInfo.temperature = 38
       }
-      console.log(this.addInfo)
       AddIsolationRecord(this.addInfo).then(res => {
         this.$Message.success('添加隔离记录成功')
         this.$emit('update', this.addInfo.code)
+      })
+    },
+    deleteIsolateRecordById(id, code) {
+      DeleteRecordById({ id: id }).then(res => {
+        this.$Message.success('删除一条隔离记录')
+        this.$emit('update', code)
       })
     }
   }

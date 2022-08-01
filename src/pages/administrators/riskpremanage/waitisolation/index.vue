@@ -49,7 +49,7 @@ export default {
         },
         {
           title: '联系方式',
-          key: 'phone',
+          key: 'phoneNumber',
           align: 'center'
         },
         {

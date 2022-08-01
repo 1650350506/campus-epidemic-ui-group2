@@ -43,8 +43,7 @@ import Search from '@/components/top/search'
 import addFaculty from './addModal'
 import checkModal from './check'
 import editModal from './edit'
-import { DeleteFacultyInfoByCode, GetFacultyInfo, GetFacultyInfoByCode } from '@api/administorators/manage'
-import { BatchDeleteFacultyInfoByCodeList } from '../../../api/administorators/manage'
+import { DeleteFacultyInfoByCode, GetFacultyInfo, GetFacultyInfoByCode, BatchDeleteFacultyInfoByCodeList } from '@api/administorators/manage'
 
 export default {
   name: 'index',
@@ -138,21 +137,8 @@ export default {
                 },
                 on: {
                   click: () => {
+                    this.getFacultyInfoByCode(params.row.code)
                     this.updateDialogVisible = true
-                    this.dialogList.code.value = params.row.code
-                    this.dialogList.name.value = params.row.name
-                    this.dialogList.sex.value = params.row.sex
-                    this.dialogList.phone.value = params.row.phone
-                    this.dialogList.id_card.value = params.row.id_card
-                    this.dialogList.dept_code.value = params.row.dept_code
-                    this.dialogList.system_post.value = params.row.system_post
-                    this.dialogList.school_post.value = params.row.school_post
-                    // this.dialogList.enter_time.value = params.row.enter_time
-                    // this.dialogList.leave_time.value = params.row.leave_time
-                    // this.dialogList.healthy_color.value = params.row.healthy_color
-                    this.dialogList.phone.isEdit = true
-                    this.dialogList.system_post.isEdit = true
-                    this.dialogList.school_post.isEdit = true
                   }
                 }
               }, '编辑'),
@@ -266,8 +252,9 @@ export default {
   },
   methods: {
     batchSubmit() {
-      BatchDeleteFacultyInfoByCodeList(this.batchList).then(() => {
+      BatchDeleteFacultyInfoByCodeList({ codes: this.batchList }).then(() => {
         this.$Message.success('批量删除防控人员成功')
+        this.getFacultyList()
       })
     },
     close(e) {
@@ -284,7 +271,7 @@ export default {
       const data = { code: code }
       DeleteFacultyInfoByCode(data).then(res => {
         this.$Message.success('删除防控人员成功')
-        console.log(res)
+        this.getFacultyList()
       })
     },
     // 按健康吗颜色查询
@@ -305,6 +292,8 @@ export default {
       GetFacultyInfo(this.queryInfo).then((res) => {
         this.total = res.total
         this.data = res.data
+        console.log('work')
+        console.log(res)
         /* 这里把数据里面的性别和健康码颜色都文字化 */
       })
     },
@@ -338,6 +327,7 @@ export default {
         console.log(item)
         this.batchList.push(item.code)
       })
+      this.batchNum = this.batchList.length
     },
     editPageNum(e) {
       this.queryInfo.pageNum = e

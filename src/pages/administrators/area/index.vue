@@ -35,7 +35,7 @@
         </Poptip>
       </div>
       <div class="table-box"> <Table  :columns="columns2" :data="data2" :border="false" class="table" @on-selection-change="selectItem"></Table></div>
-      <Page :total="100" show-elevator show-sizer class-name="page"></Page>
+      <Page :total="total" show-elevator show-sizer class-name="page" @on-change="editPageNum" @on-page-size-change="editPageSize"></Page>
     </Card>
   </div>
 </template>
@@ -43,8 +43,20 @@
 <script>
 
 import iHeaderBreadcrumb from '@/layouts/basic-layout/header-breadcrumb'
-import { GetProvinceList, GetCityList, GetCountyList, GetStreetList, UpdateRiskAreaByCode } from '@api/administorators/riskArea'
-import { BatchUpdateRiskAreaByCode } from '../../../api/administorators/riskArea'
+import {
+  GetProvinceList,
+  GetCityList,
+  GetCountyList,
+  GetStreetList,
+  UpdateRiskAreaByCode,
+  BatchUpdateRiskAreaByCode,
+  getRiskInfoList,
+  GetRiskInfoList,
+  GetRiskInfoListByProvince,
+  GetRiskInfoListByCity,
+  GetRiskInfoListByCounty,
+  GetRiskInfoListByTown
+} from '@api/administorators/riskArea'
 
 export default {
   name: 'index',
@@ -127,7 +139,7 @@ export default {
         {
           title: '更新时间',
           align: 'left',
-          key: 'update'
+          key: 'updateTime'
         },
         {
           title: '操作',
@@ -168,55 +180,23 @@ export default {
           }
         }
       ],
-      data2: [
-        {
-          code: 199200118,
-          name: '浙江省杭州市余杭区无常街道后山路',
-          riskLevel: 0,
-          update: '2022-05-01'
-        },
-        {
-          code: 199200118,
-          name: '浙江省杭州市余杭区无常街道后山路',
-          riskLevel: 1,
-          update: '2022-05-01'
-        },
-        {
-          code: 199200118,
-          name: '浙江省杭州市余杭区无常街道后山路',
-          riskLevel: 2,
-          update: '2022-05-01'
-        },
-        {
-          code: 199200118,
-          name: '浙江省杭州市余杭区无常街道后山路',
-          riskLevel: 2,
-          update: '2022-05-01'
-        },
-        {
-          code: 199200118,
-          name: '浙江省杭州市余杭区无常街道后山路',
-          grade: 2,
-          update: '2022-05-01'
-        },
-        {
-          uid: 199200118,
-          name: '浙江省杭州市余杭区无常街道后山路',
-          grade: 2,
-          update: '2022-05-01'
-        },
-        {
-          uid: 199200118,
-          name: '浙江省杭州市余杭区无常街道后山路',
-          grade: 2,
-          update: '2022-05-01'
-        }
-      ],
-      batchList: []
+      data2: [],
+      batchList: [],
+      queryInfo: {
+        pageNum: 1,
+        pageSize: 10
+      },
+      queryInfo1: {
+        pageNum: 1,
+        pageSize: 10,
+        value: ''
+      },
+      total: 0
     }
   },
   created() {
     this.getProvinceList()
+    this.getRiskInfoList()
   },
   methods: {
     // 批量提交
@@ -226,10 +206,16 @@ export default {
         list: this.batchList,
         riskLevel: this.riskGrade
       }
-      console.log(data)
       BatchUpdateRiskAreaByCode(data).then(res => {
-        console.log(res)
         this.$Message.success('批量修改风险地区成功！')
+        this.getRiskInfoList()
+      })
+    },
+    getRiskInfoList() {
+      GetRiskInfoList(this.queryInfo).then(res => {
+        console.log(res)
+        this.total = res.field.total
+        this.data2 = res.field.data
       })
     },
     // 表格
@@ -261,7 +247,8 @@ export default {
       console.log(RiskInfo)
       //  post请求
       UpdateRiskAreaByCode(RiskInfo).then(res => {
-        this.$Message('修改风险等级成功!')
+        this.$Message.success('修改风险等级成功!')
+        this.getRiskInfoList()
       })
     },
     getProvinceList() {
@@ -289,12 +276,16 @@ export default {
       console.log(selectedData[0].level)
       if (selectedData[0].level === 1) {
         this.getCityListByValue(value[0])
+        this.getRiskInfoListByProvince(value[0])
       } else if (selectedData[0].level === 2) {
         this.getCountyListByValue(value[0])
+        this.getRiskInfoListByCity(value[0])
       } else if (selectedData[0].level === 3) {
+        this.getRiskInfoListByCounty(value[0])
         this.getStreetListByValue(value[0])
       } else if (selectedData[0].level === 4) {
         this.getRiskAreaListByCode(value[0])
+        this.getRiskInfoListByTown(value[0])
       }
     },
     getCityListByValue(val) {
@@ -338,10 +329,49 @@ export default {
         })
       })
       this.streetData = arrays
+      console.log(this.streetData)
     },
     getRiskAreaListByCode(code) {
       const container = { code: code }
       console.log(container)
+    },
+    // 选择页码
+    editPageNum(e) {
+      this.queryInfo.pageNum = e
+      this.getRiskInfoList()
+    },
+    // 选择当页最大条数
+    editPageSize(e) {
+      this.queryInfo.pageSize = e
+      this.getRiskInfoList()
+    },
+    getRiskInfoListByProvince(val) {
+      this.queryInfo.value = val
+      GetRiskInfoListByProvince(this.queryInfo).then(res => {
+        this.total = res.field.total
+        this.data2 = res.field.data
+      })
+    },
+    getRiskInfoListByCity(val) {
+      this.queryInfo.value = val
+      GetRiskInfoListByCity(this.queryInfo).then(res => {
+        this.total = res.field.total
+        this.data2 = res.field.data
+      })
+    },
+    getRiskInfoListByCounty(val) {
+      this.queryInfo.value = val
+      GetRiskInfoListByCounty(this.queryInfo).then(res => {
+        this.total = res.field.total
+        this.data2 = res.field.data
+      })
+    },
+    getRiskInfoListByTown(val) {
+      this.queryInfo.value = val
+      GetRiskInfoListByTown(this.queryInfo).then(res => {
+        this.total = res.field.total
+        this.data2 = res.field.data
+      })
     }
   }
 }

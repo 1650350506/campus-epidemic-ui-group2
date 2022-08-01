@@ -217,7 +217,6 @@ export default {
               if (menu.children) {
                 menu.children.forEach(item => {
                   if (item.jumpType === 'open') {
-                    console.log('1')
                     childMenu.push({
                       custom: item.ico,
                       title: item.cname,
@@ -260,6 +259,7 @@ export default {
                 })
               }
             })
+            menuSider.shift()
             // 结束
             resolve(menuSider)
           })

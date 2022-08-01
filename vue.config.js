@@ -24,12 +24,12 @@ module.exports = {
           '/api': ''
         }
       },
-      '/test': {
-        target: 'http://192.168.1.181:28088',
+      '/jixian': {
+        target: 'http://192.168.1.3:28088',
         ws: true,
         changeOrigin: true,
         pathRewrite: {
-          '^/test': ''
+          '^/jixian': ''
         }
       }
     }
