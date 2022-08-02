@@ -34,7 +34,7 @@ export default {
     }
   },
   created() {
-    // this.handleSubmit()
+    console.log(this.$router)
   },
   methods: {
     ...mapActions('admin/account', [
@@ -67,8 +67,7 @@ export default {
           })
       }
     },
-    Stu
-        () {
+    StuBack() {
       const username = 'admin456'
       let password = 'Admin456'
       password = md5(password)

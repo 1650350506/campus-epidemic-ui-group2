@@ -29,7 +29,7 @@
           <!--          <baidu-map class="map" center="杭州">-->
           <!--            <bm-geolocation anchor="BMAP_ANCHOR_BOTTOM_RIGHT" :showAddressBar="true" :autoLocation="true" locationSuccess="getAddress"></bm-geolocation>-->
           <!--          </baidu-map>-->
-          <Button class="position-btn" type="primary">获取定位</Button>
+          <Button class="position-btn" type="primary" @click="getMapList">获取定位</Button>
         </div>
         <div class="form-address">
           <span>途经地点  (跨市同学填写)</span>
@@ -65,8 +65,8 @@
   </div>
 </template>
 <script>
-import AMapLoader from '@amap/amap-jsapi-loader'
-import { CheckStudent } from '@api/stu/stu'
+import myBMap from '@/plugins/map/bmap'
+import { CheckStudent, SubStuBack } from '@api/stu/stu'
 import { GetCityList, GetProvinceList } from '@api/administorators/riskArea'
 export default {
   name: 'dashboard-console',
@@ -82,7 +82,8 @@ export default {
       formItem: {
         code: '',
         name: ''
-      }
+      },
+      data: []
     }
   },
   created() {
@@ -90,17 +91,36 @@ export default {
   },
   methods: {
     subMsg() {
-      // "code": "",
-      // "name": "",
-      // "travelRecord": "",
-      // "travelRecordList": [],
+      const arrays = []
+      this.formDynamic.items.forEach((item) => {
+        arrays.push(item.value[1])
+      })
+      const list = {
+        code: this.formItem.code,
+        name: this.formItem.name,
+        travelRecordList: arrays
+      }
+      SubStuBack(list).then(() => {
+        this.$Message.success('回校信息提交成功！')
+      })
     },
-    getAddress(point, AddressComponent, marker) {
-      console.log(1)
-      console.log(point)
-      console.log(AddressComponent)
-      console.log(marker)
-      console.log(1)
+    getMapList() {
+      myBMap.init().then(BMap => {
+        const myCity = new BMap.LocalCity()
+        myCity.get(
+          result => {
+            const geoc = new BMap.Geocoder()
+            geoc.getLocation(result.center, res => {
+              // 位置信息
+              console.log(res.address)
+              if (res.address === '浙江省杭州市上城区中环东路') {
+                this.$Message.success('定位成功！')
+              }
+            })
+          },
+          { enableHighAccuracy: true }
+        )
+      })
     },
     handleSubmit(name) {
       this.$refs[name].validate((valid) => {

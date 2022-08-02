@@ -32,10 +32,11 @@ export function getVoByUserName(data) {
   })
 }
 
-// export function GetUserInfo() {
-//   return request({
-//     url: `${moduleName.doraemon_code}/userAppResource/getUserInfo`,
-//     method: 'get',
-//     urlType: 'login'
-//   })
-// }
+export function RegUserInfo(data) {
+  return request({
+    url: `${moduleName.doraemon_userinfo}/userManage/registerUser`,
+    method: 'post',
+    urlType: 'jixian',
+    data
+  })
+}

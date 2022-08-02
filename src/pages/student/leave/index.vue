@@ -18,7 +18,7 @@
             </Form-item>
             <Form-item>
               <div class="form-label">姓名</div>
-              <Input type="text" v-model="formItem.code"></Input>
+              <Input type="text" v-model="formItem.name" @on-blur="checkStu"></Input>
             </Form-item>
           </Form>
         </div>
@@ -26,7 +26,7 @@
       <div class="whereabouts">
         <div class="form-goto">
           <span>行程范围</span>
-          <Radio-group>
+          <Radio-group v-model="formItem.type" @on-change="changeAddress">
             <Radio label="本市"></Radio>
             <Radio label="跨市"></Radio>
           </Radio-group>
@@ -36,25 +36,29 @@
           <div class="msg-content">
             <div class="msg-item">
               <div class="msg-left">地区</div>
-              <div class="msg-right">
-                <Cascader placeholder="选择省、市、区、街道" style="width: 18em"></Cascader>
+              <div class="msg-right" style="display: flex; flex-direction: column">
+                <Cascader placeholder="选择省" style="width: 18em" :data="provinceData" v-model="provinceValue" @on-change="loadData"></Cascader>
+                <Cascader placeholder="选择市" style="width: 18em" :data="cityData" v-model="cityValue" @on-change="loadData"></Cascader>
+                <Cascader placeholder="选择区" style="width: 18em" v-show="is_Local" :data="countyData" v-model="countyValue" @on-change="loadData"></Cascader>
+                <Cascader placeholder="选择街道" style="width: 18em" v-show="is_Local" :data="streetData" v-model="streetValue" @on-change="loadData"></Cascader>
               </div>
             </div>
             <div class="msg-item">
               <div class="msg-left">详细地址</div>
               <div class="msg-right">
-                <Input placeholder="小区楼栋/乡村名称" style="width: 18em"></Input>
+                <Input placeholder="小区楼栋/乡村名称" style="width: 18em" v-model="formItem.whereDetail"></Input>
               </div>
             </div>
           </div>
         </div>
-        <Button class="btn" type="primary">提交</Button>
+        <Button class="btn" type="primary" @click="subMsg">提交</Button>
       </div>
     </div>
   </div>
 </template>
 <script>
-import { GetCityList, GetProvinceList } from '@api/administorators/riskArea'
+import { GetCityList, GetCountyList, GetProvinceList, GetStreetList } from '@api/administorators/riskArea'
+import { CheckStudent, SubStuBack, SubStuLeave } from '@api/stu/stu'
 
 export default {
   name: 'dashboard-console',
@@ -63,29 +67,52 @@ export default {
       formItem: {
         code: '',
         name: '',
-        classCode: '',
-        sex: 0,
-        phoneNumber: '',
-        idCard: '',
-        address: '',
-        emergencyContact: '',
-        emergencyContactPhone: '',
-        region: {
-          items: [
-            { value: '' }
-          ]
-        },
-        imgUrl: '',
-        healthUrl: ''
-      }
+        type: 0,
+        whereCode: '',
+        whereDetail: ''
+      },
+      provinceValue: '',
+      provinceData: [],
+      cityValue: '',
+      cityData: [],
+      countyValue: '',
+      countyData: [],
+      streetValue: '',
+      streetData: [],
+      is_Local: false
     }
   },
-  computed: {
-    label() {
-      return this.formItem.sex ? '男' : '女'
-    }
+  created() {
+    this.getProvinceList()
   },
   methods: {
+    changeAddress() {
+      if (this.formItem.type === '本市') {
+        this.is_Local = true
+      } else if (this.formItem.type === '跨市') {
+        this.is_Local = false
+      }
+      console.log(this.is_Local)
+    },
+    subMsg() {
+      if (this.formItem.type === '本市') {
+        this.formItem.type = 0
+      } else if (this.formItem.type === '跨市') {
+        this.formItem.type = 1
+      }
+      this.formItem.whereCode = this.streetValue[0]
+      console.log(this.formItem)
+      SubStuLeave(this.formItem).then(() => {
+        this.$Message.success('离校信息提交成功！')
+      })
+    },
+    checkStu() {
+      CheckStudent(this.formItem).then((res) => {
+        if (res === 0) {
+          this.$Message.success('学生信息校验失败！请检查是否输入正确！')
+        }
+      })
+    },
     handleSubmit(name) {
       this.$refs[name].validate((valid) => {
         if (valid) {
@@ -117,16 +144,21 @@ export default {
           arrays.push({
             level: 1,
             label: ele.label,
-            value: ele.value,
-            children: []
+            value: ele.value
           })
         })
-        this.data = arrays
-        console.log(this.data)
+        this.provinceData = arrays
       })
     },
     loadData(value, selectedData) {
-      this.getCityListByValue(value[0])
+      if (selectedData[0].level === 1) {
+        this.getCityListByValue(value[0])
+      } else if (selectedData[0].level === 2) {
+        this.getCountyListByValue(value[0])
+      } else if (selectedData[0].level === 3) {
+        console.log(value[0])
+        this.getStreetListByValue(value[0])
+      }
     },
     getCityListByValue(val) {
       const valueList = { value: val }
@@ -140,12 +172,37 @@ export default {
           })
         })
       })
-      for (let i = 0; i < this.data.length; i++) {
-        if (this.data[i].value === val) {
-          this.data[i].children = arrays
-        }
-      }
+      this.cityData = arrays
     },
+    getCountyListByValue(val) {
+      const valueList = { value: val }
+      const arrays = []
+      GetCountyList(valueList).then((res) => {
+        res.forEach(ele => {
+          arrays.push({
+            level: 3,
+            label: ele.label,
+            value: ele.value
+          })
+        })
+      })
+      this.countyData = arrays
+    },
+    getStreetListByValue(val) {
+      const valueList = { value: val }
+      const arrays = []
+      GetStreetList(valueList).then((res) => {
+        res.forEach(ele => {
+          arrays.push({
+            level: 4,
+            label: ele.label,
+            value: ele.value
+          })
+        })
+      })
+      this.streetData = arrays
+      console.log(this.streetData)
+    }
   }
 }
 </script>

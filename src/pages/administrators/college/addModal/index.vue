@@ -75,7 +75,7 @@
 </template>
 
 <script>
-import { AccountReg } from '../../../../api/account'
+import { RegUserInfo } from '../../../../api/system/user'
 
 export default {
   name: 'addFaculty',
@@ -119,7 +119,7 @@ export default {
     },
     //  这是对自己服务的方法()
     addFacultyInfo() {
-      AccountReg(this.addUserInfo).then(res => {
+      RegUserInfo(this.addUserInfo).then(res => {
         console.log(res)
       })
     }
