@@ -26,27 +26,29 @@
       <div class="whereabouts">
         <div class="form-goto">
           <span>获取定位</span>
-          <!--          <baidu-map class="map" center="杭州">-->
-          <!--            <bm-geolocation anchor="BMAP_ANCHOR_BOTTOM_RIGHT" :showAddressBar="true" :autoLocation="true" locationSuccess="getAddress"></bm-geolocation>-->
-          <!--          </baidu-map>-->
           <Button class="position-btn" type="primary" @click="getMapList">获取定位</Button>
         </div>
         <div class="form-address">
           <span>途经地点  (跨市同学填写)</span>
-          <Form ref="formDynamic" style="height: 30vh; overflow-y: auto" :model="formDynamic" :label-width="90">
+          <Form ref="formDynamic" :model="formDynamic" :label-width="90">
             <Form-item
               v-for="(item, index) in formDynamic.items"
+              style="padding: 1em 1em 0 0"
               :key="item"
               :label="'地区' + (index + 1)"
               :prop="'items.' + index + '.value'"
               :rules="{required: true, message: '地点' + (index + 1) +'不能为空', trigger: 'blur'}"
             >
               <Row>
-                <Col span="18">
-                  <Cascader :data="data" v-model="item.value" @on-change="loadData"></Cascader>
+                <Col span="18" style="display: flex">
+                  <Cascader :data="provinceData" v-model="provinceValue" @on-change="loadData"></Cascader>
+                  <span></span>
+                  <Cascader :data="cityData" v-model="cityValue"></Cascader>
                 </Col>
-                <Col span="3" offset="1">
+                <Col span="4" offset="1">
                   <Button type="error" @click="handleRemove(index)">删除</Button>
+                </Col>
+                <Col span="2" offset="1">
                 </Col>
               </Row>
             </Form-item>
@@ -68,6 +70,8 @@
 import myBMap from '@/plugins/map/bmap'
 import { CheckStudent, SubStuBack } from '@api/stu/stu'
 import { GetCityList, GetProvinceList } from '@api/administorators/riskArea'
+import md5 from 'js-md5'
+import { mapActions } from 'vuex'
 export default {
   name: 'dashboard-console',
   data() {
@@ -83,13 +87,37 @@ export default {
         code: '',
         name: ''
       },
-      data: []
+      provinceValue: '',
+      provinceData: [],
+      cityValue: '',
+      cityData: []
     }
   },
   created() {
+    this.StuBack()
     this.getProvinceList()
   },
   methods: {
+    ...mapActions('admin/account', [
+      'login'
+    ]),
+    StuBack() {
+      const username = 'admin456'
+      let password = 'Admin456'
+      password = md5(password)
+      this.login({
+        username,
+        password
+      })
+        .then(() => {
+          // 重定向对象不存在则返回顶层路径
+        })
+        .catch(error => {
+          // 异常情况
+          this.$log.error(error)
+          this.$Message.error(error.message)
+        })
+    },
     subMsg() {
       const arrays = []
       this.formDynamic.items.forEach((item) => {
@@ -145,7 +173,7 @@ export default {
     queryMsg() {
       CheckStudent(this.formItem).then((res) => {
         if (res === 0) {
-          this.$Message.success('学生信息校验失败！请检查是否输入正确！')
+          this.$Message.error('学生信息校验失败！请检查是否输入正确！')
         }
       })
     },
@@ -164,7 +192,7 @@ export default {
             children: []
           })
         })
-        this.data = arrays
+        this.provinceData = arrays
         console.log(this.data)
       })
     },
@@ -183,11 +211,7 @@ export default {
           })
         })
       })
-      for (let i = 0; i < this.data.length; i++) {
-        if (this.data[i].value === val) {
-          this.data[i].children = arrays
-        }
-      }
+      this.cityData = arrays
     }
   }
 }
@@ -261,7 +285,7 @@ export default {
         .form-label {
           position: absolute;
           left: 0%;
-          top: -100%;
+          top: -60%;
           font-size: 1.2em;
           z-index: 99;
         }
@@ -323,7 +347,7 @@ export default {
       }
       .btn {
         margin: 0 2em;
-        height: 3em;
+        height: 12vw;
         font-size: 1.2em;
       }
     }

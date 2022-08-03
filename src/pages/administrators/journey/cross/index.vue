@@ -6,13 +6,19 @@
       <h2 class="bread-title">你好！ 疫情防控小组组长！</h2>
     </Card>
     <Card class="card">
-      <div slot="extra">
-        风险等级查询
-        <Select v-model="selectModel" style="width:200px" @on-change="queryListByGrade(selectModel)">
-          <Option v-for="item in gradeList" :value="item" :key="item">{{ item }}</Option>
-        </Select>
+      <div class="search-container">
+        <div class="left-search">
+          <i class="ivu-icon ivu-icon-ios-search"></i>
+          <Input  placeholder="请输入学生学号、学生姓名、二级学院" style="width: 340px" v-model="queryInfo.keyword"></Input>
+        </div>
+        <div style="margin-right: 2em">
+          <Select v-model="selectModel" style="width:200px" @on-change="queryListByGrade(selectModel)" placeholder="按分险等级查询">
+            <Option v-for="item in gradeList" :value="item" :key="item">{{ item }}</Option>
+          </Select>
+        </div>
+        <Button type="primary" class="btn" @click="queryStuInfoByKey">查询</Button>
+        <Button class="btn" @click="queryInfo.keyword = ''">重置</Button>
       </div>
-      <Search title="请输入学生学号、学生姓名、二级学院" :keyValue="queryInfo.keyword" @selectFun="queryStuInfoByKey"></Search>
     </Card>
     <Card class="card-marginTop card">
       <div class="batch-box">
@@ -28,7 +34,7 @@
       <div class="table-box">
         <Table  :border="false" :columns="columns" :data="data" class="table" @on-selection-change="selectItem"></Table>
       </div>
-      <Page :total="total" show-elevator show-sizer class-name="page"  @on-change="editPageNum" @on-page-size-change="editPageSize"></Page>
+      <Page :total="total" :current="queryInfo.pageNum"  show-elevator show-sizer class-name="page"  @on-change="editPageNum" @on-page-size-change="editPageSize"></Page>
     </Card>
     <CheckModal :checkSwitch="showDialogVisible" :checkList1="checkList1" @switchCheck="closeCheck"></CheckModal>
   </div>
@@ -45,12 +51,12 @@ import { BatchDelCrossBatchDailyCodeList } from '@api/administorators/journery'
 export default {
   name: 'index',
   components: {
-    iHeaderBreadcrumb, Search, CheckModal
+    iHeaderBreadcrumb, CheckModal
   },
   data() {
     return {
       batchSum: 0,
-      selectModel: '默认',
+      selectModel: '按分险等级查询',
       gradeList: [
         '默认', '只看中风险', '只看高风险'
       ],
@@ -249,7 +255,7 @@ export default {
   methods: {
     selectItem(e) {
       this.batchList = []
-      e.forEach((item, index) => {
+      e.forEach((item) => {
         console.log(item)
         this.batchList.push(item.code)
       })
@@ -257,19 +263,15 @@ export default {
     },
     batchSubmit() {
       console.log(this.batchList)
-      BatchDelCrossBatchDailyCodeList({ codeList: this.batchList }).then(res => {
+      BatchDelCrossBatchDailyCodeList({ codeList: this.batchList }).then(() => {
         this.$Message.success('批量删除成功！')
       })
     },
-    // 查看对话框开关
     closeCheck() {
       this.showDialogVisible = false
     },
     closeEdit() {
       this.updateDialogVisible = false
-    },
-    handleUpdateStuInfo() {
-      console.log('用户更新')
     },
     // 通过学生学号删除
     deleteStuInfoByCode(code) {
@@ -287,22 +289,22 @@ export default {
       } else if (grade === '只看高风险') {
         this.queryInfo.riskLevel = '2'
       }
+      this.queryInfo.pageNum = 1
+      this.queryInfo.pageSize = 10
       this.getStuList()
-      console.log(grade)
     },
     // 获得学生基本信息
     getStuList() {
       GetStuList(this.queryInfo).then((res) => {
-        console.log(1)
-        console.log(res.data)
         this.data = res.data
         this.total = res.total
       })
     },
     // 关键字查询
-    queryStuInfoByKey(e) {
+    queryStuInfoByKey() {
+      this.queryInfo.pageNum = 1
+      this.queryInfo.pageSize = 10
       this.data = []
-      this.queryInfo.keyword = e
       this.getStuList()
     },
     // 选择页码
@@ -424,6 +426,21 @@ export default {
     background: transparent;
     border: 0;
     color: #1e93ff;
+  }
+}
+.search-container {
+  display: flex;
+  border: 0;
+  .left-search {
+    display: flex;
+    align-items: center;
+    margin-right: 2em;
+    i {
+      font-size: 2em;
+    }
+  }
+  .btn {
+    margin-right: 2em;
   }
 }
 </style>

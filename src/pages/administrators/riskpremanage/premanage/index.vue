@@ -21,7 +21,7 @@
       <div class="table-box">
         <Table :border="false"  :columns="columns" :data="data" class="table"></Table>
       </div>
-      <Page :total="total" show-elevator show-sizer class-name="page"  @on-change="editPageNum" @on-page-size-change="editPageSize"></Page>
+      <Page :total="total" :current="queryInfo.pageNum" show-elevator show-sizer class-name="page"  @on-change="editPageNum" @on-page-size-change="editPageSize"></Page>
     </Card>
     <CheckContent :checkSwitch="showDialogVisible" :msgList="msgData" :serviceList="serviceData" :checkList1="checkList1" @switchCheck="close"></CheckContent>
     <AddContent :addSwitch="updateDialogVisible" :msgList="msgData" :addList1="addInfoList1" @switchAdd="closeByAdd" @update="updateRecord"></AddContent>
@@ -47,8 +47,8 @@ export default {
       topList: [
         { name: '待隔离', num: -1 },
         { name: '已隔离', num: -1 },
-        { name: '治疗中', num: -1 },
-        { name: '隔离结束', num: -1 }
+        { name: '隔离结束', num: -1 },
+        { name: '治疗中', num: -1 }
       ],
       nucleicResult: [
         {
@@ -223,6 +223,7 @@ export default {
         {
           title: '开始隔离时间',
           key: 'startTime',
+          width: '180',
           align: 'center'
         },
         {
@@ -294,6 +295,7 @@ export default {
                     style: {
                       marginRight: '5px',
                       backgroundColor: 'transparent',
+                      display: this.displayType,
                       border: '0px',
                       color: '#01b0ff'
                     },
@@ -310,6 +312,7 @@ export default {
                 style: {
                   marginRight: '5px',
                   backgroundColor: 'transparent',
+                  display: this.displayType,
                   border: '0px',
                   color: '#01b0ff'
                 },
@@ -344,7 +347,8 @@ export default {
         keyword: '',
         state: 1
       },
-      total: 0
+      total: 0,
+      displayType: 'inline-block'
     }
   },
   created() {
@@ -384,9 +388,13 @@ export default {
         code: code
       }
       GetIsolationInfoListByCode(queryInfo).then(res => {
-        // this.checkList1.protectorName.value = res.data[0].protectorName
+        console.log('关联')
         console.log(res)
-        // console.log(this.checkList1.protectorName.value)
+        if (res.data.length > 0) {
+          this.checkList1.protectorName.value = res.data[0].protectorName
+        } else {
+          this.checkList1.protectorName.value = ''
+        }
       })
     },
     // 查询已隔离或者未隔离信息
@@ -454,6 +462,8 @@ export default {
     // 关键字查询
     queryQuarantinedInfoByKey(e) {
       this.data = []
+      this.queryInfo.pageNum = 1
+      this.queryInfo.pageSize = 10
       this.queryInfo.keyword = e
       this.getIsolationInfoList()
     },
@@ -479,16 +489,23 @@ export default {
     },
     getTreatedTotal() {
       GetTreatedTotal().then(res => {
-        this.topList[2].num = res.field
+        this.topList[3].num = res.field
       })
     },
     getIsolatedTotalTotal() {
       GetIsolatedTotal().then(res => {
-        this.topList[3].num = res.field
+        this.topList[2].num = res.field
       })
     },
     showList(index) {
       this.queryInfo.state = index
+      if (index !== 1) {
+        this.displayType = 'none'
+      } else {
+        this.displayType = 'inline-block'
+      }
+      this.queryInfo.pageNum = 1
+      this.queryInfo.pageSize = 10
       this.getIsolationInfoList()
     }
   }

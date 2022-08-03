@@ -39,7 +39,7 @@
                 </Radio-group>
               </div>
             </div>
-            <div class="btn">
+            <div style="display: flex; justify-content: end">
               <Button type="primary" @click="addRecord">添加</Button>
             </div>
           </div>
@@ -60,7 +60,7 @@ import {
   AddIsolationRecord, DeleteRecordById,
   GetEpidemicPreventionPersonnel,
   GetIsolationInfoList
-} from '../../../../../api/personnel/riskpremanage'
+} from '@api/personnel/riskpremanage'
 
 export default {
   name: 'AddContent',
@@ -162,10 +162,7 @@ export default {
       return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
     },
     getStuCode() {
-      if (this.msgList.length > 0) {
-        // eslint-disable-next-line vue/no-side-effects-in-computed-properties
-        this.addInfo.code = this.msgList[0].code
-      }
+      this.addInfo.code = this.addList1.code.value
     },
     close() {
       this.$emit('switchAdd', false)
@@ -195,13 +192,15 @@ export default {
       } else if (this.addInfo.temperature === '异常') {
         this.addInfo.temperature = 38
       }
-      AddIsolationRecord(this.addInfo).then(res => {
+      console.log('添加')
+      console.log(this.addInfo)
+      AddIsolationRecord(this.addInfo).then(() => {
         this.$Message.success('添加隔离记录成功')
         this.$emit('update', this.addInfo.code)
       })
     },
     deleteIsolateRecordById(id, code) {
-      DeleteRecordById({ id: id }).then(res => {
+      DeleteRecordById({ id: id }).then(() => {
         this.$Message.success('删除一条隔离记录')
         this.$emit('update', code)
       })
@@ -272,9 +271,5 @@ export default {
   .footer-box {
     padding: 0 2em;
   }
-}
-.btn {
-  display: flex;
-  justify-content: end;
 }
 </style>

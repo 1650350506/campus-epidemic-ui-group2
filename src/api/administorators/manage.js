@@ -58,3 +58,22 @@ export function UpdateFacultyInfo(data) {
     data
   })
 }
+
+// 上班打卡
+export function ClockIn(data) {
+  return request({
+    url: `${moduleName.doraemon_campus}/workPerson/clockIn`,
+    method: 'post',
+    urlType: 'jixian',
+    data
+  })
+}
+// 下班打卡
+export function ClockOut(data) {
+  return request({
+    url: `${moduleName.doraemon_campus}/workPerson/clockOut`,
+    method: 'post',
+    urlType: 'jixian',
+    data
+  })
+}

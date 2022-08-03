@@ -25,10 +25,11 @@
       </div>
       <div class="whereabouts">
         <div class="form-title">14天内行程</div>
-        <Form ref="formDynamic" style="height: 30vh; overflow-y: auto" :model="formDynamic" :label-width="90">
+        <Form ref="formDynamic" :model="formDynamic" :label-width="90">
           <Form-item
             v-for="(item, index) in formDynamic.items"
             :key="item"
+            style="padding: 1em 1em 0 0"
             :label="'行程记录' + (index + 1)"
             :prop="'items.' + index + '.value'"
             :rules="{required: true, message: '行程轨迹' + (index + 1) +'不能为空', trigger: 'blur'}"
@@ -51,13 +52,15 @@
           </Form-item>
         </Form>
       </div>
-      <Button type="primary" style="margin: 0 10%; height: 6vh" @click="recordSubmit">提交</Button>
+      <Button type="primary" style="margin: 0 10%; height: 12vw" @click="recordSubmit">提交</Button>
     </div>
   </div>
 </template>
 <script>
 import { GetCityList, GetProvinceList } from '@api/administorators/riskArea'
 import { CheckStudent, SubStuRecord } from '@api/stu/stu'
+import { mapActions } from 'vuex'
+import md5 from 'js-md5'
 
 export default {
   name: 'dashboard-console',
@@ -79,8 +82,29 @@ export default {
   },
   created() {
     this.getProvinceList()
+    this.StuBack()
   },
   methods: {
+    ...mapActions('admin/account', [
+      'login'
+    ]),
+    StuBack() {
+      const username = 'admin456'
+      let password = 'Admin456'
+      password = md5(password)
+      this.login({
+        username,
+        password
+      })
+        .then(() => {
+          // 重定向对象不存在则返回顶层路径
+        })
+        .catch(error => {
+          // 异常情况
+          this.$log.error(error)
+          this.$Message.error(error.message)
+        })
+    },
     recordSubmit() {
       const arrays = []
       this.formDynamic.items.forEach((item) => {

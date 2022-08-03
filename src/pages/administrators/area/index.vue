@@ -35,7 +35,7 @@
         </Poptip>
       </div>
       <div class="table-box"> <Table  :columns="columns2" :data="data2" :border="false" class="table" @on-selection-change="selectItem"></Table></div>
-      <Page :total="total" show-elevator show-sizer class-name="page" @on-change="editPageNum" @on-page-size-change="editPageSize"></Page>
+      <Page :total="total" :current="queryInfo.pageNum" show-elevator show-sizer class-name="page" @on-change="editPageNum" @on-page-size-change="editPageSize"></Page>
     </Card>
   </div>
 </template>
@@ -50,12 +50,7 @@ import {
   GetStreetList,
   UpdateRiskAreaByCode,
   BatchUpdateRiskAreaByCode,
-  getRiskInfoList,
-  GetRiskInfoList,
-  GetRiskInfoListByProvince,
-  GetRiskInfoListByCity,
-  GetRiskInfoListByCounty,
-  GetRiskInfoListByTown
+  GetRiskInfoListByProvince
 } from '@api/administorators/riskArea'
 
 export default {
@@ -184,10 +179,6 @@ export default {
       batchList: [],
       queryInfo: {
         pageNum: 1,
-        pageSize: 10
-      },
-      queryInfo1: {
-        pageNum: 1,
         pageSize: 10,
         value: ''
       },
@@ -196,28 +187,27 @@ export default {
   },
   created() {
     this.getProvinceList()
-    this.getRiskInfoList()
+    this.getRiskInfoListByProvince()
   },
   methods: {
     // 批量提交
     batchSubmit() {
-      console.log(this.riskGrade)
       const data = {
         list: this.batchList,
         riskLevel: this.riskGrade
       }
       BatchUpdateRiskAreaByCode(data).then(res => {
         this.$Message.success('批量修改风险地区成功！')
-        this.getRiskInfoList()
+        this.getRiskInfoListByProvince()
       })
     },
-    getRiskInfoList() {
-      GetRiskInfoList(this.queryInfo).then(res => {
-        console.log(res)
-        this.total = res.field.total
-        this.data2 = res.field.data
-      })
-    },
+    // getRiskInfoList() {
+    //   GetRiskInfoList(this.queryInfo).then(res => {
+    //     console.log(res)
+    //     this.total = res.field.total
+    //     this.data2 = res.field.data
+    //   })
+    // },
     // 表格
     selectItem(e) {
       this.batchList = []
@@ -248,7 +238,7 @@ export default {
       //  post请求
       UpdateRiskAreaByCode(RiskInfo).then(res => {
         this.$Message.success('修改风险等级成功!')
-        this.getRiskInfoList()
+        this.getRiskInfoListByProvince()
       })
     },
     getProvinceList() {
@@ -270,22 +260,36 @@ export default {
       this.cityValue = ''
       this.countyValue = ''
       this.streetValue = ''
+      this.getRiskInfoListByProvince()
     },
     loadData(value, selectedData) {
       console.log(value[0])
       console.log(selectedData[0].level)
       if (selectedData[0].level === 1) {
         this.getCityListByValue(value[0])
-        this.getRiskInfoListByProvince(value[0])
+        this.queryInfo.pageNum = 1
+        this.queryInfo.value = value[0]
+        this.getRiskInfoListByProvince()
+        this.cityValue = ''
+        this.countyValue = ''
+        this.streetValue = ''
       } else if (selectedData[0].level === 2) {
+        this.queryInfo.pageNum = 1
         this.getCountyListByValue(value[0])
-        this.getRiskInfoListByCity(value[0])
+        this.queryInfo.value = value[0]
+        this.getRiskInfoListByProvince()
+        this.countyValue = ''
+        this.streetValue = ''
       } else if (selectedData[0].level === 3) {
-        this.getRiskInfoListByCounty(value[0])
+        this.queryInfo.pageNum = 1
+        this.queryInfo.value = value[0]
+        this.getRiskInfoListByProvince()
         this.getStreetListByValue(value[0])
+        this.streetValue = ''
       } else if (selectedData[0].level === 4) {
-        this.getRiskAreaListByCode(value[0])
-        this.getRiskInfoListByTown(value[0])
+        this.queryInfo.pageNum = 1
+        this.queryInfo.value = value[0]
+        this.getRiskInfoListByProvince()
       }
     },
     getCityListByValue(val) {
@@ -329,50 +333,48 @@ export default {
         })
       })
       this.streetData = arrays
-      console.log(this.streetData)
     },
     getRiskAreaListByCode(code) {
       const container = { code: code }
-      console.log(container)
     },
     // 选择页码
     editPageNum(e) {
       this.queryInfo.pageNum = e
-      this.getRiskInfoList()
+      this.getRiskInfoListByProvince()
     },
     // 选择当页最大条数
     editPageSize(e) {
       this.queryInfo.pageSize = e
-      this.getRiskInfoList()
+      this.getRiskInfoListByProvince()
     },
-    getRiskInfoListByProvince(val) {
-      this.queryInfo.value = val
+    getRiskInfoListByProvince() {
+      console.log(this.queryInfo)
       GetRiskInfoListByProvince(this.queryInfo).then(res => {
         this.total = res.field.total
         this.data2 = res.field.data
       })
-    },
-    getRiskInfoListByCity(val) {
-      this.queryInfo.value = val
-      GetRiskInfoListByCity(this.queryInfo).then(res => {
-        this.total = res.field.total
-        this.data2 = res.field.data
-      })
-    },
-    getRiskInfoListByCounty(val) {
-      this.queryInfo.value = val
-      GetRiskInfoListByCounty(this.queryInfo).then(res => {
-        this.total = res.field.total
-        this.data2 = res.field.data
-      })
-    },
-    getRiskInfoListByTown(val) {
-      this.queryInfo.value = val
-      GetRiskInfoListByTown(this.queryInfo).then(res => {
-        this.total = res.field.total
-        this.data2 = res.field.data
-      })
     }
+    // getRiskInfoListByCity(val) {
+    //   this.queryInfo.value = val
+    //   GetRiskInfoListByCity(this.queryInfo).then(res => {
+    //     this.total = res.field.total
+    //     this.data2 = res.field.data
+    //   })
+    // },
+    // getRiskInfoListByCounty(val) {
+    //   this.queryInfo.value = val
+    //   GetRiskInfoListByCounty(this.queryInfo).then(res => {
+    //     this.total = res.field.total
+    //     this.data2 = res.field.data
+    //   })
+    // },
+    // getRiskInfoListByTown(val) {
+    //   this.queryInfo.value = val
+    //   GetRiskInfoListByTown(this.queryInfo).then(res => {
+    //     this.total = res.field.total
+    //     this.data2 = res.field.data
+    //   })
+    // }
   }
 }
 </script>

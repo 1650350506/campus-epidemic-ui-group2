@@ -1,11 +1,9 @@
 <template>
   <div style="margin:84px 24px 0 24px">
     <Card :bordered="false"  class="card">
-      <!--       这是面包屑组件-->
       <i-header-breadcrumb  ref="breadcrumb" />
       <h2 style="margin-top: 10px;">你好！ 管理员！</h2>
     </Card>
-    <!--        <i class="ivu-icon ivu-icon-ios-refresh" slot="extra"></i>-->
     <div class="chart-top">
       <Card v-for="(item, index) in topList" :key="index"  class="card-box" :style="{background:'linear-gradient(-45deg, transparent 50%,'+bgColorList[index]+' 0)'}">
         <Row>
@@ -24,31 +22,29 @@
     </div>
     <div class="chart-bottom" style="background: #fff">
       <Card class="card">
-        <h2 slot="title" style="margin: 1em 0;">各学院防疫人员分布</h2>
-        <i class="ivu-icon ivu-icon-ios-refresh" slot="extra"></i>
-        <div id="main3" :style="{ width: '100%' , height: '22vw'}"></div>
+        <h2 slot="title" style="margin: 1em 0;">隔离人员/防疫人员配比</h2>
+        <div id="main3" :style="{ width: '100%' , height: '24vw'}"></div>
       </Card>
     </div>
     <div class="chart-mid card-marginTop">
       <Card class="card" :bordered="false">
         <h2 slot="title" style="margin: 1em 0;">新增隔离人数趋势</h2>
         <div slot="extra">
-          <Select :value="timeList" class="select-box" @on-change="selectTime">
-            <Option v-for="item in timeList" :value="item.value" :key="item">{{ item.label }}</Option>
+          <Select v-model="selectModel" class="select-box" @on-change="selectTime">
+            <Option value="7">过去7天</Option>
+            <Option value="14">过去14天</Option>
           </Select>
         </div>
         <div id="main" style="width: 100%; height: 58vh;"></div>
       </Card>
       <Card class="card" :bordered="false">
         <h2 slot="title" style="margin: 1em 0;">各个学院隔离人员分布</h2>
-        <i class="ivu-icon ivu-icon-ios-refresh" slot="extra"></i>
         <div id="main2" :style="{ width: '98%', height: '60vh' }"></div>
       </Card>
     </div>
   </div>
 </template>
 <script>
-import _ from 'lodash'
 import iHeaderBreadcrumb from '@/layouts/basic-layout/header-breadcrumb'
 import {
   GetAllIsolationTotal, GetEachEpidemicListAnalysis, GetEachIsolationListAnalysis,
@@ -56,8 +52,6 @@ import {
   GetNewIsolationTotal,
   GetRelieveIsolationTotal
 } from '@api/administorators/analysis'
-import { GetUserInfo } from '../../../api/system/user'
-
 const echarts = require('echarts')
 
 export default {
@@ -125,8 +119,6 @@ export default {
             fontSize: 14,
             padding: [0, 0, 10, 0]
           }
-          // data: this.eachDays
-          // data: [7.4, 7.2, 7.3, 7.4, 7.5, 7.6, 7.7]
         },
         yAxis: {
           type: 'value',
@@ -141,14 +133,14 @@ export default {
           nameRotate: '90',
           nameTextStyle: {
             fontSize: 14,
-            padding: [0, 0, 0, 0, 0] // 加上padding可以调整其位置
+            padding: [0, 0, 0, 0, 0]
           },
           splitLine: {
             // 网格线
             lineStyle: {
-              type: 'dashed' // 设置网格线类型 dotted：虚线   solid:实线
+              type: 'dashed'
             },
-            show: true // 隐藏或显示
+            show: true
           }
         },
         series: [
@@ -219,7 +211,6 @@ export default {
         },
         series: [
           {
-            name: 'Access From',
             itemGap: -10,
             type: 'pie',
             radius: ['65%', '40%'],
@@ -263,7 +254,7 @@ export default {
         },
         yAxis: {
           type: 'value',
-          name: '比例',
+          name: '人数',
           axisLine: {
             show: false
           },
@@ -280,56 +271,27 @@ export default {
         },
         series: [
           {
+            name: '防疫人员',
             type: 'bar',
-            itemStyle: {
-              normal: {
-                color: '#435EBE',
-                label: {
-                  show: false
-                }
-              }
+            stack: 'Ad',
+            emphasis: {
+              focus: 'series'
             },
-            markLine: {
-              symbol: 'none',
-              itemStyle: {
-                normal: {
-                  color: '#57CAEB',
-                  label: {
-                    show: true
-                  }
-                }
-              },
-              data: [{ type: 'average', name: '平均值' }]
-            }
+            data: []
+          },
+          {
+            name: '隔离人员',
+            type: 'bar',
+            stack: 'Search Engine',
+            emphasis: {
+              focus: 'series'
+            },
+            data: []
           }
         ]
       },
-      option3: {
-        xAxis: {
-          type: 'category',
-          data: [],
-          splitLine: false,
-          axisTick: false,
-          show: false
-        },
-        yAxis: {
-          type: 'value',
-          splitLine: false,
-          show: false
-        },
-        series: [
-          {
-            data: [0, 2, 1, 1, 4, 3, 8, 6, 3, 1, 1, 4, 3.5, 5, 5, 4, 3, 8, 6, 3, 1, 1, 4, 3.5, 5, 5, 4, 3, 8, 4, 3.5, 1, 2],
-            type: 'line',
-            smooth: true,
-            symbol: 'none'
-          }
-        ],
-        eachDays: [],
-        eachCount: [],
-        queryDayInfo: {
-          command: 7
-        }
+      queryDayInfo: {
+        command: 7
       }
     }
   },
@@ -340,8 +302,8 @@ export default {
   },
   created() {
     this.getOldIsolationListByDate()
-    this.getAllIsolationTotal()
     this.getNewIsolationTotal()
+    this.getAllIsolationTotal()
     this.getReliveIsolationTotal()
     this.getEachEpidemicListAnalysis()
     this.getEachIsolationListAnalysis()
@@ -396,45 +358,41 @@ export default {
           arr1.push(parseFloat(this.dateFormat(item.to_char)))
           arr2.push(item.count)
         })
-        this.option.series[0].data = arr2
-        this.option.xAxis.data = arr1
+        this.option.series[0].data = arr2.reverse()
+        this.option.xAxis.data = arr1.reverse()
         this.updateOptions()
       })
     },
     getEachEpidemicListAnalysis() {
       GetEachEpidemicListAnalysis().then(res => {
-        const arr1 = Object.keys(res.field)
-        const arr2 = Object.values(res.field)
+        const arr1 = Object.keys(res.field[0])
+        const arr2 = Object.values(res.field[0])
+        const arr3 = Object.keys(res.field[1])
+        const arr4 = Object.values(res.field[1])
         this.option2.series[0].data = arr2
+        this.option2.series[1].data = arr4
         this.option2.xAxis.data = arr1
         this.updateOptions1()
       })
     },
     getEachIsolationListAnalysis() {
       GetEachIsolationListAnalysis().then(res => {
-        const arr1 = Object.keys(res.field)
-        const arr2 = Object.values(res.field)
         const arr = []
-        console.log(res.field)
-        for (let i = 0; i < arr1.length; i++) {
+        for (let i = 0; i < res.field.length; i++) {
           if (i < 7) {
             arr.push({
-              name: arr1[i],
-              value: arr2[i]
+              name: Object.keys(res.field[i])[0],
+              value: Object.values(res.field[i])[0]
             })
           }
         }
         this.option1.series[0].data = arr
-        // console.log(this.option.series)
         this.updateOptions2()
       })
     },
     dateFormat(time) {
       const date = new Date(time)
       const year = date.getFullYear()
-      /* 在日期格式中，月份是从0开始的，因此要加0
-       * 使用三元表达式在小于10的前面加0，以达到格式统一  如 09:11:05
-       * */
       const month = date.getMonth() + 1 < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1
       const day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate()
       const hours = date.getHours() < 10 ? `0${date.getHours()}` : date.getHours()
@@ -515,7 +473,7 @@ i {
   }
 }
 .chart-bottom {
-  height: 30vw;
+  height: 33vw;
   .card {
     height: 100%;
     width: 100%;

@@ -48,30 +48,81 @@ export default {
         {
           title: '检测时间',
           key: 'nucleicAcidTime',
+          align: 'center',
           width: '180'
         },
         {
           title: '核酸结果',
-          key: 'nucleicAcidKey'
+          align: 'center',
+          key: 'nucleicAcidKey',
+          render: (h, params) => {
+            let key
+            if (params.row.nucleicacidkey === 1) {
+              key = '阳性'
+            } else {
+              key = '阴性'
+            }
+            return h('span', key)
+          }
         },
         {
-          title: '检测结果',
-          key: 'temperature'
+          title: '测温结果',
+          align: 'center',
+          key: 'temperature',
+          render: (h, params) => {
+            let temp = params.row.temperature
+            let colors
+            if (temp < 37) {
+              temp = '正常'
+              colors = '#0f7419'
+            } else {
+              temp = '异常'
+              colors = '#d71313'
+            }
+            return h('div',
+              {
+                style: {
+                  display: 'flex',
+                  justifyContent: 'center'
+                }
+              },
+              [
+                h('div', {
+                  style: {
+                    width: '1em',
+                    height: '1em',
+                    marginTop: '2px',
+                    borderRadius: '50%',
+                    backgroundColor: colors
+                  }
+                }),
+                h('div', {
+                  style: {
+                    marginLeft: '5px'
+                  },
+                  on: {
+                  }
+                }, temp)
+              ])
+          }
         }
       ],
       columns1: [
         {
           title: '隔离开始时间',
           key: 'startTime',
-          width: '160'
+          align: 'center',
+          width: '170'
         },
         {
           title: '隔离结束时间',
           key: 'endTime',
-          width: '160'
+          align: 'center',
+          width: '170'
         },
         {
           title: '隔离原因',
+          align: 'center',
           key: 'isolationReason'
         }
       ],

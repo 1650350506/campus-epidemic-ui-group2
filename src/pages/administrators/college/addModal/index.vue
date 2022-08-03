@@ -75,8 +75,9 @@
 </template>
 
 <script>
-import { RegUserInfo } from '../../../../api/system/user'
-
+import { GetUserInfoByToken, RegUserInfo } from '../../../../api/system/user'
+const Long = require('long')
+import md5 from 'js-md5'
 export default {
   name: 'addFaculty',
   props: ['showSwitch'],
@@ -97,12 +98,12 @@ export default {
       },
       addUserInfo: {
         account: 'testAdmin',
-        deptId: '1548935972324904988',
+        deptId: 1548935972324904988,
         mobile: '19858104444',
         name: '姜程璐',
         pwd: 'Admin111',
         resetPwd: false,
-        roles: ['1547742937243193372'],
+        roles: [1547517732906340380],
         selfAccount: false,
         switchUser: false
       },
@@ -119,7 +120,13 @@ export default {
     },
     //  这是对自己服务的方法()
     addFacultyInfo() {
+      this.addUserInfo.pwd = md5(this.addUserInfo.pwd)
       RegUserInfo(this.addUserInfo).then(res => {
+        console.log(res)
+      })
+    },
+    getUserInfoByToken() {
+      GetUserInfoByToken().then(res => {
         console.log(res)
       })
     }

@@ -13,7 +13,7 @@
       <div class="table-box">
         <Table  :columns="columns" :data="data" :border="false" class="table"></Table>
       </div>
-      <Page :total="total" show-elevator show-sizer class-name="page"  @on-change="editPageNum" @on-page-size-change="editPageSize"></Page>
+      <Page :total="total" :current="queryInfo.pageNum" show-elevator show-sizer class-name="page"  @on-change="editPageNum" @on-page-size-change="editPageSize"></Page>
     </Card>
     <NewContent :newSwitch="addDialogVisible" @addClose="closeByNew"></NewContent>
   </div>

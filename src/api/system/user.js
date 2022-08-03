@@ -40,3 +40,11 @@ export function RegUserInfo(data) {
     data
   })
 }
+
+export function GetUserInfoByToken(data) {
+  return request({
+    url: `${moduleName.doraemon_userinfo}/userManage/viewUserInfo`,
+    method: 'post',
+    urlType: 'jixian'
+  })
+}

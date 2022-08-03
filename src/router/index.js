@@ -33,7 +33,7 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   if (Setting.showProgressBar) iView.LoadingBar.start()
 
-  if (to.path === '/' || to.path === '/login') {
+  if (to.path === '/' || to.path === '/login' || to.path === '/login/back' || to.path === '/login/leave' || to.path === '/login/record' || to.path === '/login/openCard') {
     next()
   } else {
     // 这里依据 token 判断是否登录，可视情况修改

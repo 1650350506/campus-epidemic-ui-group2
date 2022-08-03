@@ -47,16 +47,6 @@ const frameIn = [
         component: () => import('@/pages/administrators/college')
       },
       {
-        path: '/riskPreMessage',
-        name: 'riskPreMessage',
-        component: () => import('@/pages/groupleader/stumanage/riskpre')
-      },
-      {
-        path: '/outRecord',
-        name: 'outRecord',
-        component: () => import('@/pages/groupleader/stumanage/outrecord')
-      },
-      {
         path: '/quarantinedManage',
         name: 'quarantinedManage',
         component: () => import('@/pages/administrators/riskpremanage/premanage')
@@ -80,6 +70,11 @@ const frameIn = [
         path: '/record',
         name: 'record',
         component: () => import('@/pages/student/record')
+      },
+      {
+        path: '/openCard',
+        name: 'record',
+        component: () => import('@/pages/administrators/punch')
       },
       {
         path: 'log',
@@ -133,9 +128,20 @@ const frameIn = [
     ]
   },
   {
-    path: '/isolationAnalysis',
-    name: 'isolationAnalysis',
-    component: () => import('@/pages/administrators/analysis')
+    path: '/login/back',
+    component: () => import('@/pages/student/back')
+  },
+  {
+    path: '/login/leave',
+    component: () => import('@/pages/student/leave')
+  },
+  {
+    path: '/login/record',
+    component: () => import('@/pages/student/record')
+  },
+  {
+    path: '/login/openCard',
+    component: () => import('@/pages/administrators/punch')
   },
   dashboard, administrators
 ]

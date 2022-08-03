@@ -6,13 +6,19 @@
       <h2 class="bread-title">你好！ 疫情防控小组组长！</h2>
     </Card>
     <Card class="card">
-      <div slot="extra">
-        风险等级查询
-        <Select v-model="selectModel" style="width:200px" @on-change="queryListByGrade(selectModel)">
-          <Option v-for="item in gradeList" :value="item" :key="item">{{ item }}</Option>
-        </Select>
+      <div class="search-container">
+        <div class="left-search">
+          <i class="ivu-icon ivu-icon-ios-search"></i>
+          <Input  placeholder="请输入学生学号、学生姓名、二级学院" style="width: 340px" v-model="queryInfo.key"></Input>
+        </div>
+        <div style="margin-right: 2em">
+          <Select v-model="selectModel" style="width:200px" @on-change="queryListByGrade(selectModel)" placeholder="按分险等级查询">
+            <Option v-for="item in gradeList" :value="item" :key="item">{{ item }}</Option>
+          </Select>
+        </div>
+        <Button type="primary" class="btn" @click="queryStuInfoByKey">查询</Button>
+        <Button class="btn" @click="queryInfo.key = ''">重置</Button>
       </div>
-      <Search title="请输入学生学号、学生姓名、二级学院" :keyValue="queryInfo.key" @selectFun="queryStuInfoByKey"></Search>
     </Card>
     <Card class="card-marginTop card">
       <div class="batch-box">
@@ -28,7 +34,7 @@
       <div class="table-box">
         <Table :border="false" :columns="columns" :data="data" @on-selection-change="selectItem"></Table>
       </div>
-      <Page :total="total" show-elevator show-sizer class-name="page"  @on-change="editPageNum" @on-page-size-change="editPageSize"></Page>
+      <Page :total="total" show-elevator :current="queryInfo.pageNum" show-sizer class-name="page"  @on-change="editPageNum" @on-page-size-change="editPageSize"></Page>
     </Card>
     <CheckLocal :checkSwitch="showDialogVisible" :checkList1="checkList1" :crossList="crossList" :outList="outList" @switchCheck="close"></CheckLocal>
   </div>
@@ -47,12 +53,12 @@ import { BatchDelBatchDailyCodeList, BatchDelLocalBatchDailyCodeList } from '../
 export default {
   name: 'index',
   components: {
-    iHeaderBreadcrumb, Search, CheckLocal
+    iHeaderBreadcrumb, CheckLocal
   },
   data() {
     return {
       batchNum: 0,
-      selectModel: '默认',
+      selectModel: '',
       gradeList: [
         '默认', '只看中风险', '只看高风险'
       ],
@@ -139,15 +145,22 @@ export default {
         },
         {
           title: '学生学号',
+          align: 'center',
           key: 'code'
         },
         {
           title: '学生姓名',
+          align: 'center',
           key: 'name'
         },
         {
           title: '二级学院',
           key: 'secondCollage'
+        },
+        {
+          title: '离校时间',
+          align: 'center',
+          key: 'startTime'
         },
         {
           title: '风险地区等级',
@@ -272,7 +285,7 @@ export default {
   methods: {
     selectItem(e) {
       this.batchList = []
-      e.forEach((item, index) => {
+      e.forEach((item) => {
         console.log(item)
         this.batchList.push(item.code)
       })
@@ -290,12 +303,9 @@ export default {
     close() {
       this.showDialogVisible = false
     },
-    handleUpdateStuInfo() {
-      console.log('用户更新')
-    },
     // 通过学生学号删除
     deleteStuInfoByCode(code) {
-      DeleteLocalStuInfo({ code: code }).then((res) => {
+      DeleteLocalStuInfo({ code: code }).then(() => {
         this.$Message.success('删除本市学生信息成功！')
         this.getLocalStuList()
       })
@@ -309,20 +319,22 @@ export default {
       } else if (grade === '只看高风险') {
         this.queryInfo.risk = 2
       }
+      this.queryInfo.pageNum = 1
+      this.queryInfo.pageSize = 10
       this.getLocalStuList()
     },
     // 获得学生基本信息
     getLocalStuList() {
       GetLocalStuList(this.queryInfo).then((res) => {
-        console.log(res)
         this.data = res.data
         this.total = res.total
       })
     },
     // 关键字查询
-    queryStuInfoByKey(e) {
+    queryStuInfoByKey() {
       this.data = []
-      this.queryInfo.key = e
+      this.queryInfo.pageNum = 1
+      this.queryInfo.pageSize = 10
       this.getLocalStuList()
     },
     // 选择页码
@@ -363,8 +375,6 @@ export default {
             whereDetail: item.whereDetail
           })
         })
-        console.log('out')
-        console.log(this.outList)
       })
     }
   }
@@ -410,6 +420,21 @@ export default {
 ::v-deep .ivu-input {
   font-size: 16px;
   color: #000;
+}
+.search-container {
+  display: flex;
+  border: 0;
+  .left-search {
+    display: flex;
+    align-items: center;
+    margin-right: 2em;
+    i {
+      font-size: 2em;
+    }
+  }
+  .btn {
+    margin-right: 2em;
+  }
 }
 .search-module {
   width: 70%;

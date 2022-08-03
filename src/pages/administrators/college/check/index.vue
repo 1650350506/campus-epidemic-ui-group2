@@ -17,7 +17,7 @@
       <div class="mid-box">
         <div class="mid-box-left"></div>
         <div class="mid-box-right">
-          <Table border :columns="columns"  height="150" :data="data"></Table>
+          <Table border :columns="columns"  height="150" :data="msgList"></Table>
         </div>
       </div>
     </div>
@@ -30,45 +30,60 @@
 <script>
 export default {
   name: 'index',
-  props: ['display', 'checkList1'],
+  props: ['display', 'checkList1', 'msgList'],
   data() {
     return {
       columns: [
         {
           title: '进入时间',
-          key: 'name'
+          key: 'startTime',
+          align: 'center',
+          width: '170'
         },
         {
           title: '离开时间',
-          key: 'age'
+          key: 'endTime',
+          align: 'center',
+          width: '170'
         },
         {
           title: '健康码颜色',
-          key: 'address'
+          key: 'color',
+          align: 'center',
+          width: '170',
+          render: (h, params) => {
+            let types = ''
+            let typeName = ''
+            console.log('查看')
+            console.log(params.row)
+            if (params.row.color === 0) {
+              types = 'success'
+              typeName = '绿码'
+            } else if (params.row.color === 1) {
+              types = 'warning'
+              typeName = '黄码'
+            } else if (params.row.color === 2) {
+              types = 'error'
+              typeName = '红码'
+            } else {
+              types = 'text'
+              typeName = '------'
+            }
+            return h('div', [
+              h('Button', {
+                props: {
+                  type: types
+                },
+                style: {
+                },
+                on: {
+                }
+              }, typeName)
+            ])
+          }
         }
       ],
-      data: [
-        {
-          name: '王小明',
-          age: 18,
-          address: '北京市朝阳区芍药居'
-        },
-        {
-          name: '张小刚',
-          age: 25,
-          address: '北京市海淀区西二旗'
-        },
-        {
-          name: '李小红',
-          age: 30,
-          address: '上海市浦东新区世纪大道'
-        },
-        {
-          name: '周小伟',
-          age: 26,
-          address: '深圳市南山区深南大道'
-        }
-      ]
+      data: []
     }
   },
   methods: {

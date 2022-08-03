@@ -20,7 +20,7 @@
             <!--            <i-header-log v-if="isDesktop && showLog" />-->
             <!--            <i-header-fullscreen v-if="isDesktop && showFullscreen" />-->
 <!--                        <i-header-notice v-if="showNotice" />-->
-            <i-header-add />
+<!--            <i-header-add />-->
             <i-header-user />
             <!--            <i-header-setting v-if="enableSetting && !isMobile" />-->
           </div>

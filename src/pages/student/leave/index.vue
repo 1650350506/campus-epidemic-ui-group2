@@ -41,6 +41,7 @@
                 <Cascader placeholder="选择市" style="width: 18em" :data="cityData" v-model="cityValue" @on-change="loadData"></Cascader>
                 <Cascader placeholder="选择区" style="width: 18em" v-show="is_Local" :data="countyData" v-model="countyValue" @on-change="loadData"></Cascader>
                 <Cascader placeholder="选择街道" style="width: 18em" v-show="is_Local" :data="streetData" v-model="streetValue" @on-change="loadData"></Cascader>
+                <Cascader placeholder="选择社区" style="width: 18em" v-show="is_Local" :data="townData" v-model="townValue" @on-change="loadData"></Cascader>
               </div>
             </div>
             <div class="msg-item">
@@ -57,8 +58,16 @@
   </div>
 </template>
 <script>
-import { GetCityList, GetCountyList, GetProvinceList, GetStreetList } from '@api/administorators/riskArea'
+import {
+  GetCityList,
+  GetCountyList,
+  GetProvinceList,
+  GetRiskInfoListByTown,
+  GetStreetList
+} from '@api/administorators/riskArea'
 import { CheckStudent, SubStuBack, SubStuLeave } from '@api/stu/stu'
+import md5 from 'js-md5'
+import { mapActions } from 'vuex'
 
 export default {
   name: 'dashboard-console',
@@ -79,13 +88,36 @@ export default {
       countyData: [],
       streetValue: '',
       streetData: [],
+      townData: [],
+      townValue: [],
       is_Local: false
     }
   },
   created() {
     this.getProvinceList()
+    this.StuBack()
   },
   methods: {
+    ...mapActions('admin/account', [
+      'login'
+    ]),
+    StuBack() {
+      const username = 'admin456'
+      let password = 'Admin456'
+      password = md5(password)
+      this.login({
+        username,
+        password
+      })
+        .then(() => {
+          // 重定向对象不存在则返回顶层路径
+        })
+        .catch(error => {
+          // 异常情况
+          this.$log.error(error)
+          this.$Message.error(error.message)
+        })
+    },
     changeAddress() {
       if (this.formItem.type === '本市') {
         this.is_Local = true
@@ -100,7 +132,8 @@ export default {
       } else if (this.formItem.type === '跨市') {
         this.formItem.type = 1
       }
-      this.formItem.whereCode = this.streetValue[0]
+      // eslint-disable-next-line prefer-destructuring
+      this.formItem.whereCode = this.townValue[0]
       console.log(this.formItem)
       SubStuLeave(this.formItem).then(() => {
         this.$Message.success('离校信息提交成功！')
@@ -158,6 +191,8 @@ export default {
       } else if (selectedData[0].level === 3) {
         console.log(value[0])
         this.getStreetListByValue(value[0])
+      } else if (selectedData[0].level === 4) {
+        this.getRiskInfoListByTown(value[0])
       }
     },
     getCityListByValue(val) {
@@ -201,6 +236,22 @@ export default {
         })
       })
       this.streetData = arrays
+      console.log(this.streetData)
+    },
+    getRiskInfoListByTown(val) {
+      const valueList = { value: val }
+      const arrays = []
+      GetRiskInfoListByTown(valueList).then((res) => {
+        console.log(res)
+        res.field.forEach(ele => {
+          arrays.push({
+            level: 5,
+            label: ele.label,
+            value: ele.value
+          })
+        })
+      })
+      this.townData = arrays
       console.log(this.streetData)
     }
   }
@@ -327,7 +378,7 @@ export default {
       }
       .btn {
         margin: 2em 2em;
-        height: 3em;
+        height: 12vw;
         font-size: 1.2em;
       }
     }

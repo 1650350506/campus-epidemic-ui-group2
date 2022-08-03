@@ -6,12 +6,18 @@
       <h2 class="bread-title">你好！ 管理员！</h2>
     </Card>
     <Card class="card card-marginTop">
-      <Search title="请输入职工工号、职工姓名、二级学院" :keyValue="queryInfo.key" @selectFun="queryFacultyInfoByKey"></Search>
-      <div slot="extra">
-        查询健康码颜色
-        <Select v-model="healthyModel" style="width:200px" @on-change="queryListByHealthy(healthyModel)">
-          <Option v-for="item in healthyList" :value="item" :key="item">{{ item }}</Option>
-        </Select>
+      <div class="search-container">
+        <div class="left-search">
+          <i class="ivu-icon ivu-icon-ios-search"></i>
+          <Input  placeholder="请输入职工工号、职工姓名、二级学院" style="width: 340px" v-model="queryInfo.key"></Input>
+        </div>
+        <div style="margin-right: 2em">
+          <Select v-model="healthyModel" style="width:200px" @on-change="queryListByHealthy(healthyModel)" placeholder="按分险等级查询">
+            <Option v-for="(item,index) in healthyList" :value="item" :key="index">{{ item }}</Option>
+          </Select>
+        </div>
+        <Button type="primary" class="btn" @click="queryFacultyInfoByKey">查询</Button>
+        <Button class="btn" @click="queryInfo.key = ''">重置</Button>
       </div>
     </Card>
     <Card class="card card-marginTop">
@@ -23,15 +29,15 @@
           title="您确认批量删除这些数据吗？"
           @on-ok="batchSubmit"
         >
-          <div class="btn">批量提交</div>
+          <div class="btn">批量删除</div>
         </Poptip>
       </div>
       <div class="table-box">
         <Table :columns="columns" :data="data" :border="false" class="table" @on-selection-change="selectItem"></Table>
       </div>
-      <Page :total="total" show-elevator show-sizer class-name="page" :page-size="queryInfo.pageSize" :current="queryInfo.pageNum"  @on-change="editPageNum" @on-page-size-change="editPageSize"></Page>
+      <Page :total="total"  show-elevator show-sizer class-name="page" :page-size="queryInfo.pageSize" :current="queryInfo.pageNum"  @on-change="editPageNum" @on-page-size-change="editPageSize"></Page>
     </Card>
-    <check-modal :display="showDialogVisible" :checkList1="dialogList" @displayClose="closeCheck"></check-modal>
+    <check-modal :display="showDialogVisible" :checkList1="dialogList" @displayClose="closeCheck" :msgList="msgList"></check-modal>
     <edit-modal :editSwitch="updateDialogVisible" :editList1="dialogList" @editClose="closeEdit"></edit-modal>
     <add-faculty :showSwitch="addDialogVisible" @switchAdd="close"></add-faculty>
   </div>
@@ -59,7 +65,7 @@ export default {
         pageSize: 10,
         key: ''
       },
-      healthyModel: '默认',
+      healthyModel: '按健康码颜色查询',
       healthyList: ['默认', '绿码', '黄码', '红码'],
       columns: [
         {
@@ -70,11 +76,13 @@ export default {
         {
           title: '职工工号',
           width: '160',
+          align: 'center',
           key: 'code'
         },
         {
           title: '姓名',
           width: '120',
+          align: 'center',
           key: 'name'
         },
         {
@@ -91,19 +99,23 @@ export default {
         },
         {
           title: '健康吗颜色',
-          key: 'healthy_color',
+          key: 'color',
           render: (h, params) => {
-            let types = 'success'
-            let typeName = '绿码'
-            if (params.row.healthy_color === '绿码') {
+            let types = ''
+            let typeName = ''
+            console.log(params.row)
+            if (params.row.color === 0) {
               types = 'success'
               typeName = '绿码'
-            } else if (params.row.healthy_color === '黄码') {
+            } else if (params.row.color === 1) {
               types = 'warning'
               typeName = '黄码'
-            } else if (params.row.healthy_color === '红码') {
+            } else if (params.row.color === 2) {
               types = 'error'
               typeName = '红码'
+            } else {
+              types = 'text'
+              typeName = '------'
             }
             return h('div', [
               h('Button', {
@@ -244,7 +256,8 @@ export default {
         selfAccount: false,
         switchUser: false
       },
-      batchList: []
+      batchList: [],
+      msgList: []
     }
   },
   created() {
@@ -292,15 +305,11 @@ export default {
       GetFacultyInfo(this.queryInfo).then((res) => {
         this.total = res.total
         this.data = res.data
-        console.log('work')
-        console.log(res)
-        /* 这里把数据里面的性别和健康码颜色都文字化 */
       })
     },
     // 查询信息信息
     getFacultyInfoByCode(code) {
       GetFacultyInfoByCode({ code: code }).then(res => {
-        console.log(res)
         this.dialogList.code.value = res.code
         this.dialogList.name.value = res.name
         if (res.sex === 0) {
@@ -313,12 +322,19 @@ export default {
         this.dialogList.phone.value = res.phone
         this.dialogList.systemPost.value = res.systemPost
         this.dialogList.schoolPost.value = res.schoolPost
+        this.msgList = []
+        res.recordVOList.forEach(item => {
+          this.msgList.push({
+            color: item.color,
+            endTime: item.endTime,
+            startTime: item.startTime
+          })
+        })
       })
     },
     //  关键字查询工作人员信息
     queryFacultyInfoByKey(e) {
       this.data = []
-      this.queryInfo.key = e
       this.getFacultyList()
     },
     selectItem(e) {
@@ -357,16 +373,6 @@ export default {
   flex-basis: 25%;
   text-align: right;
 }
-i {
-  font-size: 18px;
-  position: absolute;
-  right: 0;
-  top: 60%;
-  color: #e01717;
-  line-height: 21px;
-  text-align: right;
-  transform: translate(-50%, -50%);
-}
 .batch-box {
   border: 1px solid #afd0ee;
   background: #E6F7FF;
@@ -384,6 +390,21 @@ i {
     background: transparent;
     border: 0;
     color: #1e93ff;
+  }
+}
+.search-container {
+  display: flex;
+  border: 0;
+  .left-search {
+    display: flex;
+    align-items: center;
+    margin-right: 2em;
+    i {
+      font-size: 2em;
+    }
+  }
+  .btn {
+    margin-right: 2em;
   }
 }
 </style>
