@@ -3,7 +3,7 @@
     <Card  :bordered="false"  class="card">
       <!--       这是面包屑组件-->
       <i-header-breadcrumb  ref="breadcrumb"  />
-      <h2 style="margin-top: 10px;">你好！管理员！</h2>
+      <h2 style="margin-top: 10px;">你好！ {{userInfo.roleName}}！</h2>
     </Card>
     <Card class="card">
       <Search title="请输入学生学号、学生姓名" :keyValue="queryInfo.keyword" @selectFun="queryWaitIsolationInfoBykey"></Search>
@@ -24,6 +24,7 @@ import iHeaderBreadcrumb from '@/layouts/basic-layout/header-breadcrumb'
 import Search from '@/components/top/search'
 import { GetIsolationInfoList, EditIsolationState } from '@api/personnel/riskpremanage'
 import NewContent from './../newPre'
+import { mapState } from 'vuex'
 export default {
   name: 'index',
   components: {
@@ -106,6 +107,9 @@ export default {
       },
       total: 0
     }
+  },
+  computed: {
+    ...mapState('admin/account', ['userInfo'])
   },
   created() {
     this.getWaitIsolationInfoList()

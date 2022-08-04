@@ -6,10 +6,10 @@
     <Layout class="i-layout-inside" :class="insideClasses">
       <transition name="fade-quick">
         <Header class="i-layout-header" :class="headerClasses" :style="headerStyle" v-show="showHeader&&!isMobile" v-resize="handleHeaderWidthChange">
-<!--          <i-header-logo v-if="isMobile && showMobileLogo" />-->
-<!--          <i-header-logo v-if="!isMobile && isHeaderStick && headerFix" />-->
-<!--          <i-header-collapse v-if="(isMobile || showSiderCollapse) && !hideSider" @on-toggle-drawer="handleToggleDrawer" />-->
-<!--          <i-header-reload v-if="!isMobile && showReload" @on-reload="handleReload" />-->
+          <!--          <i-header-logo v-if="isMobile && showMobileLogo" />-->
+          <!--          <i-header-logo v-if="!isMobile && isHeaderStick && headerFix" />-->
+          <!--          <i-header-collapse v-if="(isMobile || showSiderCollapse) && !hideSider" @on-toggle-drawer="handleToggleDrawer" />-->
+          <!--          <i-header-reload v-if="!isMobile && showReload" @on-reload="handleReload" />-->
           <!--          <i-menu-head v-if="headerMenu && !isMobile" ref="menuHead" />-->
           <!--          <i-header-breadcrumb v-if="showBreadcrumb && !headerMenu && !isMobile" ref="breadcrumb" />-->
           <!--          <i-header-search v-if="showSearch && !headerMenu && !isMobile && !showBreadcrumb" />-->
@@ -19,8 +19,8 @@
             <!--            <i-menu-head v-if="headerMenu && isMobile" />-->
             <!--            <i-header-log v-if="isDesktop && showLog" />-->
             <!--            <i-header-fullscreen v-if="isDesktop && showFullscreen" />-->
-<!--                        <i-header-notice v-if="showNotice" />-->
-<!--            <i-header-add />-->
+            <!--                        <i-header-notice v-if="showNotice" />-->
+            <!--            <i-header-add />-->
             <i-header-user />
             <!--            <i-header-setting v-if="enableSetting && !isMobile" />-->
           </div>
@@ -70,7 +70,7 @@ import { requestAnimation } from '@/libs/util'
 export default {
   name: 'BasicLayout',
   // eslint-disable-next-line vue/no-unused-components
-  components: { iMenuHead, iMenuSide, iCopyright, iHeaderLogo, iHeaderCollapse, iHeaderReload, iHeaderBreadcrumb, iHeaderSearch, iHeaderUser, iHeaderLog, iHeaderFullscreen, iHeaderSetting, iHeaderNotice, iTabs, iHeaderAdd},
+  components: { iMenuHead, iMenuSide, iCopyright, iHeaderLogo, iHeaderCollapse, iHeaderReload, iHeaderBreadcrumb, iHeaderSearch, iHeaderUser, iHeaderLog, iHeaderFullscreen, iHeaderSetting, iHeaderNotice, iTabs, iHeaderAdd },
   data() {
     return {
       showDrawer: false,

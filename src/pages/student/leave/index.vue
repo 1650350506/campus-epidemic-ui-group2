@@ -1,8 +1,8 @@
 <template>
-  <div class="page-container">
+  <div class="page-container" v-if="submitSuccess">
     <div class="top-box">
       <div class="top-title">
-        <i class="ivu-icon ivu-icon-ios-close" @click="backHome"></i>
+        <i class="iconfont icon-close" style="font-weight: bold" @click="backHome"></i>
         <h2>出校信息填写</h2>
       </div>
       <img class="img-style" src="../../../assets/images/top.png" alt="">
@@ -56,6 +56,17 @@
       </div>
     </div>
   </div>
+  <div v-else class="page-success">
+    <div class="success-box">
+      <div class="top-title">
+        <i class="ivu-icon ivu-icon-ios-arrow-back" @click="backPrev"></i>
+        <h2>离校信息填写</h2>
+        <i class="ivu-icon ivu-icon-ios-close" style="font-weight: bold" @click="backHome"></i>
+      </div>
+      <img class="img-submit" src="../../../assets/images/subSuccess.png" alt="">
+      <span class="submit-title">提交成功</span>
+    </div>
+  </div>
 </template>
 <script>
 import {
@@ -89,13 +100,14 @@ export default {
       streetValue: '',
       streetData: [],
       townData: [],
-      townValue: [],
-      is_Local: false
+      townValue: '',
+      is_Local: false,
+      submitSuccess: true
     }
   },
   created() {
-    this.getProvinceList()
     this.StuBack()
+    this.getProvinceList()
   },
   methods: {
     ...mapActions('admin/account', [
@@ -129,14 +141,13 @@ export default {
     subMsg() {
       if (this.formItem.type === '本市') {
         this.formItem.type = 0
+        this.formItem.whereCode = this.townValue[0]
       } else if (this.formItem.type === '跨市') {
         this.formItem.type = 1
+        this.formItem.whereCode = this.cityValue[0]
       }
-      // eslint-disable-next-line prefer-destructuring
-      this.formItem.whereCode = this.townValue[0]
-      console.log(this.formItem)
       SubStuLeave(this.formItem).then(() => {
-        this.$Message.success('离校信息提交成功！')
+        this.submitSuccess = false
       })
     },
     checkStu() {
@@ -146,28 +157,13 @@ export default {
         }
       })
     },
-    handleSubmit(name) {
-      this.$refs[name].validate((valid) => {
-        if (valid) {
-          this.$Message.success('提交成功!')
-        } else {
-          this.$Message.error('表单验证失败!')
-        }
-      })
-    },
-    handleReset(name) {
-      this.$refs[name].resetFields()
-    },
-    handleAdd() {
-      this.formItem.region.items.push({
-        value: ''
-      })
-    },
-    handleRemove(index) {
-      this.formItem.region.items.splice(index, 1)
-    },
     backHome() {
-      this.$router.replace('/login')
+      window.location.href = 'about:blank'
+      window.close()
+    },
+    backPrev() {
+      this.submitSuccess = true
+      window.location.reload()
     },
     getProvinceList() {
       const arrays = []
@@ -186,13 +182,22 @@ export default {
     loadData(value, selectedData) {
       if (selectedData[0].level === 1) {
         this.getCityListByValue(value[0])
+        this.cityValue = ''
+        this.countyValue = ''
+        this.streetValue = ''
+        this.townValue = ''
       } else if (selectedData[0].level === 2) {
         this.getCountyListByValue(value[0])
+        this.countyValue = ''
+        this.streetValue = ''
+        this.townValue = ''
       } else if (selectedData[0].level === 3) {
-        console.log(value[0])
+        this.streetValue = ''
+        this.townValue = ''
         this.getStreetListByValue(value[0])
       } else if (selectedData[0].level === 4) {
         this.getRiskInfoListByTown(value[0])
+        this.townValue = ''
       }
     },
     getCityListByValue(val) {
@@ -252,7 +257,6 @@ export default {
         })
       })
       this.townData = arrays
-      console.log(this.streetData)
     }
   }
 }
@@ -272,8 +276,8 @@ export default {
       width: 100%;
       display: flex;
       i {
-        font-weight: bold;
-        font-size: 3em;
+        margin-left: 2vw;
+        font-size: 2em;
         color: #ffffff;
       }
       h2 {
@@ -378,7 +382,7 @@ export default {
       }
       .btn {
         margin: 2em 2em;
-        height: 12vw;
+        height: 16vw;
         font-size: 1.2em;
       }
     }

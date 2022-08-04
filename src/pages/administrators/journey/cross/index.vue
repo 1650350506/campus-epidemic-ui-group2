@@ -3,7 +3,7 @@
     <Card :bordered="false"  class="card">
       <!--       这是面包屑组件-->
       <i-header-breadcrumb  ref="breadcrumb" />
-      <h2 class="bread-title">你好！ 疫情防控小组组长！</h2>
+      <h2 style="margin-top: 10px;">你好！ {{userInfo.roleName}}！</h2>
     </Card>
     <Card class="card">
       <div class="search-container">
@@ -42,12 +42,12 @@
 
 <script>
 import iHeaderBreadcrumb from '@/layouts/basic-layout/header-breadcrumb'
-import Search from '@/components/top/search'
 import CheckModal from './checkModal'
 import {
   GetStuList, DeleteStuInfo
 } from '@api/group/stuManage'
 import { BatchDelCrossBatchDailyCodeList } from '@api/administorators/journery'
+import { mapState } from 'vuex'
 export default {
   name: 'index',
   components: {
@@ -168,6 +168,7 @@ export default {
         {
           title: '操作',
           key: 'action',
+          width: 160,
           align: 'center',
           render: (h, params) => {
             return h('div', [
@@ -249,6 +250,9 @@ export default {
       batchList: []
     }
   },
+  computed: {
+    ...mapState('admin/account', ['userInfo'])
+  },
   created() {
     this.getStuList()
   },
@@ -275,7 +279,7 @@ export default {
     },
     // 通过学生学号删除
     deleteStuInfoByCode(code) {
-      DeleteStuInfo({ code: code }).then((res) => {
+      DeleteStuInfo({ code: code }).then(() => {
         this.$Message.success('删除成功！')
         this.getStuList()
       })

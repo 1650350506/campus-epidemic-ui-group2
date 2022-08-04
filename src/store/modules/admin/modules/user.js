@@ -16,6 +16,7 @@ export default {
          * @param {*} info info
          */
     set({ state, dispatch }, info) {
+      // eslint-disable-next-line no-async-promise-executor
       return new Promise(async resolve => {
         // store 赋值
         state.info = info
@@ -35,7 +36,9 @@ export default {
          * @param {Object} state vuex state
          * @param {Object} dispatch vuex dispatch
          */
+    // eslint-disable-next-line no-unused-vars
     load({ state, dispatch }) {
+      // eslint-disable-next-line no-async-promise-executor
       return new Promise(async resolve => {
         if (util.cookies.get('userInfo')) {
           state.info = JSON.parse(util.cookies.get('userInfo'))

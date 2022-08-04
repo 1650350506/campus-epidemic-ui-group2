@@ -93,29 +93,29 @@ const frameIn = [
         component: () => import('@/pages/setting/account')
       },
       // 刷新页面 必须保留
-      {
-        path: 'refresh',
-        name: 'refresh',
-        hidden: true,
-        component: {
-          beforeRouteEnter(to, from, next) {
-            next(instance => instance.$router.replace(from.fullPath))
-          },
-          render: h => h()
-        }
-      },
+      // {
+      //   path: 'refresh',
+      //   name: 'refresh',
+      //   hidden: true,
+      //   component: {
+      //     beforeRouteEnter(to, from, next) {
+      //       next(instance => instance.$router.replace(from.fullPath))
+      //     },
+      //     render: h => h()
+      //   }
+      // },
       // 页面重定向 必须保留
-      {
-        path: 'redirect/:route*',
-        name: 'redirect',
-        hidden: true,
-        component: {
-          beforeRouteEnter(to, from, next) {
-            next(instance => instance.$router.replace(JSON.parse(from.params.route)))
-          },
-          render: h => h()
-        }
-      },
+      // {
+      //   path: 'redirect/:route*',
+      //   name: 'redirect',
+      //   hidden: true,
+      //   component: {
+      //     beforeRouteEnter(to, from, next) {
+      //       next(instance => instance.$router.replace(JSON.parse(from.params.route)))
+      //     },
+      //     render: h => h()
+      //   }
+      // },
       {
         path: '/iframe-page/:menuId',
         name: 'iframe-page',

@@ -4,12 +4,6 @@
       <Avatar size="small" :src="info.avatar" v-if="info.avatar" />
       <span class="i-layout-header-user-name" v-if="!isMobile">{{ info.name }}</span>
       <DropdownMenu slot="list">
-        <i-link to="/setting/account">
-          <DropdownItem>
-            <Icon type="ios-contact-outline" />
-            <span>个人中心</span>
-          </DropdownItem>
-        </i-link>
         <DropdownItem divided name="logout">
           <Icon type="ios-log-out" />
           <span>退出登录</span>
@@ -30,6 +24,9 @@ export default {
       'isMobile',
       'logoutConfirm'
     ])
+  },
+  created() {
+    console.log(this.info)
   },
   methods: {
     ...mapActions('admin/account', [

@@ -3,10 +3,10 @@
     <Card :bordered="false"  class="card">
       <!--       这是面包屑组件-->
       <i-header-breadcrumb  ref="breadcrumb"  />
-      <h2 style="margin-top: 10px;">你好！管理员</h2>
+      <h2 style="margin-top: 10px;">你好！ {{userInfo.roleName}}！</h2>
     </Card>
     <div class="top-card">
-      <Card class="card" v-for="(item, index) in topList" :key="index">
+      <Card class="card" v-for="(item, index) in topList" :key="index" ref="cardRef">
         <div @click="showList(index)">
           <h1>{{item.name}}</h1>
           <h1>{{item.num}}</h1>
@@ -36,6 +36,7 @@ import CheckContent from './checkModal'
 import AddContent from './addModal'
 import NewContent from './../newPre'
 import { DeleteIsolationInfo, GetIsolationInfoList, GetIsolationInfoListByCode, GetTreatedTotal, GetQuarantinedTotal, GetToBeTotal, GetIsolatedTotal } from '@api/personnel/riskpremanage'
+import { mapState } from 'vuex'
 
 export default {
   name: 'index',
@@ -172,12 +173,15 @@ export default {
           render: (h, params) => {
             let temp = params.row.temperature
             let colors
-            if (temp < 37) {
+            if (params.row.temperature <= 36 && params.row.temperature > 35) {
               temp = '正常'
               colors = '#0f7419'
-            } else {
+            } else if (params.row.temperature > 37) {
               temp = '异常'
               colors = '#d71313'
+            } else {
+              temp = '------'
+              colors = 'transparent'
             }
             return h('div',
               {
@@ -214,14 +218,16 @@ export default {
             let key
             if (params.row.nucleicacidkey === 1) {
               key = '阳性'
-            } else {
+            } else if (params.row.nucleicacidkey === 0) {
               key = '阴性'
+            } else {
+              key = '------'
             }
             return h('span', key)
           }
         },
         {
-          title: '开始隔离时间',
+          title: '隔离开始时间',
           key: 'startTime',
           width: '180',
           align: 'center'
@@ -229,7 +235,7 @@ export default {
         {
           title: '操作',
           key: 'action',
-          width: '300',
+          width: '270',
           align: 'center',
           render: (h, params) => {
             return h('div', [
@@ -240,6 +246,7 @@ export default {
                 style: {
                   marginRight: '5px',
                   backgroundColor: 'transparent',
+                  display: this.displayType,
                   border: '0px',
                   color: '#01b0ff'
                 },
@@ -351,6 +358,9 @@ export default {
       displayType: 'inline-block'
     }
   },
+  computed: {
+    ...mapState('admin/account', ['userInfo'])
+  },
   created() {
     this.getIsolationInfoList()
     this.getTreatedTotal()
@@ -359,11 +369,10 @@ export default {
     this.getIsolatedTotalTotal()
   },
   methods: {
-    close(e) {
-      console.log(e)
+    close() {
       this.showDialogVisible = false
     },
-    closeByAdd(e) {
+    closeByAdd() {
       this.updateDialogVisible = false
     },
     closeByNew() {
@@ -380,8 +389,7 @@ export default {
       // 拼接
       return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
     },
-    // 获得隔离人员的关联人员
-    getProtectorNameByCode(code) {
+    getProtectorNameByCode(code) { // 获得隔离人员的关联人员
       const queryInfo = {
         pageNum: '1',
         pageSize: '10',
@@ -397,25 +405,26 @@ export default {
         }
       })
     },
-    // 查询已隔离或者未隔离信息
-    getIsolationInfoList() {
+    getIsolationInfoList() {  // 查询已隔离或者未隔离信息
       GetIsolationInfoList(this.queryInfo).then((res) => {
         this.data = res.data
         this.total = res.total
       })
     },
-    // // 解除隔离
-    relieveIsolation(e) {
+    relieveIsolation(e) { // 解除隔离
       const data = {
         code: e
       }
       DeleteIsolationInfo(data).then((res) => {
         this.$Message.success('解除隔离成功!')
         this.getIsolationInfoList()
+        this.getTreatedTotal()
+        this.getTobeTotal()
+        this.getQuarantinedTotal()
+        this.getIsolatedTotalTotal()
       })
     },
-    // 获取隔离信息
-    getIsolationInfoListByCode(code) {
+    getIsolationInfoListByCode(code) { // 获取隔离信息
       const queryInfo = {
         pageNum: '1',
         pageSize: '10',
@@ -435,16 +444,15 @@ export default {
         console.log(this.msgData)
       })
     },
-    // 服务记录
-    getIsolationServiceInfoList(code) {
+    getIsolationServiceInfoList(code) { // 服务记录
       const queryInfo = {
         pageNum: '1',
         pageSize: '10',
         keyword: code,
         state: ''
       }
+      this.serviceData = []
       GetIsolationInfoList(queryInfo).then(res => {
-        this.serviceData = []
         res.data.forEach(item => {
           this.serviceData.push({
             code: item.code,
@@ -455,25 +463,21 @@ export default {
         })
       })
     },
-    // 返回子组件最新的隔离记录
-    updateRecord(e) {
+    updateRecord(e) { // 返回子组件最新的隔离记录
       this.getIsolationInfoListByCode(e)
     },
-    // 关键字查询
-    queryQuarantinedInfoByKey(e) {
+    queryQuarantinedInfoByKey(e) { // 关键字查询
       this.data = []
       this.queryInfo.pageNum = 1
       this.queryInfo.pageSize = 10
       this.queryInfo.keyword = e
       this.getIsolationInfoList()
     },
-    // 选择页码
-    editPageNum(e) {
+    editPageNum(e) { // 选择页码
       this.queryInfo.pageNum = e
       this.getIsolationInfoList()
     },
-    // 选择当页最大条数
-    editPageSize(e) {
+    editPageSize(e) { // 选择当页最大条数
       this.queryInfo.pageSize = e
       this.getIsolationInfoList()
     },
@@ -520,6 +524,7 @@ export default {
   justify-content: flex-start;
 
   .card {
+    cursor: pointer;
     width: 20%;
     height: 100%;
     margin-left: 6.6%;

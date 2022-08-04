@@ -1,8 +1,8 @@
 <template>
-  <div class="page-container">
+  <div class="page-container" v-if="submitSuccess">
     <div class="top-box">
       <div class="top-title">
-        <i class="ivu-icon ivu-icon-ios-close" @click="backHome"></i>
+        <i class="iconfont icon-close" style="font-weight: bold" @click="backHome"></i>
         <h2>14天返校行程</h2>
       </div>
       <img class="img-style" src="../../../assets/images/top.png" alt="">
@@ -35,11 +35,15 @@
             :rules="{required: true, message: '行程轨迹' + (index + 1) +'不能为空', trigger: 'blur'}"
           >
             <Row>
-              <Col span="18">
-                <Cascader :data="data" v-model="item.value" @on-change="loadData"></Cascader>
+              <Col span="18" style="display: flex">
+                <Cascader :data="provinceData" @on-change="loadData"></Cascader>
+                <p></p>
+                <Cascader :data="cityData" v-model="item.value" @on-change="getCityCode"></Cascader>
               </Col>
               <Col span="4" offset="1">
                 <Button type="error" @click="handleRemove(index)">删除</Button>
+              </Col>
+              <Col span="2" offset="1">
               </Col>
             </Row>
           </Form-item>
@@ -53,6 +57,17 @@
         </Form>
       </div>
       <Button type="primary" style="margin: 0 10%; height: 12vw" @click="recordSubmit">提交</Button>
+    </div>
+  </div>
+  <div v-else class="page-success">
+    <div class="success-box">
+      <div class="top-title">
+        <i class="iconfont icon-arrow-left-bold" @click="backPrev"></i>
+        <h2>行程记录信息</h2>
+        <i class="iconfont icon-close" style="font-weight: bold" @click="backHome"></i>
+      </div>
+      <img class="img-submit" src="../../../assets/images/subSuccess.png" alt="">
+      <span class="submit-title">提交成功</span>
     </div>
   </div>
 </template>
@@ -77,12 +92,18 @@ export default {
         code: '',
         name: ''
       },
-      data: []
+      data: [],
+      submitSuccess: true,
+      provinceValue: '',
+      provinceData: [],
+      cityValue: '',
+      cityData: [],
+      travelRecordList: []
     }
   },
   created() {
-    this.getProvinceList()
     this.StuBack()
+    this.getProvinceList()
   },
   methods: {
     ...mapActions('admin/account', [
@@ -105,17 +126,26 @@ export default {
           this.$Message.error(error.message)
         })
     },
+    getCityCode(value, selectedData) { // 获得市区的编号
+      if (this.travelRecordList.length < this.formDynamic.items.length) {
+        this.travelRecordList.push(value[0])
+      } else if (this.travelRecordList.length === this.formDynamic.items.length) {
+        this.travelRecordList.splice(this.travelRecordList.length - 1, 1)
+        this.travelRecordList.push(value[0])
+      }
+    },
     recordSubmit() {
-      const arrays = []
-      this.formDynamic.items.forEach((item) => {
-        arrays.push(item.value[1])
-      })
       const list = {
         code: this.formItem.code,
-        cityList: arrays
+        cityList: this.travelRecordList
       }
-      SubStuRecord(list).then(res => {
-        console.log('提交成功')
+      console.log(list)
+      SubStuRecord(list).then(() => {
+        this.submitSuccess = false
+        this.formItem.code = ''
+        this.formItem.name = ''
+        this.provinceValue = ''
+        this.cityValue = ''
       })
     },
     handleReset(name) {
@@ -128,11 +158,12 @@ export default {
     },
     handleRemove(index) {
       this.formDynamic.items.splice(index, 1)
+      this.travelRecordList.splice(index, 1)
     },
     checkStu() {
       CheckStudent(this.formItem).then((res) => {
         if (res === 0) {
-          this.$Message.success('学生信息校验失败！请检查是否输入正确！')
+          this.$Message.error('学生信息校验失败！请检查是否输入正确！')
         }
       })
     },
@@ -148,7 +179,7 @@ export default {
             children: []
           })
         })
-        this.data = arrays
+        this.provinceData = arrays
         console.log(this.data)
       })
     },
@@ -167,14 +198,14 @@ export default {
           })
         })
       })
-      for (let i = 0; i < this.data.length; i++) {
-        if (this.data[i].value === val) {
-          this.data[i].children = arrays
-        }
-      }
+      this.cityData = arrays
     },
     backHome() {
-      this.$router.replace('/login')
+      window.location.href = 'about:blank'
+      window.close()
+    },
+    backPrev() {
+      this.submitSuccess = true
     }
   }
 }
@@ -194,8 +225,8 @@ export default {
       width: 100%;
       display: flex;
       i {
-        font-weight: bold;
-        font-size: 3em;
+        margin-left: 2vw;
+        font-size: 2em;
         color: #ffffff;
       }
       h2 {

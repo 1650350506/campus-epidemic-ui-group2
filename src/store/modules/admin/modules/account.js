@@ -9,6 +9,16 @@ import { Modal } from 'view-design'
 
 export default {
   namespaced: true,
+  state: {
+    userInfo: JSON.parse(localStorage.getItem('userInfo') || '[]')
+  },
+  mutations: {
+    addToUserInfo(state, user) {
+      console.log()
+      state.userInfo = user
+      localStorage.setItem('userInfo', JSON.stringify(state.userInfo))
+    }
+  },
   actions: {
     /**
          * @description 登录
@@ -41,7 +51,7 @@ export default {
             // 设置 vuex 用户信息
             const info = { name: res.user_name, avatar: 'https://dev-file.iviewui.com/userinfoPDvn9gKWYihR24SpgC319vXY8qniCqj4/avatar' }
             util.cookies.set('userInfo', info)
-            // await dispatch('admin/user/set', info, { root: true });
+            await dispatch('admin/user/set', info, { root: true })
             // 用户登录后从持久化数据加载一系列的设置
             await dispatch('load')
             // 结束

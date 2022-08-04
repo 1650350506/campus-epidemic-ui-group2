@@ -95,6 +95,7 @@ export default {
     },
     getJourneyInfoList() {
       GetJourneyInfoList(this.queryInfo).then((res) => {
+        this.data = []
         res.forEach((item) => {
           this.data.push({
             addressName: item
@@ -105,8 +106,7 @@ export default {
     },
     getOutSchoolListByCode() {
       GetOutSchoolList(this.queryInfo).then((res) => {
-        console.log(1)
-        console.log(res)
+        this.data1 = []
         res.forEach((item) => {
           this.data1.push({
             startTime: item.startTime,

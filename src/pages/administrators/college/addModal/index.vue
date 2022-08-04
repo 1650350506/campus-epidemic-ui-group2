@@ -98,7 +98,7 @@ export default {
       },
       addUserInfo: {
         account: 'testAdmin',
-        deptId: 1548935972324904988,
+        deptId: '1548935972324904988',
         mobile: '19858104444',
         name: '姜程璐',
         pwd: 'Admin111',

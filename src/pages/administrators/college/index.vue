@@ -3,7 +3,7 @@
     <Card :bordered="false" class="card" style="margin-top: 0">
       <!--       这是面包屑组件-->
       <i-header-breadcrumb  ref="breadcrumb" />
-      <h2 class="bread-title">你好！ 管理员！</h2>
+      <h2 style="margin-top: 10px;">你好！ {{userInfo.roleName}}！</h2>
     </Card>
     <Card class="card card-marginTop">
       <div class="search-container">
@@ -45,16 +45,16 @@
 
 <script>
 import iHeaderBreadcrumb from '@/layouts/basic-layout/header-breadcrumb'
-import Search from '@/components/top/search'
 import addFaculty from './addModal'
 import checkModal from './check'
 import editModal from './edit'
 import { DeleteFacultyInfoByCode, GetFacultyInfo, GetFacultyInfoByCode, BatchDeleteFacultyInfoByCodeList } from '@api/administorators/manage'
+import { mapState } from 'vuex'
 
 export default {
   name: 'index',
   components: {
-    iHeaderBreadcrumb, Search, addFaculty, checkModal, editModal
+    iHeaderBreadcrumb, addFaculty, checkModal, editModal
   },
   data() {
     return {
@@ -260,6 +260,9 @@ export default {
       msgList: []
     }
   },
+  computed: {
+    ...mapState('admin/account', ['userInfo'])
+  },
   created() {
     this.getFacultyList()
   },
@@ -335,6 +338,8 @@ export default {
     //  关键字查询工作人员信息
     queryFacultyInfoByKey(e) {
       this.data = []
+      this.queryInfo.pageNum = 1
+      this.queryInfo.pageSize = 10
       this.getFacultyList()
     },
     selectItem(e) {

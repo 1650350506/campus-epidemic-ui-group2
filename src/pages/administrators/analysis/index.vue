@@ -2,7 +2,7 @@
   <div style="margin:84px 24px 0 24px">
     <Card :bordered="false"  class="card">
       <i-header-breadcrumb  ref="breadcrumb" />
-      <h2 style="margin-top: 10px;">你好！ 管理员！</h2>
+      <h2 style="margin-top: 10px;">你好！ {{userInfo.roleName}}！</h2>
     </Card>
     <div class="chart-top">
       <Card v-for="(item, index) in topList" :key="index"  class="card-box" :style="{background:'linear-gradient(-45deg, transparent 50%,'+bgColorList[index]+' 0)'}">
@@ -39,7 +39,7 @@
       </Card>
       <Card class="card" :bordered="false">
         <h2 slot="title" style="margin: 1em 0;">各个学院隔离人员分布</h2>
-        <div id="main2" :style="{ width: '98%', height: '60vh' }"></div>
+        <div id="main2" :style="{ width: '100%', height: '60vh' }"></div>
       </Card>
     </div>
   </div>
@@ -52,6 +52,7 @@ import {
   GetNewIsolationTotal,
   GetRelieveIsolationTotal
 } from '@api/administorators/analysis'
+import { mapState } from 'vuex'
 const echarts = require('echarts')
 
 export default {
@@ -207,13 +208,13 @@ export default {
           orient: 'vertical',
           top: '20%',
           right: '10%',
-          itemGap: 40
+          itemGap: 30
         },
         series: [
           {
             itemGap: -10,
             type: 'pie',
-            radius: ['65%', '40%'],
+            radius: ['60%', '40%'],
             center: ['30%', '50%'],
             avoidLabelOverlap: false,
             itemStyle: {
@@ -295,6 +296,9 @@ export default {
       }
     }
   },
+  computed: {
+    ...mapState('admin/account', ['userInfo'])
+  },
   mounted() {
     this.updateOptions()
     this.updateOptions1()
@@ -369,6 +373,7 @@ export default {
         const arr2 = Object.values(res.field[0])
         const arr3 = Object.keys(res.field[1])
         const arr4 = Object.values(res.field[1])
+        console.log(res)
         this.option2.series[0].data = arr2
         this.option2.series[1].data = arr4
         this.option2.xAxis.data = arr1
@@ -392,12 +397,8 @@ export default {
     },
     dateFormat(time) {
       const date = new Date(time)
-      const year = date.getFullYear()
       const month = date.getMonth() + 1 < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1
       const day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate()
-      const hours = date.getHours() < 10 ? `0${date.getHours()}` : date.getHours()
-      const minutes = date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes()
-      const seconds = date.getSeconds() < 10 ? `0${date.getSeconds()}` : date.getSeconds()
       // 拼接
       return `${month}.${day}`
     }

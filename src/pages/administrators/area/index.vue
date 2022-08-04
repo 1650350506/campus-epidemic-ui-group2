@@ -1,9 +1,8 @@
 <template>
   <div  style="margin:84px 24px 0 24px">
     <Card :bordered="false"  class="card">
-      <!--       这是面包屑组件-->
       <i-header-breadcrumb  ref="breadcrumb" />
-      <h2 class="bread-title">你好！ 管理员！</h2>
+      <h2 style="margin-top: 10px;">你好！ {{userInfo.roleName}}！</h2>
     </Card>
     <Card class="card">
       <div class="search-module">
@@ -52,6 +51,7 @@ import {
   BatchUpdateRiskAreaByCode,
   GetRiskInfoListByProvince
 } from '@api/administorators/riskArea'
+import { mapState } from 'vuex'
 
 export default {
   name: 'index',
@@ -184,6 +184,9 @@ export default {
       },
       total: 0
     }
+  },
+  computed: {
+    ...mapState('admin/account', ['userInfo'])
   },
   created() {
     this.getProvinceList()

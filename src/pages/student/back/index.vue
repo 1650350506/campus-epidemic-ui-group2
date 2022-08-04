@@ -1,9 +1,9 @@
 <template>
-  <div class="page-container">
+  <div class="page-container" v-if="submitSuccess">
     <div class="top-box">
       <div class="top-title">
-        <i class="ivu-icon ivu-icon-ios-close" @click="backHome"></i>
-        <h2>返校信息填写</h2>
+        <i class="iconfont icon-close" style="font-weight: bold" @click="backHome"></i>
+        <h2>入校信息填写</h2>
       </div>
       <img class="img-style" src="../../../assets/images/top.png" alt="">
     </div>
@@ -41,9 +41,9 @@
             >
               <Row>
                 <Col span="18" style="display: flex">
-                  <Cascader :data="provinceData" v-model="provinceValue" @on-change="loadData"></Cascader>
+                  <Cascader :data="provinceData" @on-change="loadData"></Cascader>
                   <span></span>
-                  <Cascader :data="cityData" v-model="cityValue"></Cascader>
+                  <Cascader :data="cityData" v-model="item.value" @on-change="getCityCode"></Cascader>
                 </Col>
                 <Col span="4" offset="1">
                   <Button type="error" @click="handleRemove(index)">删除</Button>
@@ -63,6 +63,17 @@
         </div>
         <Button class="btn" type="primary" @click="subMsg">提交</Button>
       </div>
+    </div>
+  </div>
+  <div v-else class="page-success">
+    <div class="success-box">
+      <div class="top-title">
+        <i class="iconfont icon-arrow-left-bold" @click="backPrev"></i>
+        <h2>返校信息填写</h2>
+        <i class="iconfont icon-close" style="font-weight: bold" @click="backHome"></i>
+      </div>
+      <img class="img-submit" src="../../../assets/images/subSuccess.png" alt="">
+      <span class="submit-title">提交成功</span>
     </div>
   </div>
 </template>
@@ -90,7 +101,9 @@ export default {
       provinceValue: '',
       provinceData: [],
       cityValue: '',
-      cityData: []
+      cityData: [],
+      travelRecordList: [],
+      submitSuccess: true
     }
   },
   created() {
@@ -118,6 +131,14 @@ export default {
           this.$Message.error(error.message)
         })
     },
+    getCityCode(value, selectedData) { // 获得市区的编号
+      if (this.travelRecordList.length < this.formDynamic.items.length) {
+        this.travelRecordList.push(value[0])
+      } else if (this.travelRecordList.length === this.formDynamic.items.length) {
+        this.travelRecordList.splice(this.travelRecordList.length - 1, 1)
+        this.travelRecordList.push(value[0])
+      }
+    },
     subMsg() {
       const arrays = []
       this.formDynamic.items.forEach((item) => {
@@ -126,10 +147,15 @@ export default {
       const list = {
         code: this.formItem.code,
         name: this.formItem.name,
-        travelRecordList: arrays
+        travelRecordList: this.travelRecordList
       }
+      console.log(list)
       SubStuBack(list).then(() => {
-        this.$Message.success('回校信息提交成功！')
+        this.submitSuccess = false
+        this.formItem.code = ''
+        this.formItem.name = ''
+        this.provinceValue = ''
+        this.cityValue = ''
       })
     },
     getMapList() {
@@ -150,15 +176,6 @@ export default {
         )
       })
     },
-    handleSubmit(name) {
-      this.$refs[name].validate((valid) => {
-        if (valid) {
-          this.$Message.success('提交成功!')
-        } else {
-          this.$Message.error('表单验证失败!')
-        }
-      })
-    },
     handleReset(name) {
       this.$refs[name].resetFields()
     },
@@ -169,6 +186,7 @@ export default {
     },
     handleRemove(index) {
       this.formDynamic.items.splice(index, 1)
+      this.travelRecordList.splice(index, 1)
     },
     queryMsg() {
       CheckStudent(this.formItem).then((res) => {
@@ -178,7 +196,11 @@ export default {
       })
     },
     backHome() {
-      this.$router.replace('/login')
+      window.location.href = 'about:blank'
+      window.close()
+    },
+    backPrev() {
+      this.submitSuccess = true
     },
     getProvinceList() {
       const arrays = []
@@ -221,6 +243,7 @@ export default {
   width: 100%;
   height: 400px;
 }
+
 .page-container {
   display: flex;
   flex-direction: column;
@@ -235,11 +258,12 @@ export default {
       width: 100%;
       display: flex;
       i {
-        font-weight: bold;
-        font-size: 3em;
+        margin-left: 2vw;
+        font-size: 2em;
         color: #ffffff;
       }
       h2 {
+        font-size: 1.3em;
         color: #F7F7F7;
         position: absolute;
         margin: 0;
@@ -351,15 +375,6 @@ export default {
         font-size: 1.2em;
       }
     }
-  }
-  .img-upload {
-    font-size: 2em;
-    font-weight: 100;
-    border: 1px solid #9ea7b4;
-    text-align: center;
-    line-height: 5rem;
-    width: 5rem;
-    height: 5rem;
   }
 }
 </style>

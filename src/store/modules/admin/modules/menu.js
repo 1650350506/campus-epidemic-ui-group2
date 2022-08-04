@@ -16,7 +16,6 @@ function filterMenu(menuList, access, lastList) {
         if (i !== 'children') newMenu[i] = cloneDeep(menu[i])
       }
       if (menu.children && menu.children.length) newMenu.children = []
-
       lastList.push(newMenu)
       menu.children && filterMenu(menu.children, access, newMenu.children)
     }
@@ -260,6 +259,7 @@ export default {
               }
             })
             menuSider.shift()
+            menuSider.unshift()
             // 结束
             resolve(menuSider)
           })

@@ -58,8 +58,7 @@
 <script>
 import {
   AddIsolationRecord, DeleteRecordById,
-  GetEpidemicPreventionPersonnel,
-  GetIsolationInfoList
+  GetEpidemicPreventionPersonnel
 } from '@api/personnel/riskpremanage'
 
 export default {
@@ -78,13 +77,63 @@ export default {
         },
         {
           title: '核酸结果',
-          align: 'left',
-          key: 'nucleicAcidKey'
+          key: 'nucleicAcidKey',
+          align: 'center',
+          render: (h, params) => {
+            let key
+            if (params.row.nucleicAcidKey === 1) {
+              key = '阳性'
+            } else if (params.row.nucleicAcidKey === 0) {
+              key = '阴性'
+            } else {
+              key = '------'
+            }
+            return h('span', key)
+          }
         },
         {
-          title: '测温结果',
-          align: 'left',
-          key: 'temperature'
+          title: '体温',
+          key: 'temperature',
+          align: 'center',
+          render: (h, params) => {
+            let temp = params.row.temperature
+            let colors
+            if (params.row.temperature === 36) {
+              temp = '正常'
+              colors = '#0f7419'
+            } else if (params.row.temperature === 38) {
+              temp = '异常'
+              colors = '#d71313'
+            } else {
+              temp = '------'
+              colors = 'transparent'
+            }
+            return h('div',
+              {
+                style: {
+                  display: 'flex',
+                  justifyContent: 'center'
+                }
+              },
+              [
+                h('div', {
+                  style: {
+                    width: '1em',
+                    height: '1em',
+                    marginTop: '2px',
+                    borderRadius: '50%',
+                    backgroundColor: colors
+                  }
+                }),
+                h('div', {
+                  style: {
+                    marginLeft: '5px'
+                  },
+                  on: {
+                  }
+                }, temp)
+              ])
+          }
         },
         {
           title: '操作',

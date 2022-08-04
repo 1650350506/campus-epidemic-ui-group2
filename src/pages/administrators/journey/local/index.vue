@@ -3,7 +3,7 @@
     <Card :bordered="false"  class="card">
       <!--       这是面包屑组件-->
       <i-header-breadcrumb  ref="breadcrumb" />
-      <h2 class="bread-title">你好！ 疫情防控小组组长！</h2>
+      <h2 style="margin-top: 10px;">你好！ {{userInfo.roleName}}！</h2>
     </Card>
     <Card class="card">
       <div class="search-container">
@@ -49,6 +49,7 @@ import {
   , GetLocalStuInfoByCode
 } from '@api/group/stuManage'
 import { BatchDelBatchDailyCodeList, BatchDelLocalBatchDailyCodeList } from '../../../../api/administorators/journery'
+import { mapState } from 'vuex'
 
 export default {
   name: 'index',
@@ -206,7 +207,7 @@ export default {
         {
           title: '操作',
           key: 'action',
-          width: 200,
+          width: 160,
           align: 'center',
           render: (h, params) => {
             return h('div', {
@@ -278,6 +279,9 @@ export default {
       crossList: []
 
     }
+  },
+  computed: {
+    ...mapState('admin/account', ['userInfo'])
   },
   created() {
     this.getLocalStuList()

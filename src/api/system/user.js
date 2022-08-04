@@ -34,7 +34,7 @@ export function getVoByUserName(data) {
 
 export function RegUserInfo(data) {
   return request({
-    url: `${moduleName.doraemon_userinfo}/userManage/registerUser`,
+    url: `${moduleName.doraemon_campus}/registration/add`,
     method: 'post',
     urlType: 'jixian',
     data
