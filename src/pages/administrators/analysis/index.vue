@@ -30,7 +30,7 @@
       <Card class="card" :bordered="false">
         <h2 slot="title" style="margin: 1em 0;">新增隔离人数趋势</h2>
         <div slot="extra">
-          <Select v-model="selectModel" class="select-box" @on-change="selectTime">
+          <Select v-model="selectModel" class="select-box" @on-change="selectTime" placeholder="过去7天">
             <Option value="7">过去7天</Option>
             <Option value="14">过去14天</Option>
           </Select>
@@ -67,7 +67,7 @@ export default {
       ],
       topList: [
         { name: '总隔离人数', num: 0, icon: 'iconfont icon-computeChart' },
-        { name: '新增隔离人数', num: 0, icon: 'iconfont icon-tubiaoshangshengqushi', color: '#c31c1c' },
+        { name: '新增隔离人数', num: 0, icon: 'iconfont icon-tubiaoshangshengqushi' },
         { name: '新增解除人数', num: 0, icon: 'iconfont icon-tubiaoxiajiangqushi' }
       ],
       selectModel: '过去7天',
@@ -153,12 +153,13 @@ export default {
             smooth: true,
             lineStyle: { // 设置线条的style等
               normal: {
-                color: '#9bcfff' // 折线线条颜色:红色
+                color: '#bda1f8', // 折线线条颜色:红色,
+                width: 3
               }
             },
             itemStyle: {
               normal: {
-                color: '#0093ff'
+                color: '#996df7'
               }
             },
             areaStyle: {
@@ -171,19 +172,19 @@ export default {
                   colorStops: [
                     {
                       offset: 0.1,
-                      color: '#36a8fc' // 0% 处的颜色
+                      color: '#996df7' // 0% 处的颜色
                     },
                     {
                       offset: 0.5,
-                      color: '#76c2fa' // 0% 处的颜色
+                      color: '#c2a8f9' // 0% 处的颜色
                     },
                     {
-                      offset: 0.7,
-                      color: '#c3e0f6' // 0% 处的颜色
+                      offset: 0.8,
+                      color: '#e4d9fb' // 0% 处的颜色
                     },
                     {
                       offset: 0.9,
-                      color: 'rgba(252,252,252,0.1)' // 100% 处的颜色
+                      color: '#f8f6fc' // 100% 处的颜色
                     }
                   ],
                   globalCoord: false // 缺省为 false
@@ -206,16 +207,16 @@ export default {
         },
         legend: {
           orient: 'vertical',
-          top: '20%',
-          right: '10%',
-          itemGap: 30
+          top: '30%',
+          right: '0%',
+          itemGap: 20
         },
         series: [
           {
             itemGap: -10,
             type: 'pie',
-            radius: ['60%', '40%'],
-            center: ['30%', '50%'],
+            radius: ['65%', '40%'],
+            center: ['40%', '60%'],
             avoidLabelOverlap: false,
             itemStyle: {
               borderRadius: 10,
@@ -240,6 +241,8 @@ export default {
         ]
       },
       option2: {
+        legend: {
+        },
         xAxis: {
           type: 'category',
           name: '二级学院',
@@ -274,7 +277,6 @@ export default {
           {
             name: '防疫人员',
             type: 'bar',
-            stack: 'Ad',
             emphasis: {
               focus: 'series'
             },
@@ -283,7 +285,6 @@ export default {
           {
             name: '隔离人员',
             type: 'bar',
-            stack: 'Search Engine',
             emphasis: {
               focus: 'series'
             },
@@ -330,12 +331,6 @@ export default {
       const myChart = echarts.init(document.getElementById('main2'))
       myChart.setOption(this.option1, true)
     },
-    optionsAve() {
-      let sum = 0
-      for (let i = 0; i < this.option2.series[0].data.length; i++) {
-        sum += this.option2.series[0].data[i]
-      }
-    },
     // 获得总隔离人数
     getAllIsolationTotal() {
       GetAllIsolationTotal().then((res) => {
@@ -371,7 +366,6 @@ export default {
       GetEachEpidemicListAnalysis().then(res => {
         const arr1 = Object.keys(res.field[0])
         const arr2 = Object.values(res.field[0])
-        const arr3 = Object.keys(res.field[1])
         const arr4 = Object.values(res.field[1])
         console.log(res)
         this.option2.series[0].data = arr2
@@ -399,7 +393,6 @@ export default {
       const date = new Date(time)
       const month = date.getMonth() + 1 < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1
       const day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate()
-      // 拼接
       return `${month}.${day}`
     }
   }
@@ -411,7 +404,6 @@ h3 {
 }
 .container {
   background: #f7f7f7;
-  //background: #55a532;
   padding: 0;
   margin-top: 16px;
   overflow-y: hidden;
@@ -426,7 +418,6 @@ canvas {
   margin-top: 1em;
 }
 .chart-top {
-  //background: #55a532;
   width: 100%;
   height: 14vw;
   display: flex;

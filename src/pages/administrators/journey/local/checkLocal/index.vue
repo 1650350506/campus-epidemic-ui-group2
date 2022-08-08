@@ -22,11 +22,11 @@
             <Table border :columns="columns"  height="110" :data="crossList"></Table>
           </div>
         </div>
-        <div class="model-list-title">日常出校信息</div>
+        <div class="model-list-title">出入校信息</div>
         <div class="mid-box">
           <div class="mid-box-left"></div>
           <div class="mid-box-right">
-            <Table border :columns="columns1" size="small" height="150" :data="outList"></Table>
+            <Table border :columns="columns1" class="auto-column-size-table" size="small" height="150" :data="outList"></Table>
           </div>
         </div>
       </div>
@@ -38,6 +38,8 @@
 </template>
 
 <script>
+import { toolTip } from '@/util/tool/enum'
+
 export default {
   name: 'checkLocal',
   props: ['checkSwitch', 'checkList1', 'crossList', 'outList'],
@@ -46,7 +48,8 @@ export default {
       columns: [
         {
           title: '行程地点',
-          align: 'center'
+          align: 'center',
+          key: 'address'
         }
       ],
       columns1: [
@@ -60,26 +63,21 @@ export default {
         },
         {
           title: '去向信息',
-          key: 'whereDetail'
+          key: 'whereDetail',
+          render: (h, params) => {
+            return toolTip(h, 2, params.row.whereDetail)
+          }
         },
         {
           title: '途经地点',
-          key: 'travelRecord'
+          key: 'travelRecord',
+          render: (h, params) => {
+            return toolTip(h, 2, params.row.travelRecord)
+          }
         }
       ],
       data: [],
-      data1: [
-        {
-          name: '李小红',
-          age: 30,
-          address: '上海市浦东新区世纪大道'
-        },
-        {
-          name: '周小伟',
-          age: 26,
-          address: '深圳市南山区深南大道'
-        }
-      ]
+      data1: []
     }
   },
   methods: {
@@ -94,6 +92,12 @@ export default {
 .model-box {
   display: flex;
   flex-direction: column;
+  .model-list-title {
+    margin-top: 5px;
+    margin-left: 4%;
+    font-size: 18px;
+    color: #000;
+  }
   .top-box {
     flex-basis: 40%;
     display: flex;
@@ -113,7 +117,7 @@ export default {
       .title {
         color: #050505;
         font-weight: 500;
-        font-size: 18px;
+        font-size: 16px;
         flex-basis: 35%;
         text-align: right;
         line-height: 30px;
@@ -135,7 +139,7 @@ export default {
       flex-basis: 20%;
     }
     .mid-box-right {
-      flex-basis: 72%;
+      flex-basis: 78%;
       .add-condition {
         margin-top: 1em;
         display: flex;

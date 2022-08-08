@@ -10,11 +10,14 @@
     <Input v-model="queryValue" placeholder="请输入学号查询" style="width: 200px; margin-right: 10px; margin-left: 4%"></Input> <Button type="primary" @click="getStuInfoListByCode">查询</Button>
     <div class="mid-box">
       <div class="top">基本信息</div>
-      <div class="modal-container">
+      <div class="modal-container" v-if="checkList1.code.value!==''">
         <div class="modal-item" v-for="(item, index) in checkList1" :key="index">
           <div class="null"></div><div class="title">{{item.title}}:</div><div class="star"></div>
           <div class="core" style=" flex-basis: 50%;">{{item.value}}</div>
         </div>
+      </div>
+      <div class="modal-container" v-else>
+        暂无数据
       </div>
     </div>
     <div class="footer-box">
@@ -60,7 +63,7 @@
 </template>
 
 <script>
-import { GetStuInfoByCode, NewIsolatePre } from '../../../../api/personnel/riskpremanage'
+import { GetStuInfoByCode, NewIsolatePre } from '@/api/personnel/riskpremanage'
 
 export default {
   name: 'index',
@@ -107,34 +110,42 @@ export default {
       const hours = date.getHours() < 10 ? `0${date.getHours()}` : date.getHours()
       const minutes = date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes()
       const seconds = date.getSeconds() < 10 ? `0${date.getSeconds()}` : date.getSeconds()
-      // 拼接
       return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
     },
     close() {
       this.$emit('addClose', false)
     },
     getStuInfoListByCode() {
-      GetStuInfoByCode({ code: this.queryValue }).then(res => {
-        console.log('学生基本信息')
-        console.log(res)
-        this.checkList1.code.value = res.field.code
-        if (res.field.sex === 0) {
-          this.checkList1.sex.value = '男'
-        } else {
-          this.checkList1.sex.value = '女'
-        }
-        this.checkList1.deptName.value = res.field.deptName
-        this.checkList1.name.value = res.field.name
-        this.checkList1.className.value = res.field.className
-        this.checkList1.phoneNumber.value = res.field.phoneNumber
-        this.addInfo.code = res.field.code
-        this.addInfo.address = res.field.address
-      })
+      if (this.queryValue !== '') {
+        GetStuInfoByCode({ code: this.queryValue }).then(res => {
+          this.checkList1.code.value = res.field.code
+          if (res.field.sex === 0) {
+            this.checkList1.sex.value = '男'
+          } else {
+            this.checkList1.sex.value = '女'
+          }
+          this.checkList1.deptName.value = res.field.deptName
+          this.checkList1.name.value = res.field.name
+          this.checkList1.className.value = res.field.className
+          this.checkList1.phoneNumber.value = res.field.phoneNumber
+          this.addInfo.code = res.field.code
+          this.addInfo.address = res.field.address
+        })
+      } else {
+        this.checkList1.code.value = ''
+        this.checkList1.sex.value = ''
+        this.checkList1.deptName.value = ''
+        this.checkList1.name.value = ''
+        this.checkList1.className.value = ''
+        this.checkList1.phoneNumber.value = ''
+        this.addInfo.code = ''
+        this.addInfo.address = ''
+      }
     },
     addIsolatePersonnelInfo() {
       this.addInfo.startTime = this.dateFormat(this.addInfo.startTime)
       console.log(this.addInfo)
-      NewIsolatePre(this.addInfo).then(res => {
+      NewIsolatePre(this.addInfo).then(() => {
         this.$Message.success('新增隔离人员成功！')
       })
       this.close()

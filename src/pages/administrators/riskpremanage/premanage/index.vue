@@ -1,12 +1,11 @@
 <template>
   <div  style="margin:84px 24px 0 24px">
     <Card :bordered="false"  class="card">
-      <!--       这是面包屑组件-->
       <i-header-breadcrumb  ref="breadcrumb"  />
       <h2 style="margin-top: 10px;">你好！ {{userInfo.roleName}}！</h2>
     </Card>
     <div class="top-card">
-      <Card class="card" v-for="(item, index) in topList" :key="index" ref="cardRef">
+      <Card class="card" v-for="(item, index) in topList" :key="index" ref="cardRef" dis-hover>
         <div @click="showList(index)">
           <h1>{{item.name}}</h1>
           <h1>{{item.num}}</h1>
@@ -14,7 +13,7 @@
       </Card>
     </div>
     <Card class="card card-marginTop">
-      <Search title="请输入学生学号、学生姓名" :keyValue="queryInfo.keyword" @selectFun="queryQuarantinedInfoByKey"></Search>
+      <Search  title="请输入学生学号、学生姓名" :keyValue="queryInfo.keyword" @selectFun="queryQuarantinedInfoByKey"></Search>
     </Card>
     <Card class="card-marginTop card">
       <Button type="primary" style="margin-bottom: 10px" @click="addDialogVisible = true">+ 新增 </Button>
@@ -46,10 +45,10 @@ export default {
   data() {
     return {
       topList: [
-        { name: '待隔离', num: -1 },
-        { name: '已隔离', num: -1 },
-        { name: '隔离结束', num: -1 },
-        { name: '治疗中', num: -1 }
+        { name: '待隔离', num: 0 },
+        { name: '已隔离', num: 0 },
+        { name: '隔离结束', num: 0 },
+        { name: '治疗中', num: 0 }
       ],
       nucleicResult: [
         {
@@ -66,7 +65,7 @@ export default {
       addDialogVisible: false,
       checkList1: {
         name: {
-          title: '姓名', value: ''
+          title: '学生姓名', value: ''
         },
         sex: {
           title: '性别', value: ''
@@ -75,7 +74,7 @@ export default {
           title: '二级学院', value: ''
         },
         classname: {
-          title: '班级', value: ''
+          title: '学生班级', value: ''
         },
         phoneNumber: {
           title: '手机号', value: ''
@@ -100,10 +99,10 @@ export default {
       checkList3: [],
       addInfoList1: {
         code: {
-          title: '学号', value: ''
+          title: '学生学号', value: ''
         },
         name: {
-          title: '姓名', value: ''
+          title: '学生姓名', value: ''
         },
         sex: {
           title: '性别', value: ''
@@ -154,45 +153,50 @@ export default {
         {
           title: '学生学号',
           key: 'code',
-          align: 'center'
+          align: 'left'
         },
         {
           title: '学生姓名',
           key: 'name',
-          align: 'center'
+          align: 'left'
         },
         {
           title: '二级学院',
           key: 'stuCollege',
-          align: 'center'
+          align: 'left'
         },
         {
           title: '体温',
           key: 'temperature',
-          align: 'center',
+          align: 'left',
           render: (h, params) => {
             let temp = params.row.temperature
             let colors
+            let displayType
             if (params.row.temperature <= 36 && params.row.temperature > 35) {
               temp = '正常'
+              displayType = 'block'
               colors = '#0f7419'
             } else if (params.row.temperature > 37) {
               temp = '异常'
+              displayType = 'block'
               colors = '#d71313'
             } else {
-              temp = '------'
+              temp = '待测'
+              displayType = 'none'
               colors = 'transparent'
             }
             return h('div',
               {
                 style: {
                   display: 'flex',
-                  justifyContent: 'center'
+                  alignContent: 'center'
                 }
               },
               [
-                h('div', {
+                h('span', {
                   style: {
+                    display: displayType,
                     width: '1em',
                     height: '1em',
                     marginTop: '2px',
@@ -213,7 +217,7 @@ export default {
         {
           title: '核酸结果',
           key: 'nucleicacidkey',
-          align: 'center',
+          align: 'left',
           render: (h, params) => {
             let key
             if (params.row.nucleicacidkey === 1) {
@@ -221,7 +225,7 @@ export default {
             } else if (params.row.nucleicacidkey === 0) {
               key = '阴性'
             } else {
-              key = '------'
+              key = '待测'
             }
             return h('span', key)
           }
@@ -230,7 +234,25 @@ export default {
           title: '隔离开始时间',
           key: 'startTime',
           width: '180',
-          align: 'center'
+          align: 'left'
+        },
+        {
+          title: '隔离状态',
+          key: 'state',
+          align: 'left',
+          render: (h, params) => {
+            let key
+            if (params.row.state === 0) {
+              key = '待隔离'
+            } else if (params.row.state === 1) {
+              key = '已隔离'
+            } else if (params.row.state === 2) {
+              key = '隔离结束'
+            } else if (params.row.state === 3) {
+              key = '治疗中'
+            }
+            return h('span', key)
+          }
         },
         {
           title: '操作',
@@ -256,7 +278,6 @@ export default {
                     this.getProtectorNameByCode(params.row.code)
                     this.getIsolationServiceInfoList(params.row.code)
                     this.showDialogVisible = true
-                    console.log(params.row)
                     this.checkList1.name.value = params.row.name
                     this.checkList1.sex.value = params.row.sex
                     if (params.row.sex === 0) {
@@ -280,7 +301,7 @@ export default {
                     placement: 'top-start',
                     confirm: true,
                     transfer: true,
-                    title: '确定解除该隔离状态吗？'
+                    title: '你确定要解除该人员的隔离状态吗？'
                   },
                   on: {
                     'on-ok': () => {
@@ -374,9 +395,12 @@ export default {
     },
     closeByAdd() {
       this.updateDialogVisible = false
+      this.queryInfo.keyword = ''
+      this.getIsolationInfoList()
     },
     closeByNew() {
       this.addDialogVisible = false
+      this.getIsolationInfoList()
     },
     dateFormat(time) {
       const date = new Date(time)
@@ -386,7 +410,6 @@ export default {
       const hours = date.getHours() < 10 ? `0${date.getHours()}` : date.getHours()
       const minutes = date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes()
       const seconds = date.getSeconds() < 10 ? `0${date.getSeconds()}` : date.getSeconds()
-      // 拼接
       return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
     },
     getProtectorNameByCode(code) { // 获得隔离人员的关联人员
@@ -396,8 +419,6 @@ export default {
         code: code
       }
       GetIsolationInfoListByCode(queryInfo).then(res => {
-        console.log('关联')
-        console.log(res)
         if (res.data.length > 0) {
           this.checkList1.protectorName.value = res.data[0].protectorName
         } else {
@@ -528,37 +549,12 @@ export default {
     width: 20%;
     height: 100%;
     margin-left: 6.6%;
+    transition: all .5s ease-in;
     &:nth-of-type(4n+1) {
       margin-left: 0;
     }
-  }
-}
-.modal-container {
-  margin: 20px 0;
-  display: flex;
-  flex-wrap: wrap;
-  .modal-item {
-    width: 50%;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    .null {
-      flex-basis: 10%;
-    }
-    .star {
-      color: #ea2969;
-      flex-basis: 10%;
-      text-align: right;
-      font-size: 18px;
-      padding-right: 5px;
-      height: 50%;
-    }
-    .title {
-      flex-basis: 30%;
-      text-align-last: justify;
-    }
-    .core {
-      flex-basis: 46%;
+    &:hover {
+      transform: translateY(5%);
     }
   }
 }

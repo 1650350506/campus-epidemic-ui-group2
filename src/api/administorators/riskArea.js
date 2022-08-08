@@ -59,32 +59,11 @@ export function BatchUpdateRiskAreaByCode(data) {
     data
   })
 }
-// 分页查询
-export function GetRiskInfoList(data) {
-  return request({
-    url: `${moduleName.doraemon_campus}/areaRisk/firstEntry`,
-    method: 'get',
-    urlType: 'jixian',
-    params: {
-      ...data
-    }
-  })
-}
+
 // 下拉框省级别查询
 export function GetRiskInfoListByProvince(data) {
   return request({
     url: `${moduleName.doraemon_campus}/areaRisk/RederByProvince`,
-    method: 'get',
-    urlType: 'jixian',
-    params: {
-      ...data
-    }
-  })
-}
-// 下拉框市级别查询
-export function GetRiskInfoListByCity(data) {
-  return request({
-    url: `${moduleName.doraemon_campus}/areaRisk/RederByCity`,
     method: 'get',
     urlType: 'jixian',
     params: {

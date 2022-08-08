@@ -18,7 +18,7 @@
             </Form-item>
             <Form-item>
               <div class="form-label">姓名</div>
-              <Input type="text" v-model="formItem.name" @on-blur="checkStu"></Input>
+              <Input type="text" v-model="formItem.name"></Input>
             </Form-item>
           </Form>
         </div>
@@ -52,8 +52,10 @@
             </div>
           </div>
         </div>
-        <Button class="btn" type="primary" @click="subMsg">提交</Button>
       </div>
+    </div>
+    <div class="btn-box">
+      <Button type="primary" style="width:90vw; height: 12vw" size="large" @click="subMsg">提交</Button>
     </div>
   </div>
   <div v-else class="page-success">
@@ -76,7 +78,6 @@ import {
   GetRiskInfoListByTown,
   GetStreetList
 } from '@api/administorators/riskArea'
-import { CheckStudent, SubStuBack, SubStuLeave } from '@api/stu/stu'
 import md5 from 'js-md5'
 import { mapActions } from 'vuex'
 
@@ -107,7 +108,6 @@ export default {
   },
   created() {
     this.StuBack()
-    this.getProvinceList()
   },
   methods: {
     ...mapActions('admin/account', [
@@ -123,6 +123,7 @@ export default {
       })
         .then(() => {
           // 重定向对象不存在则返回顶层路径
+          this.getProvinceList()
         })
         .catch(error => {
           // 异常情况
@@ -140,22 +141,14 @@ export default {
     },
     subMsg() {
       if (this.formItem.type === '本市') {
-        this.formItem.type = 0
-        this.formItem.whereCode = this.townValue[0]
+        [this.formItem.type, this.formItem.whereCode] = [0, this.townValue[0]]
       } else if (this.formItem.type === '跨市') {
-        this.formItem.type = 1
-        this.formItem.whereCode = this.cityValue[0]
+        [this.formItem.type, this.formItem.whereCode] = [1, this.cityValue[0]]
       }
-      SubStuLeave(this.formItem).then(() => {
-        this.submitSuccess = false
-      })
-    },
-    checkStu() {
-      CheckStudent(this.formItem).then((res) => {
-        if (res === 0) {
-          this.$Message.success('学生信息校验失败！请检查是否输入正确！')
-        }
-      })
+      console.log(this.formItem)
+      // SubStuLeave(this.formItem).then(() => {
+      //   this.submitSuccess = false
+      // })
     },
     backHome() {
       window.location.href = 'about:blank'
@@ -263,8 +256,6 @@ export default {
 </script>
 <style  lang="less" scoped>
 .page-container {
-  display: flex;
-  flex-direction: column;
   .top-box {
     width: 100%;
     height: 30vh;
@@ -296,7 +287,6 @@ export default {
   }
   .mid-box {
     margin-top: 1em;
-    height: 60vh;
     display: flex;
     flex-direction: column;
     .basic {
@@ -317,15 +307,13 @@ export default {
           border-top: 0;
           border-left: 0;
           border-right: 0;
+          border-radius: 0;
+          background: #F7F7F7;
         }
-        //::v-deep .ivu-form-item {
-        //  margin: 3em 0 0;
-        //  background: #1d42ab;
-        //}
         .form-label {
           position: absolute;
           left: 0%;
-          top: -100%;
+          top: -80%;
           font-size: 1.2em;
           z-index: 99;
         }
@@ -380,12 +368,12 @@ export default {
           }
         }
       }
-      .btn {
-        margin: 2em 2em;
-        height: 16vw;
-        font-size: 1.2em;
-      }
     }
+  }
+  .btn-box {
+    display: flex;
+    justify-content: center;
+    margin: 1rem 0;
   }
 }
 </style>

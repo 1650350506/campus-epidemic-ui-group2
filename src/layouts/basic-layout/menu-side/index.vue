@@ -1,16 +1,6 @@
 <template>
   <div>
     <div class="i-layout-sider-logo" :class="{ 'i-layout-sider-logo-dark': siderTheme === 'dark' }">
-      <!--      <i-sidebar-->
-      <!--        :menu-list='applist '-->
-      <!--        :extend-menu-list='selectData'-->
-      <!--        :extend='true'-->
-      <!--        :extend-nav='true'-->
-      <!--        extend-icon='ios-apps'-->
-      <!--        extend-title='产品与服务'-->
-      <!--        :extend-search='true'-->
-      <!--        @on-search ='searchQuery'-->
-      <!--      />-->
       <transition name="fade-quick">
         <i-link to="/index" v-show="!hideLogo">
           <img src="@/assets/images/logo-small.png" v-if="menuCollapse">
@@ -106,7 +96,6 @@ export default {
   },
   created() {
     this.listBaseMenuT()
-    console.log(this.filterSider)
   },
   methods: {
     listBaseMenuT() {

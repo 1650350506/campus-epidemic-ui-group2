@@ -184,10 +184,10 @@ export default {
       data1: [],
       addInfo: {
         code: '',
-        nucleicAcidKey: 0,
+        nucleicAcidKey: null,
         nucleicAcidTime: '',
         protector: '',
-        temperature: 37
+        temperature: null
       }
     }
   },
@@ -219,6 +219,7 @@ export default {
     // 获取全部的关联人员
     getEpidemicPreventionPersonnel() {
       GetEpidemicPreventionPersonnel().then(res => {
+        console.log(res)
         res.field.forEach(item => {
           this.associationList.push({
             deptCode: item.code,
@@ -230,23 +231,25 @@ export default {
     //  新增隔离记录
     addRecord() {
       this.getStuCode()
-      this.addInfo.nucleicAcidTime = this.dateFormat(this.addInfo.nucleicAcidTime)
-      if (this.addInfo.nucleicAcidKey === '阴性') {
-        this.addInfo.nucleicAcidKey = 0
-      } else if (this.addInfo.nucleicAcidKey === '阳性') {
-        this.addInfo.nucleicAcidKey = 1
+      if (this.addInfo.nucleicAcidKey !== null && this.addInfo.temperature !== null) {
+        this.addInfo.nucleicAcidTime = this.dateFormat(this.addInfo.nucleicAcidTime)
+        if (this.addInfo.nucleicAcidKey === '阴性') {
+          this.addInfo.nucleicAcidKey = 0
+        } else if (this.addInfo.nucleicAcidKey === '阳性') {
+          this.addInfo.nucleicAcidKey = 1
+        }
+        if (this.addInfo.temperature === '正常') {
+          this.addInfo.temperature = 36
+        } else if (this.addInfo.temperature === '异常') {
+          this.addInfo.temperature = 38
+        }
+        AddIsolationRecord(this.addInfo).then(() => {
+          this.$Message.success('添加隔离记录成功')
+          this.$emit('update', this.addInfo.code)
+        })
+      } else {
+        this.$Message.error('核酸结果和测温结果不能为空！')
       }
-      if (this.addInfo.temperature === '正常') {
-        this.addInfo.temperature = 36
-      } else if (this.addInfo.temperature === '异常') {
-        this.addInfo.temperature = 38
-      }
-      console.log('添加')
-      console.log(this.addInfo)
-      AddIsolationRecord(this.addInfo).then(() => {
-        this.$Message.success('添加隔离记录成功')
-        this.$emit('update', this.addInfo.code)
-      })
     },
     deleteIsolateRecordById(id, code) {
       DeleteRecordById({ id: id }).then(() => {

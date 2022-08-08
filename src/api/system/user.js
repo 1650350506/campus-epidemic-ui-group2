@@ -34,17 +34,35 @@ export function getVoByUserName(data) {
 
 export function RegUserInfo(data) {
   return request({
-    url: `${moduleName.doraemon_campus}/registration/add`,
+    url: `${moduleName.doraemon_userinfo}/userManage/registerUser`,
     method: 'post',
     urlType: 'jixian',
     data
   })
 }
 
-export function GetUserInfoByToken(data) {
+export function GetUserInfoByToken() {
   return request({
     url: `${moduleName.doraemon_userinfo}/userManage/viewUserInfo`,
     method: 'post',
     urlType: 'jixian'
+  })
+}
+
+export function ActiveUserInfo(data) {
+  return request({
+    url: `${moduleName.doraemon_userinfo}/userManage/account/active`,
+    method: 'post',
+    urlType: 'jixian',
+    data
+  })
+}
+
+export function GetUserInfoByUsername(data) {
+  return request({
+    url: `${moduleName.doraemon_userinfo}/userManage/viewUser/userName`,
+    method: 'post',
+    urlType: 'jixian',
+    data
   })
 }

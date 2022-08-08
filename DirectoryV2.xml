@@ -22,4 +22,8 @@
     <tree path="/src/pages/administrators/riskpremanage" title="风险行程信息"/>
     <tree path="/src/pages/administrators/journey/local" title="本地行程"/>
     <tree path="/src/pages/administrators/journey/cross" title="跨市行程"/>
+    <tree path="/src/pages/administrators/punch" title="上下班打卡"/>
+    <tree path="/src/pages/student/back" title="学生返校"/>
+    <tree path="/src/pages/student/leave" title="学生离校"/>
+    <tree path="/src/pages/student/record" title="14天行程"/>
 </trees>

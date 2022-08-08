@@ -4,9 +4,11 @@ import moduleName from '@/config/moduleName'
 export function DeleteFacultyInfoByCode(data) {
   return request({
     url: `${moduleName.doraemon_campus}/workPerson/deleteByCode`,
-    method: 'post',
+    method: 'get',
     urlType: 'jixian',
-    data
+    params: {
+      ...data
+    }
   })
 }
 export function BatchDeleteFacultyInfoByCodeList(data) {
@@ -72,6 +74,23 @@ export function ClockIn(data) {
 export function ClockOut(data) {
   return request({
     url: `${moduleName.doraemon_campus}/workPerson/clockOut`,
+    method: 'post',
+    urlType: 'jixian',
+    data
+  })
+}
+// 查询二级学院信息列表
+export function GetDeptCodeAndName(data) {
+  return request({
+    url: `${moduleName.doraemon_campus}/workPerson/queryDept`,
+    method: 'get',
+    urlType: 'jixian'
+  })
+}
+// 添加防控人员
+export function InsertWorkPerson(data) {
+  return request({
+    url: `${moduleName.doraemon_campus}/workPerson/insert`,
     method: 'post',
     urlType: 'jixian',
     data

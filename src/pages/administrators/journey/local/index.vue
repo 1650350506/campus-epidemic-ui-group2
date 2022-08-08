@@ -8,11 +8,10 @@
     <Card class="card">
       <div class="search-container">
         <div class="left-search">
-          <i class="ivu-icon ivu-icon-ios-search"></i>
-          <Input  placeholder="请输入学生学号、学生姓名、二级学院" style="width: 340px" v-model="queryInfo.key"></Input>
+          <Input  placeholder="请输入学生学号、学生姓名、二级学院" style="width: 300px" v-model="queryInfo.key"></Input>
         </div>
         <div style="margin-right: 2em">
-          <Select v-model="selectModel" style="width:200px" @on-change="queryListByGrade(selectModel)" placeholder="按分险等级查询">
+          <Select v-model="selectModel" style="width:160px" @on-change="queryListByGrade(selectModel)" placeholder="按分险等级查询">
             <Option v-for="item in gradeList" :value="item" :key="item">{{ item }}</Option>
           </Select>
         </div>
@@ -25,7 +24,7 @@
         <div class="select-text">已选择 <span style="color: #0e92e7; font-size: 18px">{{batchNum}}</span> 项</div>
         <Poptip
           confirm
-          title="您确认批量删除这些数据吗？"
+          title="确定将这些学生14天前的行程进行删除吗？"
           @on-ok="batchSubmit"
         >
           <div class="btn">批量删除</div>
@@ -67,10 +66,10 @@ export default {
       outList: [],
       checkList1: {
         code: {
-          title: '学号', value: ''
+          title: '学生学号', value: ''
         },
         name: {
-          title: '姓名', value: ''
+          title: '学生姓名', value: ''
         },
         sex: {
           title: '性别', value: ''
@@ -91,30 +90,30 @@ export default {
           title: '居住地址', value: ''
         },
         emergencyContact: {
-          title: '联系人', value: ''
+          title: '紧急联系人', value: ''
         },
         emergencyContactPhone: {
-          title: '联系人电话', value: ''
+          title: '紧急联系人电话', value: ''
         }
       },
       dialogList: {
         code: {
-          title: '学号', value: '199200118', isEdit: false
+          title: '学生学号', value: '', isEdit: false
         },
         name: {
-          title: '姓名', value: '阿非', isEdit: false
+          title: '学生姓名', value: '', isEdit: false
         },
         sex: {
           title: '性别', value: 0, isEdit: false
         },
         idCard: {
-          title: '身份证', value: '350311100010123456', isEdit: false
+          title: '身份证', value: '', isEdit: false
         },
         deptName: {
-          title: '二级学院', value: '计算机学院', isEdit: false
+          title: '二级学院', value: '', isEdit: false
         },
         className: {
-          title: '班级', value: '计科19', isEdit: false
+          title: '班级', value: '', isEdit: false
         },
         riskArea: {
           title: '风险地区', value: '', isEdit: false
@@ -132,10 +131,10 @@ export default {
           title: '居住地址', value: '杭州市临安区联胜街道', isEdit: true
         },
         emergencyContact: {
-          title: '联系人', value: 'die', isEdit: true
+          title: '紧急联系人', value: 'die', isEdit: true
         },
         emergencyContactPhone: {
-          title: '联系人电话', value: '12345467890', isEdit: true
+          title: '紧急联系人电话', value: '12345467890', isEdit: true
         }
       },
       columns: [
@@ -164,7 +163,7 @@ export default {
           key: 'startTime'
         },
         {
-          title: '风险地区等级',
+          title: '风险等级',
           key: 'riskLevel',
           sortable: true,
           align: 'center',
@@ -236,7 +235,7 @@ export default {
                     placement: 'top-start',
                     confirm: true,
                     transfer: true,
-                    title: '确定删除这条数据吗？'
+                    title: '确定将学生14天前的行程进行删除吗？'
                   },
                   on: {
                     'on-ok': () => {
@@ -307,15 +306,13 @@ export default {
     close() {
       this.showDialogVisible = false
     },
-    // 通过学生学号删除
-    deleteStuInfoByCode(code) {
+    deleteStuInfoByCode(code) {  // 通过学生学号删除
       DeleteLocalStuInfo({ code: code }).then(() => {
         this.$Message.success('删除本市学生信息成功！')
         this.getLocalStuList()
       })
     },
-    // 通过等级查询
-    queryListByGrade(grade) {
+    queryListByGrade(grade) { // 通过等级查询
       if (grade === '默认') {
         this.queryInfo.risk = null
       } else if (grade === '只看中风险') {
@@ -327,32 +324,27 @@ export default {
       this.queryInfo.pageSize = 10
       this.getLocalStuList()
     },
-    // 获得学生基本信息
-    getLocalStuList() {
+    getLocalStuList() { // 获得学生基本信息
       GetLocalStuList(this.queryInfo).then((res) => {
         this.data = res.data
         this.total = res.total
       })
     },
-    // 关键字查询
-    queryStuInfoByKey() {
+    queryStuInfoByKey() { // 关键字查询
       this.data = []
       this.queryInfo.pageNum = 1
       this.queryInfo.pageSize = 10
       this.getLocalStuList()
     },
-    // 选择页码
-    editPageNum(e) {
+    editPageNum(e) { // 选择页码
       this.queryInfo.pageNum = e
       this.getLocalStuList()
     },
-    // 选择当页最大条数
-    editPageSize(e) {
+    editPageSize(e) { // 选择当页最大条数
       this.queryInfo.pageSize = e
       this.getLocalStuList()
     },
-    //   点击查看里面的基本信息
-    getLocalStuInfoByCode(code) {
+    getLocalStuInfoByCode(code) { //   点击查看里面的基本信息
       GetLocalStuInfoByCode({ code: code }).then(res => {
         console.log(res)
         this.checkList1.code.value = res.code
@@ -370,7 +362,13 @@ export default {
         this.checkList1.address.value = res.address
         this.checkList1.emergencyContact.value = res.emergencyContact
         this.checkList1.emergencyContactPhone.value = res.emergencyContactPhone
-        this.crossList = res.crossRecirdList
+        res.crossCityList.forEach((item) => {
+          this.crossList.push({
+            address: item
+          })
+        })
+        console.log('ce')
+        console.log(this.crossList)
         res.dailyRecordList.forEach(item => {
           this.outList.push({
             startTime: item.startTime,

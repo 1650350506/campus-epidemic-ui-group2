@@ -36,22 +36,22 @@ export default {
         {
           title: '学生学号',
           key: 'code',
-          align: 'center'
+          align: 'left'
         },
         {
           title: '学生姓名',
           key: 'name',
-          align: 'center'
+          align: 'left'
         },
         {
           title: '班级',
           key: 'classname',
-          align: 'center'
+          align: 'left'
         },
         {
           title: '联系方式',
           key: 'phoneNumber',
-          align: 'center'
+          align: 'left'
         },
         {
           title: '操作',
@@ -91,7 +91,7 @@ export default {
                   },
                   on: {
                   }
-                }, '待隔离')
+                }, '已隔离')
               ])
             ])
           }

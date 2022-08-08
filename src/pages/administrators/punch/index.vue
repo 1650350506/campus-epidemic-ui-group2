@@ -30,6 +30,7 @@
           <div class="radio-list">
             <Radio-group v-model="colors">
               <Radio label="绿码"></Radio>
+              <Radio label="黄码"></Radio>
               <Radio label="红码"></Radio>
             </Radio-group>
           </div>
@@ -111,8 +112,10 @@ export default {
     punch() {
       if (this.colors === '绿码') {
         this.formItem.color = 0
-      } else if (this.colors === '红码') {
+      } else if (this.colors === '黄码') {
         this.formItem.color = 1
+      } else if (this.colors === '红码') {
+        this.formItem.color = 2
       }
       if (this.workType === '上班') {
         ClockIn(this.formItem).then(res => {

@@ -1,7 +1,6 @@
 import request from '@/plugins/request'
 import moduleName from '@/config/moduleName'
-export function GetAllIsolationTotal(data) {
-  // 获得总隔离人数
+export function GetAllIsolationTotal(data) { // 获得总隔离人数
   return request({
     url: `${moduleName.doraemon_campus}/analysis/totalPerson`,
     method: 'get',
@@ -9,8 +8,7 @@ export function GetAllIsolationTotal(data) {
     data
   })
 }
-// 获得新增隔离人数
-export function GetNewIsolationTotal(data) {
+export function GetNewIsolationTotal(data) { // 获得新增隔离人数
   return request({
     url: `${moduleName.doraemon_campus}/analysis/add`,
     method: 'get',
@@ -18,8 +16,7 @@ export function GetNewIsolationTotal(data) {
     data
   })
 }
-// 获得新增解除人数
-export function GetRelieveIsolationTotal(data) {
+export function GetRelieveIsolationTotal(data) { // 获得新增解除人数
   return request({
     url: `${moduleName.doraemon_campus}/analysis/relieve`,
     method: 'get',
@@ -27,8 +24,7 @@ export function GetRelieveIsolationTotal(data) {
     data
   })
 }
-// 获得各学院防疫人员分布
-export function GetEachCollegeTotal(data) {
+export function GetEachCollegeTotal(data) { // 获得各学院防疫人员分布
   return request({
     url: `${moduleName.doraemon_campus}/analysis/relieve`,
     method: 'get',
@@ -36,8 +32,7 @@ export function GetEachCollegeTotal(data) {
     data
   })
 }
-// 获得过去一周或者14天新增的隔离人数（传参： 7 或者 14）
-export function GetIsolationListByDate(data) {
+export function GetIsolationListByDate(data) { // 获得过去一周或者14天新增的隔离人数（传参： 7 或者 14）
   return request({
     url: `${moduleName.doraemon_campus}/analysis/newlyAnalysis`,
     method: 'get',
@@ -47,8 +42,7 @@ export function GetIsolationListByDate(data) {
     }
   })
 }
-// 获得各个学院防疫人员分析/analysis/epidemic
-export function GetEachEpidemicListAnalysis(data) {
+export function GetEachEpidemicListAnalysis(data) { // 获得各个学院防疫人员分析/analysis/epidemic
   return request({
     url: `${moduleName.doraemon_campus}/analysis/epidemic`,
     method: 'get',
@@ -58,8 +52,7 @@ export function GetEachEpidemicListAnalysis(data) {
     }
   })
 }
-// 获得各个学院隔离人员分析/analysis/epidemic
-export function GetEachIsolationListAnalysis(data) {
+export function GetEachIsolationListAnalysis(data) { // 获得各个学院隔离人员分析/analysis/epidemic
   return request({
     url: `${moduleName.doraemon_campus}/analysis/isolate`,
     method: 'get',

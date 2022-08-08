@@ -27,7 +27,7 @@
         </div>
         <Poptip
           confirm
-          title="您确认批量提交这些数据吗？"
+          title="你确定要修改所选地区的风险等级吗？"
           @on-ok="batchSubmit"
         >
           <div class="btn">批量提交</div>
@@ -146,7 +146,7 @@ export default {
                 placement: 'top-start',
                 confirm: true,
                 transfer: true,
-                title: '确定修改这些风险地区吗？'
+                title: '你确定要修改所选地区的风险等级吗？'
               },
               on: {
                 'on-ok': () => {
@@ -165,7 +165,8 @@ export default {
                 style: {
                   color: '#01b0ff',
                   marginRight: '5px',
-                  border: '0px'
+                  border: '0px',
+                  background: 'transparent'
                 },
                 on: {
                 }
@@ -199,20 +200,12 @@ export default {
         list: this.batchList,
         riskLevel: this.riskGrade
       }
-      BatchUpdateRiskAreaByCode(data).then(res => {
+      BatchUpdateRiskAreaByCode(data).then(() => {
         this.$Message.success('批量修改风险地区成功！')
         this.getRiskInfoListByProvince()
       })
     },
-    // getRiskInfoList() {
-    //   GetRiskInfoList(this.queryInfo).then(res => {
-    //     console.log(res)
-    //     this.total = res.field.total
-    //     this.data2 = res.field.data
-    //   })
-    // },
-    // 表格
-    selectItem(e) {
+    selectItem(e) { // 表格全选方法
       this.batchList = []
       e.forEach((item, index) => {
         console.log(item)
@@ -237,8 +230,6 @@ export default {
         code: info.code,
         riskLevel: info.riskLevel
       }
-      console.log(RiskInfo)
-      //  post请求
       UpdateRiskAreaByCode(RiskInfo).then(res => {
         this.$Message.success('修改风险等级成功!')
         this.getRiskInfoListByProvince()
@@ -357,27 +348,6 @@ export default {
         this.data2 = res.field.data
       })
     }
-    // getRiskInfoListByCity(val) {
-    //   this.queryInfo.value = val
-    //   GetRiskInfoListByCity(this.queryInfo).then(res => {
-    //     this.total = res.field.total
-    //     this.data2 = res.field.data
-    //   })
-    // },
-    // getRiskInfoListByCounty(val) {
-    //   this.queryInfo.value = val
-    //   GetRiskInfoListByCounty(this.queryInfo).then(res => {
-    //     this.total = res.field.total
-    //     this.data2 = res.field.data
-    //   })
-    // },
-    // getRiskInfoListByTown(val) {
-    //   this.queryInfo.value = val
-    //   GetRiskInfoListByTown(this.queryInfo).then(res => {
-    //     this.total = res.field.total
-    //     this.data2 = res.field.data
-    //   })
-    // }
   }
 }
 </script>

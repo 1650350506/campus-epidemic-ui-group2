@@ -1,18 +1,16 @@
 <template>
   <div  style="margin:84px 24px 0 24px">
     <Card :bordered="false" class="card" style="margin-top: 0">
-      <!--       这是面包屑组件-->
       <i-header-breadcrumb  ref="breadcrumb" />
       <h2 style="margin-top: 10px;">你好！ {{userInfo.roleName}}！</h2>
     </Card>
     <Card class="card card-marginTop">
       <div class="search-container">
         <div class="left-search">
-          <i class="ivu-icon ivu-icon-ios-search"></i>
-          <Input  placeholder="请输入职工工号、职工姓名、二级学院" style="width: 340px" v-model="queryInfo.key"></Input>
+          <Input  placeholder="请输入职工工号、职工姓名、二级学院" style="width: 300px" v-model="queryInfo.key"></Input>
         </div>
         <div style="margin-right: 2em">
-          <Select v-model="healthyModel" style="width:200px" @on-change="queryListByHealthy(healthyModel)" placeholder="按分险等级查询">
+          <Select v-model="healthyModel" style="width:160px" @on-change="queryListByHealthy(healthyModel)" placeholder="按健康码颜色查询">
             <Option v-for="(item,index) in healthyList" :value="item" :key="index">{{ item }}</Option>
           </Select>
         </div>
@@ -26,7 +24,7 @@
         <div class="select-text">已选择 <span style="color: #0e92e7; font-size: 18px">{{batchNum}}</span> 项</div>
         <Poptip
           confirm
-          title="您确认批量删除这些数据吗？"
+          title="确定将这些防疫人员数据进行删除吗？"
           @on-ok="batchSubmit"
         >
           <div class="btn">批量删除</div>
@@ -63,7 +61,8 @@ export default {
       queryInfo: {
         pageNum: 1,
         pageSize: 10,
-        key: ''
+        key: '',
+        color: null
       },
       healthyModel: '按健康码颜色查询',
       healthyList: ['默认', '绿码', '黄码', '红码'],
@@ -76,25 +75,28 @@ export default {
         {
           title: '职工工号',
           width: '160',
-          align: 'center',
+          align: 'left',
           key: 'code'
         },
         {
           title: '姓名',
           width: '120',
-          align: 'center',
+          align: 'left',
           key: 'name'
         },
         {
           title: '联系电话',
+          align: 'left',
           key: 'phone'
         },
         {
           title: '当前职务',
+          align: 'left',
           key: 'systemPost'
         },
         {
           title: '二级学院',
+          align: 'left',
           key: 'secondCollage'
         },
         {
@@ -114,8 +116,8 @@ export default {
               types = 'error'
               typeName = '红码'
             } else {
-              types = 'text'
-              typeName = '------'
+              types = ''
+              typeName = '未测'
             }
             return h('div', [
               h('Button', {
@@ -178,7 +180,7 @@ export default {
                     placement: 'top-start',
                     confirm: true,
                     transfer: true,
-                    title: '确定删除这条数据吗？'
+                    title: '确定将该防疫人员数据进行删除吗？？'
                   },
                   on: {
                     'on-ok': () => {
@@ -213,7 +215,6 @@ export default {
         }
       ],
       data: [],
-      //  对话框显示
       is_Edit: false,
       showDialogVisible: false,
       updateDialogVisible: false,
@@ -221,18 +222,15 @@ export default {
       deleteVisible: false,
       dialogList: {
         code: {
-          title: '工号', value: '', isEdit: false
+          title: '职工工号', value: '', isEdit: false
         },
         name: {
-          title: '姓名', value: '', isEdit: false
+          title: '职工姓名', value: '', isEdit: false
         },
         sex: {
           title: '性别', value: '', isEdit: false
         },
-        idCard: {
-          title: '身份证', value: '', isEdit: false
-        },
-        deptCode: {
+        deptName: {
           title: '二级学院', value: '', isEdit: false
         },
         phone: {
@@ -244,17 +242,6 @@ export default {
         schoolPost: {
           title: '校内职务', value: '', isEdit: true
         }
-      },
-      addDialogList: {
-        account: '',
-        deptId: 1548935972324904988,
-        pwd: '',
-        name: '',
-        mobile: '',
-        resetPad: false,
-        roles: [1547742937243193372],
-        selfAccount: false,
-        switchUser: false
       },
       batchList: [],
       msgList: []
@@ -273,7 +260,7 @@ export default {
         this.getFacultyList()
       })
     },
-    close(e) {
+    close() {
       this.addDialogVisible = false
     },
     closeCheck() {
@@ -281,27 +268,27 @@ export default {
     },
     closeEdit() {
       this.updateDialogVisible = false
+      this.queryInfo.key = ''
+      this.getFacultyList()
     },
-    //  删除工作人员信息
-    deleteFacultyInfoByCode(code) {
+    deleteFacultyInfoByCode(code) {  //  删除工作人员信息
       const data = { code: code }
-      DeleteFacultyInfoByCode(data).then(res => {
+      DeleteFacultyInfoByCode(data).then(() => {
         this.$Message.success('删除防控人员成功')
         this.getFacultyList()
       })
     },
-    // 按健康吗颜色查询
-    queryListByHealthy(healthyModel) {
+    queryListByHealthy(healthyModel) { // 按健康吗颜色查询
       if (healthyModel === '默认') {
-        this.queryInfo.healthyColor = null
+        this.queryInfo.color = null
       } else if (healthyModel === '绿码') {
-        this.queryInfo.healthyColor = 0
+        this.queryInfo.color = 0
       } else if (healthyModel === '黄码') {
-        this.queryInfo.healthyColor = 1
+        this.queryInfo.color = 1
       } else if (healthyModel === '红码') {
-        this.queryInfo.healthyColor = 2
+        this.queryInfo.color = 2
       }
-      console.log(this.queryInfo.healthy_color)
+      this.getFacultyList()
     },
     // 查询工作人员列表
     getFacultyList() {
@@ -313,6 +300,8 @@ export default {
     // 查询信息信息
     getFacultyInfoByCode(code) {
       GetFacultyInfoByCode({ code: code }).then(res => {
+        console.log('check')
+        console.log(res)
         this.dialogList.code.value = res.code
         this.dialogList.name.value = res.name
         if (res.sex === 0) {
@@ -320,8 +309,7 @@ export default {
         } else if (res.sex === 1) {
           this.dialogList.sex.value = '女'
         }
-        this.dialogList.idCard.value = res.idCard
-        this.dialogList.deptCode.value = res.deptCode
+        this.dialogList.deptName.value = res.deptName
         this.dialogList.phone.value = res.phone
         this.dialogList.systemPost.value = res.systemPost
         this.dialogList.schoolPost.value = res.schoolPost
@@ -336,7 +324,7 @@ export default {
       })
     },
     //  关键字查询工作人员信息
-    queryFacultyInfoByKey(e) {
+    queryFacultyInfoByKey() {
       this.data = []
       this.queryInfo.pageNum = 1
       this.queryInfo.pageSize = 10
@@ -344,7 +332,7 @@ export default {
     },
     selectItem(e) {
       this.batchList = []
-      e.forEach((item, index) => {
+      e.forEach((item) => {
         console.log(item)
         this.batchList.push(item.code)
       })

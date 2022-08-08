@@ -22,7 +22,7 @@
             <Table border :columns="columns"  height="160" :data="data"></Table>
           </div>
         </div>
-        <div class="model-list-title">日常出校信息</div>
+        <div class="model-list-title">出入校信息</div>
         <div class="mid-box">
           <div class="mid-box-left"></div>
           <div class="mid-box-right">
@@ -65,10 +65,6 @@ export default {
           key: 'endTime'
         },
         {
-          title: '去向信息',
-          key: 'destinationInformation'
-        },
-        {
           title: '途经地点',
           key: 'waypoint'
         }
@@ -101,7 +97,6 @@ export default {
             addressName: item
           })
         })
-        console.log(this.data)
       })
     },
     getOutSchoolListByCode() {
@@ -111,7 +106,6 @@ export default {
           this.data1.push({
             startTime: item.startTime,
             endTime: item.endTime,
-            destinationInformation: item.destinationInformation,
             waypoint: item.waypoint
           })
         })

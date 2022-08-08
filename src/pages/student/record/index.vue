@@ -18,7 +18,7 @@
             </Form-item>
             <Form-item>
               <div class="form-label">姓名</div>
-              <Input type="text" v-model="formItem.name" @on-blur="checkStu"></Input>
+              <Input type="text" v-model="formItem.name"></Input>
             </Form-item>
           </Form>
         </div>
@@ -29,7 +29,7 @@
           <Form-item
             v-for="(item, index) in formDynamic.items"
             :key="item"
-            style="padding: 1em 1em 0 0"
+            style="padding: 0 1em 0 1em;"
             :label="'行程记录' + (index + 1)"
             :prop="'items.' + index + '.value'"
             :rules="{required: true, message: '行程轨迹' + (index + 1) +'不能为空', trigger: 'blur'}"
@@ -56,7 +56,9 @@
           </Form-item>
         </Form>
       </div>
-      <Button type="primary" style="margin: 0 10%; height: 12vw" @click="recordSubmit">提交</Button>
+    </div>
+    <div class="btn-box">
+      <Button type="primary" style="width:90vw; height: 12vw" size="large" @click="recordSubmit">提交</Button>
     </div>
   </div>
   <div v-else class="page-success">
@@ -73,7 +75,7 @@
 </template>
 <script>
 import { GetCityList, GetProvinceList } from '@api/administorators/riskArea'
-import { CheckStudent, SubStuRecord } from '@api/stu/stu'
+import { SubStuRecord } from '@api/stu/stu'
 import { mapActions } from 'vuex'
 import md5 from 'js-md5'
 
@@ -103,7 +105,6 @@ export default {
   },
   created() {
     this.StuBack()
-    this.getProvinceList()
   },
   methods: {
     ...mapActions('admin/account', [
@@ -118,15 +119,14 @@ export default {
         password
       })
         .then(() => {
-          // 重定向对象不存在则返回顶层路径
+          this.getProvinceList()
         })
         .catch(error => {
-          // 异常情况
           this.$log.error(error)
           this.$Message.error(error.message)
         })
     },
-    getCityCode(value, selectedData) { // 获得市区的编号
+    getCityCode(value) { // 获得市区的编号
       if (this.travelRecordList.length < this.formDynamic.items.length) {
         this.travelRecordList.push(value[0])
       } else if (this.travelRecordList.length === this.formDynamic.items.length) {
@@ -160,13 +160,6 @@ export default {
       this.formDynamic.items.splice(index, 1)
       this.travelRecordList.splice(index, 1)
     },
-    checkStu() {
-      CheckStudent(this.formItem).then((res) => {
-        if (res === 0) {
-          this.$Message.error('学生信息校验失败！请检查是否输入正确！')
-        }
-      })
-    },
     getProvinceList() {
       const arrays = []
       GetProvinceList().then((res) => {
@@ -183,7 +176,7 @@ export default {
         console.log(this.data)
       })
     },
-    loadData(value, selectedData) {
+    loadData(value) {
       this.getCityListByValue(value[0])
     },
     getCityListByValue(val) {
@@ -212,8 +205,6 @@ export default {
 </script>
 <style  lang="less" scoped>
 .page-container {
-  display: flex;
-  flex-direction: column;
   .top-box {
     width: 100%;
     height: 30vh;
@@ -245,7 +236,6 @@ export default {
   }
   .mid-box {
     margin-top: 1em;
-    height: 60vh;
     display: flex;
     flex-direction: column;
     .basic {
@@ -266,15 +256,11 @@ export default {
           border-top: 0;
           border-left: 0;
           border-right: 0;
+          border-radius: 0;
           background: #F7F7F7;
         }
-        //::v-deep .ivu-form-item {
-        //  margin: 3em 0 0;
-        //  background: #1d42ab;
-        //}
         .form-label {
           position: absolute;
-          left: 0%;
           top: -80%;
           font-size: 1.1em;
           z-index: 99;
@@ -282,20 +268,14 @@ export default {
       }
     }
     .whereabouts {
-      flex: 1;
       display: flex;
       flex-direction: column;
-      //background: #1d42ab;
     }
   }
-  .img-upload {
-    font-size: 2em;
-    font-weight: 100;
-    border: 1px solid #9ea7b4;
-    text-align: center;
-    line-height: 5rem;
-    width: 5rem;
-    height: 5rem;
+  .btn-box {
+    display: flex;
+    justify-content: center;
+    margin: 1rem 0;
   }
 }
 .form-title {

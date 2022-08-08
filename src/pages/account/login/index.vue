@@ -74,7 +74,7 @@ export default {
     ...mapMutations('admin/account', ['addToUserInfo']),
     getUserInfoByToken() {
       GetUserInfoByToken().then(res => {
-        console.log(res.role)
+        console.log(res)
         if (res.role[0].name === '疫情2组管理员') {
           const info = {
             username: this.loginInfo.username,

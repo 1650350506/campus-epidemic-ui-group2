@@ -110,7 +110,7 @@ export default {
       .title {
         color: #050505;
         font-weight: 500;
-        font-size: 18px;
+        font-size: 16px;
         flex-basis: 35%;
         text-align: right;
         line-height: 30px;

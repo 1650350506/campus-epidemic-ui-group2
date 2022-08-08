@@ -1,8 +1,11 @@
 <template>
   <div class="search-container">
     <div class="left-search">
-      <i class="ivu-icon ivu-icon-ios-search"></i>
-      <Input  :placeholder="placeholderData" style="width: 340px" v-model="keyValue"></Input>
+
+      <div></div>
+      <Input :placeholder="placeholderData" style="width: 220px;flex: 1" v-model="keyValue">
+        <i class="ivu-icon ivu-icon-ios-search"></i>
+      </Input>
     </div>
     <Button type="primary" class="btn" @click="select">查询</Button>
     <Button class="btn" @click="keyValue = ''">重置</Button>
@@ -34,9 +37,6 @@ export default {
         display: flex;
         align-items: center;
         margin-right: 2em;
-        i {
-            font-size: 2em;
-        }
     }
     .btn {
         margin-right: 2em;

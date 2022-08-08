@@ -8,11 +8,10 @@
     <Card class="card">
       <div class="search-container">
         <div class="left-search">
-          <i class="ivu-icon ivu-icon-ios-search"></i>
-          <Input  placeholder="请输入学生学号、学生姓名、二级学院" style="width: 340px" v-model="queryInfo.keyword"></Input>
+          <Input  placeholder="请输入学生学号、学生姓名、二级学院" style="width: 300px" v-model="queryInfo.keyword"></Input>
         </div>
         <div style="margin-right: 2em">
-          <Select v-model="selectModel" style="width:200px" @on-change="queryListByGrade(selectModel)" placeholder="按分险等级查询">
+          <Select v-model="selectModel" style="width:160px" @on-change="queryListByGrade(selectModel)" placeholder="按分险等级查询">
             <Option v-for="item in gradeList" :value="item" :key="item">{{ item }}</Option>
           </Select>
         </div>
@@ -25,7 +24,7 @@
         <div class="select-text">已选择 <span style="color: #0e92e7; font-size: 18px">{{batchSum}}</span> 项</div>
         <Poptip
           confirm
-          title="您确认批量删除这些数据吗？"
+          title="确定将这些学生14天前的行程进行删除吗？"
           @on-ok="batchSubmit"
         >
           <div class="btn">批量删除</div>
@@ -87,10 +86,10 @@ export default {
           title: '居住地址', value: ''
         },
         emergencyContact: {
-          title: '联系人', value: ''
+          title: '紧急联系人', value: ''
         },
         emergencyContactPhone: {
-          title: '联系人电话', value: ''
+          title: '紧急联系人电话', value: ''
         }
       },
       columns: [
@@ -126,7 +125,7 @@ export default {
           }
         },
         {
-          title: '风险地区等级',
+          title: '风险等级',
           key: 'riskLevel',
           sortable: true,
           align: 'center',
@@ -188,7 +187,11 @@ export default {
                     this.showDialogVisible = true
                     this.checkList1.code.value = params.row.code
                     this.checkList1.name.value = params.row.name
-                    this.checkList1.sex.value = params.row.sex
+                    if (this.checkList1.sex.value === 0) {
+                      this.checkList1.sex.value = '男'
+                    } else if (this.checkList1.sex.value === 1) {
+                      this.checkList1.sex.value = '女'
+                    }
                     this.checkList1.phoneNumber.value = params.row.phoneNumber
                     this.checkList1.idCard.value = params.row.idCard
                     this.checkList1.deptName.value = params.row.deptName
@@ -205,7 +208,7 @@ export default {
                     placement: 'top-start',
                     confirm: true,
                     transfer: true,
-                    title: '确定删除这条数据吗？'
+                    title: '确定该学生14天前的行程进行删除吗？'
                   },
                   on: {
                     'on-ok': () => {

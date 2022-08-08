@@ -37,8 +37,6 @@
 </template>
 
 <script>
-import { GetIsolationInfoList } from '../../../../../api/personnel/riskpremanage'
-
 export default {
   name: 'CheckContent',
   props: ['checkSwitch', 'checkList1', 'msgList', 'serviceList'],
@@ -198,7 +196,7 @@ export default {
       flex-basis: 20%;
     }
     .mid-box-right {
-      flex-basis: 65%;
+      flex-basis: 70%;
     }
   }
 }

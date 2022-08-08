@@ -14,11 +14,11 @@
           <Form ref="formInline">
             <Form-item>
               <div class="form-label">学号</div>
-              <Input type="text" v-model="formItem.code" class="input-style"></Input>
+              <Input type="text" v-model="formItem.code"></Input>
             </Form-item>
             <Form-item>
               <div class="form-label">姓名</div>
-              <Input type="text" v-model="formItem.name" @on-blur="queryMsg"></Input>
+              <Input type="text" v-model="formItem.name"></Input>
             </Form-item>
           </Form>
         </div>
@@ -33,7 +33,7 @@
           <Form ref="formDynamic" :model="formDynamic" :label-width="90">
             <Form-item
               v-for="(item, index) in formDynamic.items"
-              style="padding: 1em 1em 0 0"
+              style="padding: 0 1em 0 0"
               :key="item"
               :label="'地区' + (index + 1)"
               :prop="'items.' + index + '.value'"
@@ -61,8 +61,10 @@
             </Form-item>
           </Form>
         </div>
-        <Button class="btn" type="primary" @click="subMsg">提交</Button>
       </div>
+    </div>
+    <div class="btn-box">
+      <Button type="primary" style="width:90vw; height: 12vw" size="large" @click="subMsg">提交</Button>
     </div>
   </div>
   <div v-else class="page-success">
@@ -79,7 +81,7 @@
 </template>
 <script>
 import myBMap from '@/plugins/map/bmap'
-import { CheckStudent, SubStuBack } from '@api/stu/stu'
+import { SubStuBack } from '@api/stu/stu'
 import { GetCityList, GetProvinceList } from '@api/administorators/riskArea'
 import md5 from 'js-md5'
 import { mapActions } from 'vuex'
@@ -108,7 +110,6 @@ export default {
   },
   created() {
     this.StuBack()
-    this.getProvinceList()
   },
   methods: {
     ...mapActions('admin/account', [
@@ -123,7 +124,7 @@ export default {
         password
       })
         .then(() => {
-          // 重定向对象不存在则返回顶层路径
+          this.getProvinceList()
         })
         .catch(error => {
           // 异常情况
@@ -131,7 +132,7 @@ export default {
           this.$Message.error(error.message)
         })
     },
-    getCityCode(value, selectedData) { // 获得市区的编号
+    getCityCode(value) { // 获得市区的编号
       if (this.travelRecordList.length < this.formDynamic.items.length) {
         this.travelRecordList.push(value[0])
       } else if (this.travelRecordList.length === this.formDynamic.items.length) {
@@ -149,7 +150,6 @@ export default {
         name: this.formItem.name,
         travelRecordList: this.travelRecordList
       }
-      console.log(list)
       SubStuBack(list).then(() => {
         this.submitSuccess = false
         this.formItem.code = ''
@@ -165,7 +165,6 @@ export default {
           result => {
             const geoc = new BMap.Geocoder()
             geoc.getLocation(result.center, res => {
-              // 位置信息
               console.log(res.address)
               if (res.address === '浙江省杭州市上城区中环东路') {
                 this.$Message.success('定位成功！')
@@ -188,13 +187,6 @@ export default {
       this.formDynamic.items.splice(index, 1)
       this.travelRecordList.splice(index, 1)
     },
-    queryMsg() {
-      CheckStudent(this.formItem).then((res) => {
-        if (res === 0) {
-          this.$Message.error('学生信息校验失败！请检查是否输入正确！')
-        }
-      })
-    },
     backHome() {
       window.location.href = 'about:blank'
       window.close()
@@ -215,10 +207,9 @@ export default {
           })
         })
         this.provinceData = arrays
-        console.log(this.data)
       })
     },
-    loadData(value, selectedData) {
+    loadData(value) {
       this.getCityListByValue(value[0])
     },
     getCityListByValue(val) {
@@ -245,8 +236,6 @@ export default {
 }
 
 .page-container {
-  display: flex;
-  flex-direction: column;
   .top-box {
     width: 100%;
     height: 30vh;
@@ -279,7 +268,6 @@ export default {
   }
   .mid-box {
     margin-top: 1em;
-    height: 60vh;
     display: flex;
     flex-direction: column;
     .basic {
@@ -300,16 +288,13 @@ export default {
           border-top: 0;
           border-left: 0;
           border-right: 0;
+          border-radius: 0;
           background: #F7F7F7;
         }
-        //::v-deep .ivu-form-item {
-        //  margin: 3em 0 0;
-        //  background: #1d42ab;
-        //}
         .form-label {
           position: absolute;
           left: 0%;
-          top: -60%;
+          top: -80%;
           font-size: 1.2em;
           z-index: 99;
         }
@@ -321,10 +306,11 @@ export default {
       flex-direction: column;
       .form-goto {
         flex-basis: 25%;
-        font-size: 1.4em;
-        color: #000;
         display: flex;
         align-items: center;
+        font-size: 1.4em;
+        color: #000;
+        margin-bottom: 1rem;
         span {
           margin-left: 6%;
           margin-right: 1%;
@@ -369,12 +355,12 @@ export default {
           }
         }
       }
-      .btn {
-        margin: 0 2em;
-        height: 12vw;
-        font-size: 1.2em;
-      }
     }
+  }
+  .btn-box {
+    display: flex;
+    justify-content: center;
+    margin: 1rem 0;
   }
 }
 </style>
