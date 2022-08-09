@@ -1,19 +1,4 @@
 <template>
-  <!--  <div class="page-account template-login-data">-->
-  <!--    <div class="page-account-container">-->
-  <!--      <div class="page-account-top">-->
-  <!--        <div class="page-account-top-logo">-->
-  <!--        </div>-->
-  <!--      </div>-->
-  <!--      <div class="template-login-data-main">-->
-  <!--        <Login @on-submit="handleSubmit">-->
-  <!--          <UserName name="username" value="tianque_root1" />-->
-  <!--          <Password name="password" value="Tianque_root1" enter-to-submit />-->
-  <!--          <Submit>登录</Submit>-->
-  <!--        </Login>-->
-  <!--      </div>-->
-  <!--    </div>-->
-  <!--  </div>-->
   <div class="page-account">
     <div class="account-box">
       <div class="account-left">

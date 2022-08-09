@@ -57,6 +57,9 @@
     <div class="btn-box">
       <Button type="primary" style="width:90vw; height: 12vw" size="large" @click="subMsg">提交</Button>
     </div>
+    <div class="footer">
+      <i-copyright class="template-login-data-copyright" />
+    </div>
   </div>
   <div v-else class="page-success">
     <div class="success-box">
@@ -80,9 +83,11 @@ import {
 } from '@api/administorators/riskArea'
 import md5 from 'js-md5'
 import { mapActions } from 'vuex'
+import iCopyright from '@/components/copyright'
 
 export default {
   name: 'dashboard-console',
+  components: { iCopyright },
   data() {
     return {
       formItem: {
@@ -302,7 +307,7 @@ export default {
       }
       .form-content {
         flex: 1;
-        padding: 2em 3em 0;
+        padding: 2rem 2rem 0;
         ::v-deep .ivu-input {
           border-top: 0;
           border-left: 0;
@@ -312,7 +317,7 @@ export default {
         }
         .form-label {
           position: absolute;
-          left: 0%;
+          left: -0%;
           top: -80%;
           font-size: 1.2em;
           z-index: 99;
