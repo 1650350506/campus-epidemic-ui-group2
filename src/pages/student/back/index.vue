@@ -26,7 +26,9 @@
       <div class="whereabouts">
         <div class="form-goto">
           <span>获取定位</span>
-          <Button class="position-btn" type="primary" @click="getMapList">获取定位</Button>
+          <baidu-map :center="center" :zoom="zoom" @ready="handler" style="height:30vh;width: 50vw;" @click="getClickInfo" :scroll-wheel-zoom='true'>
+          </baidu-map>
+          <!--          <Button class="position-btn" type="primary" @click="getMapList">获取定位</Button>-->
         </div>
         <div class="form-address">
           <span>途经地点  (跨市同学填写)</span>
@@ -80,11 +82,11 @@
   </div>
 </template>
 <script>
-import myBMap from '@/plugins/map/bmap'
 import { SubStuBack } from '@api/stu/stu'
 import { GetCityList, GetProvinceList } from '@api/administorators/riskArea'
 import md5 from 'js-md5'
 import { mapActions } from 'vuex'
+const BMap = window.VueBaiduMap
 export default {
   name: 'dashboard-console',
   data() {
@@ -105,11 +107,18 @@ export default {
       cityValue: '',
       cityData: [],
       travelRecordList: [],
-      submitSuccess: true
+      submitSuccess: true,
+      center: { lng: 120.137629, lat: 30.2794 },
+      zoom: 13
     }
   },
   created() {
     this.StuBack()
+  },
+  mounted() {
+    setTimeout(() => {
+      this.baiduMap()
+    }, 100)
   },
   methods: {
     ...mapActions('admin/account', [
@@ -158,22 +167,45 @@ export default {
         this.cityValue = ''
       })
     },
-    getMapList() {
-      myBMap.init().then(BMap => {
-        const myCity = new BMap.LocalCity()
-        myCity.get(
-          result => {
-            const geoc = new BMap.Geocoder()
-            geoc.getLocation(result.center, res => {
-              console.log(res.address)
-              if (res.address === '浙江省杭州市上城区中环东路') {
-                this.$Message.success('定位成功！')
-              }
-            })
-          },
-          { enableHighAccuracy: true }
-        )
-      })
+    handler({ BMap, map }) {
+      const x = this.longitude
+      const y = this.latitude
+      const ggPoint = new BMap.Point(x, y)
+      // 地图初始化
+      const bm = new BMap.Map('allmap')
+      bm.centerAndZoom(ggPoint, 15)
+      bm.addControl(new BMap.NavigationControl())
+      // 添加gps marker和label
+      const markergg = new BMap.Marker(ggPoint)
+      bm.addOverlay(markergg) // 添加GPS marker
+      const labelgg = new BMap.Label('未转换的GPS坐标（错误）', { offset: new BMap.Size(20, -10) })
+      markergg.setLabel(labelgg) // 添加GPS label
+
+      const translateCallback = function (data) { // 坐标转换完之后的回调函数
+        console.log(data)
+        console.log(data.status)
+        if (data.status === 0) {
+          const marker = new BMap.Marker(data.points[0])
+          bm.addOverlay(marker)
+          const label = new BMap.Label('转换的GPS坐标（正确）', { offset: new BMap.Size(20, -10) })
+          marker.setLabel(label) // 添加百度label
+          bm.setCenter(data.points[0])
+        }
+      }
+
+      // 坐标转换完之后的回调函数
+      setTimeout(() => {
+        const convertor = new BMap.Convertor()
+        const pointArr = []
+        pointArr.push(ggPoint)
+        convertor.translate(pointArr, 1, 5, translateCallback)
+      }, 1000)
+    },
+    getClickInfo(e) {
+      console.log(e.point.lng)
+      console.log(e.point.lat)
+      this.center.lng = e.point.lng
+      this.center.lat = e.point.lat
     },
     handleReset(name) {
       this.$refs[name].resetFields()

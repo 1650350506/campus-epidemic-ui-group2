@@ -2,7 +2,7 @@
   <div>
     <Modal
       v-model="showSwitch"
-      @on-cancel="showSwitch = false"
+      @on-cancel="close"
       width="720"
     >
       <div slot="header" class="header-title" style="font-size: 20px; color: #000">新增人员</div>
@@ -108,9 +108,8 @@
 </template>
 
 <script>
-import { ActiveUserInfo, GetUserInfoByToken, GetUserInfoByUsername, RegUserInfo } from '@/api/system/user'
+import { ActiveUserInfo, GetUserInfoByUsername, RegUserInfo } from '@/api/system/user'
 import { GetDeptCodeAndName, InsertWorkPerson } from '@/api/administorators/manage'
-import md5 from 'js-md5'
 export default {
   name: 'addFaculty',
   props: ['showSwitch'],
@@ -206,7 +205,7 @@ export default {
       this.addUserInfo.name = this.addList1.name
       this.addUserInfo.pwd = this.addList1.pwd
       console.log(this.addList1)
-      RegUserInfo(this.addUserInfo).then(res => {
+      RegUserInfo(this.addUserInfo).then(() => {
         this.getUserInfoByName()
       })
     },
@@ -222,12 +221,12 @@ export default {
       const list = {
         ids: [id]
       }
-      ActiveUserInfo(list).then(res => {
+      ActiveUserInfo(list).then(() => {
         this.addInnerFacultyInfo()
       })
     },
     addInnerFacultyInfo() {
-      InsertWorkPerson(this.addList1).then((res) => {
+      InsertWorkPerson(this.addList1).then(() => {
         this.$Message.success('新增账号成功！')
         this.close()
       })
