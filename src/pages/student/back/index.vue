@@ -31,7 +31,7 @@
           </baidu-map>
         </div>
         <div class="form-address">
-          <span>途经地点  (跨市同学填写)</span>
+          <p>途经地点  (跨市同学填写)</p>
           <Form ref="formDynamic" :model="formDynamic" :label-width="90">
             <Form-item
               v-for="(item, index) in formDynamic.items"
@@ -294,7 +294,7 @@ export default {
       }
       .form-content {
         flex: 1;
-        padding: 2rem 2rem 0;
+        padding: 2rem 2rem 0 1.7rem;
         ::v-deep .ivu-input {
           border-top: 0;
           border-left: 0;
@@ -304,7 +304,7 @@ export default {
         }
         .form-label {
           position: absolute;
-          left: -0%;
+          left: -1%;
           top: -80%;
           font-size: 1.2em;
           z-index: 99;
@@ -331,9 +331,8 @@ export default {
       .form-address {
         font-size: 1.4em;
         color: #000;
-        span {
-          margin-left: 6%;
-          margin-right: 1%;
+        p {
+         margin: 0 1% 3% 6%;
         }
       }
       .form-msg {

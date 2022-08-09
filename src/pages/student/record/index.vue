@@ -255,7 +255,7 @@ export default {
       }
       .form-content {
         flex: 1;
-        padding: 2rem 2rem 0;
+        padding: 2rem 2rem 0 1.7rem;
         ::v-deep .ivu-input {
           border-top: 0;
           border-left: 0;
@@ -265,7 +265,7 @@ export default {
         }
         .form-label {
           position: absolute;
-          left: -0%;
+          left: -1%;
           top: -80%;
           font-size: 1.2em;
           z-index: 99;

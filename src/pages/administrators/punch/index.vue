@@ -149,7 +149,8 @@ export default {
       }
     },
     backHome() {
-      this.$router.replace('/login')
+      window.location.href = 'about:blank'
+      window.close()
     }
   }
 }
@@ -168,6 +169,7 @@ export default {
       height: 6vh;
       width: 100%;
       display: flex;
+      align-items: center;
       i {
         font-weight: bold;
         font-size: 3em;
@@ -190,7 +192,6 @@ export default {
   .mid-box {
     width: 100%;
     height: 80vh;
-    //background: #e7e1cd;
     display: flex;
     flex-direction: column;
     .mid-top {
@@ -214,7 +215,7 @@ export default {
       flex-direction: column;
       .form-content {
         flex: 1;
-        padding: 2em 3em 0;
+        padding: 2rem 2rem 0 1.7rem;
         ::v-deep .ivu-input {
           border-top: 0;
           border-left: 0;
@@ -227,7 +228,8 @@ export default {
         //}
         .form-label {
           position: absolute;
-          top: -90%;
+          left: -1%;
+          top: -80%;
           font-size: 1.2em;
           z-index: 99;
         }
@@ -240,7 +242,7 @@ export default {
       }
     }
     .big-btn {
-      flex-basis: 25%;
+      flex-basis: 40%;
       display: flex;
       justify-content: center;
       align-items: center;

@@ -37,17 +37,21 @@
             <div class="msg-item">
               <div class="msg-left">地区</div>
               <div class="msg-right" style="display: flex; flex-direction: column">
-                <Cascader placeholder="选择省" style="width: 18em" :data="provinceData" v-model="provinceValue" @on-change="loadData"></Cascader>
-                <Cascader placeholder="选择市" style="width: 18em" :data="cityData" v-model="cityValue" @on-change="loadData"></Cascader>
-                <Cascader placeholder="选择区" style="width: 18em" v-show="is_Local" :data="countyData" v-model="countyValue" @on-change="loadData"></Cascader>
-                <Cascader placeholder="选择街道" style="width: 18em" v-show="is_Local" :data="streetData" v-model="streetValue" @on-change="loadData"></Cascader>
-                <Cascader placeholder="选择社区" style="width: 18em" v-show="is_Local" :data="townData" v-model="townValue" @on-change="loadData"></Cascader>
+                <div style="display: flex">
+                  <Cascader placeholder="选择省" style="width: 5rem; margin: 0 1rem 1rem 0" :data="provinceData" v-model="provinceValue" @on-change="loadData"></Cascader>
+                  <Cascader placeholder="选择市" style="width: 5rem; margin: 0 1rem 1rem 0" :data="cityData" v-model="cityValue" @on-change="loadData"></Cascader>
+                  <Cascader placeholder="选择区" style="width: 5rem" v-show="is_Local" :data="countyData" v-model="countyValue" @on-change="loadData"></Cascader>
+                </div>
+                <div style="display: flex">
+                  <Cascader placeholder="选择街道" style="width: 8rem;margin: 0 1rem 1rem 0" v-show="is_Local" :data="streetData" v-model="streetValue" @on-change="loadData"></Cascader>
+                  <Cascader placeholder="选择社区" style="width: 8rem" v-show="is_Local" :data="townData" v-model="townValue" @on-change="loadData"></Cascader>
+                </div>
               </div>
             </div>
             <div class="msg-item">
               <div class="msg-left">详细地址</div>
               <div class="msg-right">
-                <Input placeholder="小区楼栋/乡村名称" style="width: 18em" v-model="formItem.whereDetail"></Input>
+                <Input placeholder="详细地址" style="width: 17rem" v-model="formItem.whereDetail"></Input>
               </div>
             </div>
           </div>
@@ -84,7 +88,7 @@ import {
 import md5 from 'js-md5'
 import { mapActions } from 'vuex'
 import iCopyright from '@/components/copyright'
-
+import { SubStuLeave } from '@/api/stu/stu'
 export default {
   name: 'dashboard-console',
   components: { iCopyright },
@@ -150,10 +154,9 @@ export default {
       } else if (this.formItem.type === '跨市') {
         [this.formItem.type, this.formItem.whereCode] = [1, this.cityValue[0]]
       }
-      console.log(this.formItem)
-      // SubStuLeave(this.formItem).then(() => {
-      //   this.submitSuccess = false
-      // })
+      SubStuLeave(this.formItem).then(() => {
+        this.submitSuccess = false
+      })
     },
     backHome() {
       window.location.href = 'about:blank'
@@ -307,7 +310,7 @@ export default {
       }
       .form-content {
         flex: 1;
-        padding: 2rem 2rem 0;
+        padding: 2rem 2rem 0 1.7rem;
         ::v-deep .ivu-input {
           border-top: 0;
           border-left: 0;
@@ -317,7 +320,7 @@ export default {
         }
         .form-label {
           position: absolute;
-          left: -0%;
+          left: -1%;
           top: -80%;
           font-size: 1.2em;
           z-index: 99;
@@ -329,10 +332,12 @@ export default {
       display: flex;
       flex-direction: column;
       .form-goto {
+        margin-bottom: 1rem;
         flex-basis: 25%;
         font-size: 1.4em;
         color: #000;
         display: flex;
+        align-items: center;
         span {
           margin-left: 6%;
           margin-right: 5%;
@@ -360,11 +365,13 @@ export default {
           .msg-item {
             flex-basis: 36%;
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             .msg-left {
+              font-size: 1rem;
+              display: flex;
               text-align: right;
-              flex-basis: 20%;
-              font-size: 1.2em;
+              padding-left: 6%;
+              flex-basis: 24%;
             }
             .msg-right {
               display: flex;

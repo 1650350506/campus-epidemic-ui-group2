@@ -269,6 +269,7 @@ export default {
       })
       BatchDeleteFacultyInfoByCodeList({ codes: this.batchList }).then(() => {
         this.$Message.success('批量删除防控人员成功')
+        this.queryInfo.key = ''
         this.getFacultyList()
       })
     },
