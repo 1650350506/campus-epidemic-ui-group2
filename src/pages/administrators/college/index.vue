@@ -31,7 +31,10 @@
         </Poptip>
       </div>
       <div class="table-box">
-        <Table :columns="columns" :data="data" :border="false" class="table" @on-selection-change="selectItem"></Table>
+        <Table :columns="columns" :data="data" :border="false" class="table" ref="purchaseTable"
+               @on-select="onSelectAll" @on-select-cancel='onSelectCancel' :loading="loading"
+               @on-select-all ='onSelectAll' @on-select-all-cancel='onSelectAllCancel'
+        ></Table>
       </div>
       <Page :total="total"  show-elevator show-sizer class-name="page" :page-size="queryInfo.pageSize" :current="queryInfo.pageNum"  @on-change="editPageNum" @on-page-size-change="editPageSize"></Page>
     </Card>
@@ -244,7 +247,12 @@ export default {
         }
       },
       batchList: [],
-      msgList: []
+      msgList: [],
+      selectedIds: new Set(),
+      selectedData: [], // 选中的数组
+      arr1: [], // 原本
+      arr2: [], // 去重后的，
+      loading: false
     }
   },
   computed: {
@@ -255,6 +263,10 @@ export default {
   },
   methods: {
     batchSubmit() {
+      this.batchList = []
+      this.arr2.forEach((item) => {
+        this.batchList.push(item.code)
+      })
       BatchDeleteFacultyInfoByCodeList({ codes: this.batchList }).then(() => {
         this.$Message.success('批量删除防控人员成功')
         this.getFacultyList()
@@ -330,17 +342,62 @@ export default {
       this.queryInfo.pageSize = 10
       this.getFacultyList()
     },
-    selectItem(e) {
-      this.batchList = []
-      e.forEach((item) => {
-        console.log(item)
-        this.batchList.push(item.code)
+    onSelectAll(selection) {
+      // arr1 去重之前的 选中后合并的数组
+      this.arr1 = [...selection, ...this.selectedData]
+      // 去重  some  和every 相反，只要有一个满足条件，就返回true
+      for (const val of this.arr1) {
+        if (!this.arr2.some(item => item.code === val.code)) {
+          this.arr2.push(val)
+        }
+      }
+      if (this.arr2.length >= 30) {
+        this.enableModal = true
+      }
+      this.batchNum = this.arr2.length
+    },
+
+    // 取消选中某一项时触发
+    onSelectCancel(selection, row) {
+      // 拿到取消选择的项数据 从arr2中去除 findIndex找返回传入一个符合条件的数组第一个元素位置,没有返回-1
+      const result = this.arr2.findIndex((ele) => {
+        return ele.code === row.code
       })
-      this.batchNum = this.batchList.length
+      this.arr2.splice(result, 1)
+      this.batchNum = this.arr2.length
+    },
+
+    // 点击取消全选时触发
+    onSelectAllCancel() {
+      // 拿到当前分页的数据进行取消选中处理
+      // every方法，只要有一项不满足条件就返回false，也就是说必须每一项都得满足才能返回true。返回的是布尔值。
+      // * filter方法，只要条件满足，我就将此元素返回出去，返回的是元素。
+      // *  在本示例中，只要arr1中存在与arr2中相同的元素，我就返回false。也就是说，我拿着arr2中
+      // *  的第一项去和arr1中的每一项去比较，如果code都不相等，满足所有条件，我就返回true。
+      // *       在filter中，只要条件为true，我就将这一项返回出去，就实现了批量删除的效果。
+      this.arr2 = this.arr2.filter(item => {
+        return this.data.every(item2 => {
+          return item.code !== item2.code
+        })
+      })
+      console.log(this.arr2)
+      this.batchNum = this.arr2.length
     },
     editPageNum(e) {
       this.queryInfo.pageNum = e
-      this.getFacultyList()
+      this.loading = true
+      GetFacultyInfo(this.queryInfo).then((res) => {
+        res.data.forEach(item => {
+          this.arr2.forEach(element => {
+            if (element.code === item.code) {
+              this.$set(item, '_checked', true)
+            }
+          })
+        })
+        this.loading = false
+        this.total = res.total
+        this.data = res.data
+      })
     },
     editPageSize(e) {
       this.queryInfo.pageSize = e

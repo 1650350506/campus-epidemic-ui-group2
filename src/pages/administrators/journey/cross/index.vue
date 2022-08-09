@@ -31,7 +31,10 @@
         </Poptip>
       </div>
       <div class="table-box">
-        <Table  :border="false" :columns="columns" :data="data" class="table" @on-selection-change="selectItem"></Table>
+        <Table  :border="false" :columns="columns" :data="data" class="table"
+                @on-select="onSelectAll" @on-select-cancel='onSelectCancel' :loading="loading"
+                @on-select-all ='onSelectAll' @on-select-all-cancel='onSelectAllCancel'
+        ></Table>
       </div>
       <Page :total="total" :current="queryInfo.pageNum"  show-elevator show-sizer class-name="page"  @on-change="editPageNum" @on-page-size-change="editPageSize"></Page>
     </Card>
@@ -250,7 +253,11 @@ export default {
         riskLevel: ''
       },
       total: 0,
-      batchList: []
+      batchList: [],
+      selectedData: [], // 选中的数组
+      arr1: [], // 原本
+      arr2: [], // 去重后的，
+      loading: false
     }
   },
   computed: {
@@ -260,16 +267,11 @@ export default {
     this.getStuList()
   },
   methods: {
-    selectItem(e) {
+    batchSubmit() {
       this.batchList = []
-      e.forEach((item) => {
-        console.log(item)
+      this.arr2.forEach((item) => {
         this.batchList.push(item.code)
       })
-      this.batchSum = this.batchList.length
-    },
-    batchSubmit() {
-      console.log(this.batchList)
       BatchDelCrossBatchDailyCodeList({ codeList: this.batchList }).then(() => {
         this.$Message.success('批量删除成功！')
       })
@@ -307,6 +309,41 @@ export default {
         this.total = res.total
       })
     },
+    onSelectAll(selection) {
+      // arr1 去重之前的 选中后合并的数组
+      this.arr1 = [...selection, ...this.selectedData]
+      // 去重  some  和every 相反，只要有一个满足条件，就返回true
+      for (const val of this.arr1) {
+        if (!this.arr2.some(item => item.code === val.code)) {
+          this.arr2.push(val)
+        }
+      }
+      if (this.arr2.length >= 30) {
+        this.enableModal = true
+      }
+      this.batchSum = this.arr2.length
+    },
+
+    // 取消选中某一项时触发
+    onSelectCancel(selection, row) {
+      // 拿到取消选择的项数据 从arr2中去除 findIndex找返回传入一个符合条件的数组第一个元素位置,没有返回-1
+      const result = this.arr2.findIndex((ele) => {
+        return ele.code === row.code
+      })
+      this.arr2.splice(result, 1)
+      this.batchSum = this.arr2.length
+    },
+
+    // 点击取消全选时触发
+    onSelectAllCancel() {
+      this.arr2 = this.arr2.filter(item => {
+        return this.data.every(item2 => {
+          return item.code !== item2.code
+        })
+      })
+      console.log(this.arr2)
+      this.batchSum = this.arr2.length
+    },
     // 关键字查询
     queryStuInfoByKey() {
       this.queryInfo.pageNum = 1
@@ -317,7 +354,19 @@ export default {
     // 选择页码
     editPageNum(e) {
       this.queryInfo.pageNum = e
-      this.getStuList()
+      this.loading = true
+      GetStuList(this.queryInfo).then((res) => {
+        res.data.forEach(item => {
+          this.arr2.forEach(element => {
+            if (element.code === item.code) {
+              this.$set(item, '_checked', true)
+            }
+          })
+        })
+        this.loading = false
+        this.total = res.total
+        this.data = res.data
+      })
     },
     // 选择当页最大条数
     editPageSize(e) {

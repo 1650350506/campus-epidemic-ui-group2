@@ -31,7 +31,10 @@
         </Poptip>
       </div>
       <div class="table-box">
-        <Table :border="false" :columns="columns" :data="data" @on-selection-change="selectItem"></Table>
+        <Table :border="false" :columns="columns" :data="data"
+               @on-select="onSelectAll" @on-select-cancel='onSelectCancel' :loading="loading"
+               @on-select-all ='onSelectAll' @on-select-all-cancel='onSelectAllCancel'
+        ></Table>
       </div>
       <Page :total="total" show-elevator :current="queryInfo.pageNum" show-sizer class-name="page"  @on-change="editPageNum" @on-page-size-change="editPageSize"></Page>
     </Card>
@@ -275,7 +278,11 @@ export default {
       },
       total: 0,
       batchList: [],
-      crossList: []
+      crossList: [],
+      selectedData: [], // 选中的数组
+      arr1: [], // 原本
+      arr2: [], // 去重后的，
+      loading: false
 
     }
   },
@@ -295,6 +302,10 @@ export default {
       this.batchNum = this.batchList.length
     },
     batchSubmit() {
+      this.batchList = []
+      this.arr2.forEach((item) => {
+        this.batchList.push(item.code)
+      })
       const data = {
         codes: this.batchList
       }
@@ -336,9 +347,55 @@ export default {
       this.queryInfo.pageSize = 10
       this.getLocalStuList()
     },
+    onSelectAll(selection) {
+      // arr1 去重之前的 选中后合并的数组
+      this.arr1 = [...selection, ...this.selectedData]
+      // 去重  some  和every 相反，只要有一个满足条件，就返回true
+      for (const val of this.arr1) {
+        if (!this.arr2.some(item => item.code === val.code)) {
+          this.arr2.push(val)
+        }
+      }
+      if (this.arr2.length >= 30) {
+        this.enableModal = true
+      }
+      this.batchNum = this.arr2.length
+    },
+
+    // 取消选中某一项时触发
+    onSelectCancel(selection, row) {
+      // 拿到取消选择的项数据 从arr2中去除 findIndex找返回传入一个符合条件的数组第一个元素位置,没有返回-1
+      const result = this.arr2.findIndex((ele) => {
+        return ele.code === row.code
+      })
+      this.arr2.splice(result, 1)
+      this.batchNum = this.arr2.length
+    },
+
+    // 点击取消全选时触发
+    onSelectAllCancel() {
+      this.arr2 = this.arr2.filter(item => {
+        return this.data.every(item2 => {
+          return item.code !== item2.code
+        })
+      })
+      console.log(this.arr2)
+      this.batchNum = this.arr2.length
+    },
     editPageNum(e) { // 选择页码
       this.queryInfo.pageNum = e
-      this.getLocalStuList()
+      GetLocalStuList(this.queryInfo).then((res) => {
+        res.data.forEach(item => {
+          this.arr2.forEach(element => {
+            if (element.code === item.code) {
+              this.$set(item, '_checked', true)
+            }
+          })
+        })
+        this.loading = false
+        this.total = res.total
+        this.data = res.data
+      })
     },
     editPageSize(e) { // 选择当页最大条数
       this.queryInfo.pageSize = e
