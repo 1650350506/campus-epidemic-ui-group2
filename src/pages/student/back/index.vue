@@ -26,9 +26,9 @@
       <div class="whereabouts">
         <div class="form-goto">
           <span>获取定位</span>
-          <baidu-map :center="center" :zoom="zoom" @ready="handler" style="height:30vh;width: 50vw;" @click="getClickInfo" :scroll-wheel-zoom='true'>
+          <baidu-map :center="center" :zoom="zoom" @ready="handler" style="height:30vh;width: 86vw;margin: 1rem auto 0">
+            <bm-geolocation anchor="BMAP_ANCHOR_BOTTOM_RIGHT" :showAddressBar="true" :autoLocation="true" @locationSuccess="getLocation" @locationError="getLocationError"></bm-geolocation>
           </baidu-map>
-          <!--          <Button class="position-btn" type="primary" @click="getMapList">获取定位</Button>-->
         </div>
         <div class="form-address">
           <span>途经地点  (跨市同学填写)</span>
@@ -87,6 +87,7 @@ import { GetCityList, GetProvinceList } from '@api/administorators/riskArea'
 import md5 from 'js-md5'
 import { mapActions } from 'vuex'
 const BMap = window.VueBaiduMap
+const coordtransform = require('coordtransform')
 export default {
   name: 'dashboard-console',
   data() {
@@ -109,7 +110,8 @@ export default {
       travelRecordList: [],
       submitSuccess: true,
       center: { lng: 120.137629, lat: 30.2794 },
-      zoom: 13
+      zoom: 13,
+      locate: false
     }
   },
   created() {
@@ -124,6 +126,14 @@ export default {
     ...mapActions('admin/account', [
       'login'
     ]),
+    getLocation(point) {
+      const addr = point.addressComponent
+      this.$Message.success(`已定位到${addr.province}${addr.city}${addr.district}${addr.street}${addr.street}${addr.streetNumber}`)
+      this.locate = true
+    },
+    getLocationError() {
+      this.$Message.error('定位失败请刷新页面！')
+    },
     StuBack() {
       const username = 'admin456'
       let password = 'Admin456'
@@ -150,62 +160,26 @@ export default {
       }
     },
     subMsg() {
-      const arrays = []
-      this.formDynamic.items.forEach((item) => {
-        arrays.push(item.value[1])
-      })
-      const list = {
-        code: this.formItem.code,
-        name: this.formItem.name,
-        travelRecordList: this.travelRecordList
-      }
-      SubStuBack(list).then(() => {
-        this.submitSuccess = false
-        this.formItem.code = ''
-        this.formItem.name = ''
-        this.provinceValue = ''
-        this.cityValue = ''
-      })
-    },
-    handler({ BMap, map }) {
-      const x = this.longitude
-      const y = this.latitude
-      const ggPoint = new BMap.Point(x, y)
-      // 地图初始化
-      const bm = new BMap.Map('allmap')
-      bm.centerAndZoom(ggPoint, 15)
-      bm.addControl(new BMap.NavigationControl())
-      // 添加gps marker和label
-      const markergg = new BMap.Marker(ggPoint)
-      bm.addOverlay(markergg) // 添加GPS marker
-      const labelgg = new BMap.Label('未转换的GPS坐标（错误）', { offset: new BMap.Size(20, -10) })
-      markergg.setLabel(labelgg) // 添加GPS label
-
-      const translateCallback = function (data) { // 坐标转换完之后的回调函数
-        console.log(data)
-        console.log(data.status)
-        if (data.status === 0) {
-          const marker = new BMap.Marker(data.points[0])
-          bm.addOverlay(marker)
-          const label = new BMap.Label('转换的GPS坐标（正确）', { offset: new BMap.Size(20, -10) })
-          marker.setLabel(label) // 添加百度label
-          bm.setCenter(data.points[0])
+      if (this.locate === true) {
+        const arrays = []
+        this.formDynamic.items.forEach((item) => {
+          arrays.push(item.value[1])
+        })
+        const list = {
+          code: this.formItem.code,
+          name: this.formItem.name,
+          travelRecordList: this.travelRecordList
         }
+        SubStuBack(list).then(() => {
+          this.submitSuccess = false
+          this.formItem.code = ''
+          this.formItem.name = ''
+          this.provinceValue = ''
+          this.cityValue = ''
+        })
+      } else {
+        this.$Message.error('必须先定位成功！才能提交！')
       }
-
-      // 坐标转换完之后的回调函数
-      setTimeout(() => {
-        const convertor = new BMap.Convertor()
-        const pointArr = []
-        pointArr.push(ggPoint)
-        convertor.translate(pointArr, 1, 5, translateCallback)
-      }, 1000)
-    },
-    getClickInfo(e) {
-      console.log(e.point.lng)
-      console.log(e.point.lat)
-      this.center.lng = e.point.lng
-      this.center.lat = e.point.lat
     },
     handleReset(name) {
       this.$refs[name].resetFields()
@@ -339,7 +313,8 @@ export default {
       .form-goto {
         flex-basis: 25%;
         display: flex;
-        align-items: center;
+        flex-direction: column;
+        align-items: flex-start;
         font-size: 1.4em;
         color: #000;
         margin-bottom: 1rem;

@@ -345,6 +345,8 @@ export default {
     onSelectAll(selection) {
       // arr1 去重之前的 选中后合并的数组
       this.arr1 = [...selection, ...this.selectedData]
+      console.log('arr1')
+      console.log(this.arr1)
       // 去重  some  和every 相反，只要有一个满足条件，就返回true
       for (const val of this.arr1) {
         if (!this.arr2.some(item => item.code === val.code)) {
@@ -359,7 +361,6 @@ export default {
 
     // 取消选中某一项时触发
     onSelectCancel(selection, row) {
-      // 拿到取消选择的项数据 从arr2中去除 findIndex找返回传入一个符合条件的数组第一个元素位置,没有返回-1
       const result = this.arr2.findIndex((ele) => {
         return ele.code === row.code
       })
@@ -369,12 +370,6 @@ export default {
 
     // 点击取消全选时触发
     onSelectAllCancel() {
-      // 拿到当前分页的数据进行取消选中处理
-      // every方法，只要有一项不满足条件就返回false，也就是说必须每一项都得满足才能返回true。返回的是布尔值。
-      // * filter方法，只要条件满足，我就将此元素返回出去，返回的是元素。
-      // *  在本示例中，只要arr1中存在与arr2中相同的元素，我就返回false。也就是说，我拿着arr2中
-      // *  的第一项去和arr1中的每一项去比较，如果code都不相等，满足所有条件，我就返回true。
-      // *       在filter中，只要条件为true，我就将这一项返回出去，就实现了批量删除的效果。
       this.arr2 = this.arr2.filter(item => {
         return this.data.every(item2 => {
           return item.code !== item2.code
