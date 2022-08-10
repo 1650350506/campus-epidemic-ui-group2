@@ -8,7 +8,7 @@
     <Card class="card">
       <div class="search-container">
         <div class="left-search">
-          <Input  placeholder="请输入学生学号、学生姓名、二级学院" style="width: 300px" v-model="queryInfo.keyword"></Input>
+          <Input  placeholder="请输入学生学号、学生姓名、二级学院" v-on:keyup.enter.native="queryEnter" style="width: 300px" v-model="queryInfo.keyword"></Input>
         </div>
         <div style="margin-right: 2em">
           <Select v-model="selectModel" style="width:160px" @on-change="queryListByGrade(selectModel)" placeholder="按分险等级查询">
@@ -16,7 +16,7 @@
           </Select>
         </div>
         <Button type="primary" class="btn" @click="queryStuInfoByKey">查询</Button>
-        <Button class="btn" @click="queryInfo.keyword = ''">重置</Button>
+        <Button class="btn" @click="resetQuery">重置</Button>
       </div>
     </Card>
     <Card class="card-marginTop card">
@@ -276,6 +276,14 @@ export default {
     this.getStuList()
   },
   methods: {
+    resetQuery() {
+      this.queryInfo.keyword = ''
+      this.selectModel = '按分险等级查询'
+      this.queryInfo.riskLevel = ''
+      this.queryInfo.pageNum = 1
+      this.queryInfo.pageSize = 10
+      this.getStuList()
+    },
     batchSubmit() {
       this.batchList = []
       this.arr2.forEach((item) => {
@@ -357,6 +365,12 @@ export default {
       })
       console.log(this.arr2)
       this.batchSum = this.arr2.length
+    },
+    queryEnter(e) {
+      const keyCode = window.event ? e.keyCode : e.which
+      if (keyCode === 13) {
+        this.queryStuInfoByKey()
+      }
     },
     // 关键字查询
     queryStuInfoByKey() {

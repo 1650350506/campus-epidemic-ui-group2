@@ -6,7 +6,15 @@
       <h2 style="margin-top: 10px;">你好！ {{userInfo.roleName}}！</h2>
     </Card>
     <Card class="card">
-      <Search title="请输入学生学号、学生姓名" :keyValue="queryInfo.keyword" @selectFun="queryWaitIsolationInfoBykey"></Search>
+      <div class="search-container">
+        <div class="left-search">
+          <div></div>
+          <Input placeholder="请输入学生学号、学生姓名" v-on:keyup.enter.native="queryEnter" style="width: 220px;flex: 1" v-model="queryInfo.keyword">
+          </Input>
+        </div>
+        <Button type="primary" class="btn" @click="queryWaitIsolationInfoByKey">查询</Button>
+        <Button class="btn" @click="resetQuery">重置</Button>
+      </div>
     </Card>
     <Card class="card-marginTop card" dis-hover>
       <Button type="primary" style="margin-bottom: 10px" @click="addDialogVisible = true">+ 新增 </Button>
@@ -21,14 +29,13 @@
 
 <script>
 import iHeaderBreadcrumb from '@/layouts/basic-layout/header-breadcrumb'
-import Search from '@/components/top/search'
 import { GetIsolationInfoList, EditIsolationState } from '@api/personnel/riskpremanage'
 import NewContent from './../newPre'
 import { mapState } from 'vuex'
 export default {
   name: 'index',
   components: {
-    iHeaderBreadcrumb, Search, NewContent
+    iHeaderBreadcrumb, NewContent
   },
   data() {
     return {
@@ -115,8 +122,7 @@ export default {
     this.getWaitIsolationInfoList()
   },
   methods: {
-    // 点击修改该人状态（变成已隔离)
-    addIsolation(obj) {
+    addIsolation(obj) { // 点击修改该人状态（变成已隔离)
       let state
       if (obj.nucleic_result === '阴性') {
         state = 0
@@ -143,16 +149,28 @@ export default {
       const data = {
         code: code
       }
-      EditIsolationState(data).then((res) => {
+      EditIsolationState(data).then(() => {
         this.$Message.success('修改隔离状态成功!')
         this.queryInfo.keyword = ''
         this.getWaitIsolationInfoList()
       })
     },
+    queryEnter(e) {
+      const keyCode = window.event ? e.keyCode : e.which
+      if (keyCode === 13) {
+        this.queryWaitIsolationInfoByKey()
+      }
+    },
+    resetQuery() {
+      this.queryInfo.pageNum = 1
+      this.queryInfo.pageSize = 10
+      this.queryInfo.keyword = ''
+      this.getWaitIsolationInfoList()
+    },
     // 关键字查询隔离人员信息
-    queryWaitIsolationInfoBykey(e) {
-      this.data = []
-      this.queryInfo.keyword = e
+    queryWaitIsolationInfoByKey() {
+      this.queryInfo.pageNum = 1
+      this.queryInfo.pageSize = 10
       this.getWaitIsolationInfoList()
     },
     // 选择页码
@@ -177,6 +195,18 @@ export default {
     h1 {
       font-size: 3em;
     }
+  }
+}
+.search-container {
+  display: flex;
+  border: 0;
+  .left-search {
+    display: flex;
+    align-items: center;
+    margin-right: 2em;
+  }
+  .btn {
+    margin-right: 2em;
   }
 }
 </style>

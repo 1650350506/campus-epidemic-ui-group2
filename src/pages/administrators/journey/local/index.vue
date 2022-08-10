@@ -8,7 +8,7 @@
     <Card class="card">
       <div class="search-container">
         <div class="left-search">
-          <Input  placeholder="请输入学生学号、学生姓名、二级学院" style="width: 300px" v-model="queryInfo.key"></Input>
+          <Input  placeholder="请输入学生学号、学生姓名、二级学院" v-on:keyup.enter.native="queryEnter" style="width: 300px" v-model="queryInfo.key"></Input>
         </div>
         <div style="margin-right: 2em">
           <Select v-model="selectModel" style="width:160px" @on-change="queryListByGrade(selectModel)" placeholder="按分险等级查询">
@@ -16,7 +16,7 @@
           </Select>
         </div>
         <Button type="primary" class="btn" @click="queryStuInfoByKey">查询</Button>
-        <Button class="btn" @click="queryInfo.key = ''">重置</Button>
+        <Button class="btn" @click="resetQuery">重置</Button>
       </div>
     </Card>
     <Card class="card-marginTop card">
@@ -291,13 +291,13 @@ export default {
     this.getLocalStuList()
   },
   methods: {
-    selectItem(e) {
-      this.batchList = []
-      e.forEach((item) => {
-        console.log(item)
-        this.batchList.push(item.code)
-      })
-      this.batchNum = this.batchList.length
+    resetQuery() {
+      this.queryInfo.key = ''
+      this.selectModel = ''
+      this.queryInfo.risk = ''
+      this.queryInfo.pageNum = 1
+      this.queryInfo.pageSize = 10
+      this.getLocalStuList()
     },
     batchSubmit() {
       this.batchList = []
@@ -335,6 +335,12 @@ export default {
       this.queryInfo.pageNum = 1
       this.queryInfo.pageSize = 10
       this.getLocalStuList()
+    },
+    queryEnter(e) {
+      const keyCode = window.event ? e.keyCode : e.which
+      if (keyCode === 13) {
+        this.queryStuInfoByKey()
+      }
     },
     getLocalStuList() { // 获得学生基本信息
       GetLocalStuList(this.queryInfo).then((res) => {
@@ -418,6 +424,7 @@ export default {
         this.checkList1.address.value = res.address
         this.checkList1.emergencyContact.value = res.emergencyContact
         this.checkList1.emergencyContactPhone.value = res.emergencyContactPhone
+        this.crossList = []
         res.crossCityList.forEach((item) => {
           this.crossList.push({
             address: item

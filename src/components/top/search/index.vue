@@ -1,10 +1,8 @@
 <template>
   <div class="search-container">
     <div class="left-search">
-
       <div></div>
-      <Input :placeholder="placeholderData" style="width: 220px;flex: 1" v-model="keyValue">
-        <i class="ivu-icon ivu-icon-ios-search"></i>
+      <Input :placeholder="placeholderData" v-on:keyup.enter.native="queryEnter" style="width: 220px;flex: 1" v-model="keyValue">
       </Input>
     </div>
     <Button type="primary" class="btn" @click="select">查询</Button>
@@ -24,6 +22,9 @@ export default {
   methods: {
     select(e) {
       this.$emit('selectFun', this.keyValue)
+    },
+    queryEnter(e) {
+      this.$emit('queryFun', e)
     }
   }
 }

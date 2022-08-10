@@ -13,7 +13,15 @@
       </Card>
     </div>
     <Card class="card card-marginTop">
-      <Search  title="请输入学生学号、学生姓名" :keyValue="queryInfo.keyword" @selectFun="queryQuarantinedInfoByKey"></Search>
+      <div class="search-container">
+        <div class="left-search">
+          <div></div>
+          <Input placeholder="请输入学生学号、学生姓名" v-on:keyup.enter.native="queryEnter" style="width: 220px;flex: 1" v-model="queryInfo.keyword">
+          </Input>
+        </div>
+        <Button type="primary" class="btn" @click="queryQuarantinedInfoByKey">查询</Button>
+        <Button class="btn" @click="resetQuery">重置</Button>
+      </div>
     </Card>
     <Card class="card-marginTop card">
       <Button type="primary" style="margin-bottom: 10px" @click="addDialogVisible = true">+ 新增 </Button>
@@ -30,7 +38,6 @@
 
 <script>
 import iHeaderBreadcrumb from '@/layouts/basic-layout/header-breadcrumb'
-import Search from '@/components/top/search'
 import CheckContent from './checkModal'
 import AddContent from './addModal'
 import NewContent from './../newPre'
@@ -40,7 +47,7 @@ import { mapState } from 'vuex'
 export default {
   name: 'index',
   components: {
-    iHeaderBreadcrumb, Search, CheckContent, AddContent, NewContent
+    iHeaderBreadcrumb, CheckContent, AddContent, NewContent
   },
   data() {
     return {
@@ -487,11 +494,22 @@ export default {
     updateRecord(e) { // 返回子组件最新的隔离记录
       this.getIsolationInfoListByCode(e)
     },
-    queryQuarantinedInfoByKey(e) { // 关键字查询
+    queryQuarantinedInfoByKey() { // 关键字查询
       this.data = []
       this.queryInfo.pageNum = 1
       this.queryInfo.pageSize = 10
-      this.queryInfo.keyword = e
+      this.getIsolationInfoList()
+    },
+    queryEnter(e) {
+      const keyCode = window.event ? e.keyCode : e.which
+      if (keyCode === 13) {
+        this.queryQuarantinedInfoByKey()
+      }
+    },
+    resetQuery() {
+      this.queryInfo.pageNum = 1
+      this.queryInfo.pageSize = 10
+      this.queryInfo.keyword = ''
       this.getIsolationInfoList()
     },
     editPageNum(e) { // 选择页码
@@ -556,6 +574,18 @@ export default {
     &:hover {
       transform: translateY(5%);
     }
+  }
+}
+.search-container {
+  display: flex;
+  border: 0;
+  .left-search {
+    display: flex;
+    align-items: center;
+    margin-right: 2em;
+  }
+  .btn {
+    margin-right: 2em;
   }
 }
 </style>

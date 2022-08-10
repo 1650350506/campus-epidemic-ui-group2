@@ -253,7 +253,7 @@ export default {
             show: false
           },
           axisLabel: {
-            rotate: 45
+            rotate: 30
           }
         },
         yAxis: {

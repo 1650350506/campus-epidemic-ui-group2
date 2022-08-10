@@ -7,7 +7,7 @@
     <Card class="card card-marginTop">
       <div class="search-container">
         <div class="left-search">
-          <Input  placeholder="请输入职工工号、职工姓名、二级学院" style="width: 300px" v-model="queryInfo.key"></Input>
+          <Input  placeholder="请输入职工工号、职工姓名、二级学院" v-on:keyup.enter.native="queryEnter" style="width: 300px" v-model="queryInfo.key"></Input>
         </div>
         <div style="margin-right: 2em">
           <Select v-model="healthyModel" style="width:160px" @on-change="queryListByHealthy(healthyModel)" placeholder="按健康码颜色查询">
@@ -15,7 +15,7 @@
           </Select>
         </div>
         <Button type="primary" class="btn" @click="queryFacultyInfoByKey">查询</Button>
-        <Button class="btn" @click="queryInfo.key = ''">重置</Button>
+        <Button class="btn" @click="clearBtn">重置</Button>
       </div>
     </Card>
     <Card class="card card-marginTop">
@@ -261,6 +261,14 @@ export default {
     this.getFacultyList()
   },
   methods: {
+    clearBtn() {
+      this.queryInfo.pageNum = 1
+      this.queryInfo.pageSize = 10
+      this.queryInfo.key = ''
+      this.healthyModel = '按健康码颜色查询'
+      this.queryInfo.color = null
+      this.getFacultyList()
+    },
     batchSubmit() {
       this.batchList = []
       this.arr2.forEach((item) => {
@@ -335,6 +343,12 @@ export default {
           })
         })
       })
+    },
+    queryEnter(e) {
+      const keyCode = window.event ? e.keyCode : e.which
+      if (keyCode === 13) {
+        this.queryFacultyInfoByKey()
+      }
     },
     //  关键字查询工作人员信息
     queryFacultyInfoByKey() {
