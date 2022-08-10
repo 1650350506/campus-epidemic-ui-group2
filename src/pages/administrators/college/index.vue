@@ -32,7 +32,7 @@
       </div>
       <div class="table-box">
         <Table :columns="columns" :data="data" :border="false" class="table" ref="purchaseTable"
-               @on-select="onSelectAll" @on-select-cancel='onSelectCancel' :loading="loading"
+               @on-select="onSelectAll" @on-select-cancel='onSelectCancel'
                @on-select-all ='onSelectAll' @on-select-all-cancel='onSelectAllCancel'
         ></Table>
       </div>
@@ -103,7 +103,7 @@ export default {
           key: 'secondCollage'
         },
         {
-          title: '健康吗颜色',
+          title: '健康码颜色',
           key: 'color',
           render: (h, params) => {
             let types = ''
@@ -120,7 +120,7 @@ export default {
               typeName = '红码'
             } else {
               types = ''
-              typeName = '未测'
+              typeName = '未提交'
             }
             return h('div', [
               h('Button', {
@@ -251,8 +251,7 @@ export default {
       selectedIds: new Set(),
       selectedData: [], // 选中的数组
       arr1: [], // 原本
-      arr2: [], // 去重后的，
-      loading: false
+      arr2: [] // 去重后的，
     }
   },
   computed: {
@@ -270,6 +269,9 @@ export default {
       BatchDeleteFacultyInfoByCodeList({ codes: this.batchList }).then(() => {
         this.$Message.success('批量删除防控人员成功')
         this.queryInfo.key = ''
+        this.arr1 = []
+        this.arr2 = []
+        this.batchNum = 0
         this.getFacultyList()
       })
     },
@@ -313,8 +315,6 @@ export default {
     // 查询信息信息
     getFacultyInfoByCode(code) {
       GetFacultyInfoByCode({ code: code }).then(res => {
-        console.log('check')
-        console.log(res)
         this.dialogList.code.value = res.code
         this.dialogList.name.value = res.name
         if (res.sex === 0) {
@@ -346,8 +346,6 @@ export default {
     onSelectAll(selection) {
       // arr1 去重之前的 选中后合并的数组
       this.arr1 = [...selection, ...this.selectedData]
-      console.log('arr1')
-      console.log(this.arr1)
       // 去重  some  和every 相反，只要有一个满足条件，就返回true
       for (const val of this.arr1) {
         if (!this.arr2.some(item => item.code === val.code)) {
@@ -381,7 +379,6 @@ export default {
     },
     editPageNum(e) {
       this.queryInfo.pageNum = e
-      this.loading = true
       GetFacultyInfo(this.queryInfo).then((res) => {
         res.data.forEach(item => {
           this.arr2.forEach(element => {
@@ -390,7 +387,6 @@ export default {
             }
           })
         })
-        this.loading = false
         this.total = res.total
         this.data = res.data
       })

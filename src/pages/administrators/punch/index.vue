@@ -6,46 +6,46 @@
         <h2>通行记录填写</h2>
       </div>
       <div class="mid-box">
-        <div class="mid-top">
-          <div ref="upWork" style="border-radius: 20px 0% 0% 20px; background: #346DF4; color: #F7F7F7" class="btn-style" @click="changeType(0)">上班</div>
-          <div ref="downWork" style="border-radius: 0% 20px 20px 0%" class="btn-style" @click="changeType(1)">下班</div>
-        </div>
-        <div class="basic">
-          <div class="form-title">基本信息</div>
-          <div class="form-content">
-            <Form ref="formInline">
-              <Form-item>
+        <Form ref="formInline" :rules="ruleValidate" :model="formItem">
+          <div class="mid-top">
+            <div ref="upWork" style="border-radius: 20px 0% 0% 20px; background: #346DF4; color: #F7F7F7" class="btn-style" @click="changeType(0)">上班</div>
+            <div ref="downWork" style="border-radius: 0% 20px 20px 0%" class="btn-style" @click="changeType(1)">下班</div>
+          </div>
+          <div class="basic">
+            <div class="form-title">基本信息</div>
+            <div class="form-content">
+              <Form-item prop="code">
                 <div class="form-label">工号</div>
                 <Input type="text" v-model="formItem.code" class="input-style"></Input>
               </Form-item>
-              <Form-item>
+              <Form-item prop="name">
                 <div class="form-label">姓名</div>
                 <Input type="text" v-model="formItem.name"></Input>
               </Form-item>
-            </Form>
-          </div>
-        </div>
-        <div class="health-box" v-show="colorShow">
-          <div class="form-title">健康码颜色</div>
-          <div class="radio-list">
-            <Radio-group v-model="colors">
-              <Radio label="绿码"></Radio>
-              <Radio label="黄码"></Radio>
-              <Radio label="红码"></Radio>
-            </Radio-group>
-          </div>
-        </div>
-        <div class="big-btn">
-          <div class="circle-btn" @click="punch">
-            <div>
-              <p>{{workType}}打卡</p>
-              <p>{{time}}</p>
             </div>
           </div>
-        </div>
-        <div class="result-box" v-show="submit">
-          <div><i class="ivu-icon ivu-icon-ios-checkmark"></i>{{endTime}}已打卡</div>
-        </div>
+          <div class="health-box" v-show="colorShow">
+            <div class="form-title">健康码颜色</div>
+            <div class="radio-list">
+              <Radio-group v-model="colors">
+                <Radio label="绿码"></Radio>
+                <Radio label="黄码"></Radio>
+                <Radio label="红码"></Radio>
+              </Radio-group>
+            </div>
+          </div>
+          <div class="big-btn">
+            <div class="circle-btn" @click="punch">
+              <div>
+                <p>{{workType}}打卡</p>
+                <p>{{time}}</p>
+              </div>
+            </div>
+          </div>
+          <div class="result-box" v-show="submit">
+            <div><i class="ivu-icon ivu-icon-ios-checkmark"></i>{{endTime}}已打卡</div>
+          </div>
+        </Form>
       </div>
     </div>
   </div>
@@ -62,14 +62,24 @@ export default {
       workType: '上班',
       formItem: {
         code: '',
-        name: '',
-        color: ''
+        name: ''
       },
       colors: '',
       time: '',
       submit: false,
       endTime: '',
-      colorShow: true
+      colorShow: true,
+      ruleValidate: {
+        code: [
+          { required: true, message: '工号不能为空', trigger: 'blur' }
+        ],
+        name: [
+          { required: true, message: '姓名不能为空', trigger: 'blur' }
+        ],
+        color: [
+          { required: true, message: '健康码颜色不能为空', trigger: 'change' }
+        ]
+      }
     }
   },
   created() {
@@ -110,24 +120,42 @@ export default {
       return `${hours}:${minutes}:${seconds}`
     },
     punch() {
-      if (this.colors === '绿码') {
-        this.formItem.color = 0
-      } else if (this.colors === '黄码') {
-        this.formItem.color = 1
-      } else if (this.colors === '红码') {
-        this.formItem.color = 2
-      }
-      if (this.workType === '上班') {
-        ClockIn(this.formItem).then(res => {
-          this.submit = true
-          this.endTime = this.dateFormat()
-        })
-      } else if (this.workType === '下班') {
-        ClockOut(this.formItem).then(res => {
-          this.submit = true
-          this.endTime = this.dateFormat()
-        })
-      }
+      this.$refs.formInline.validate((valid) => {
+        if (valid) {
+          if (this.colors === '绿码') {
+            this.colors = 0
+          } else if (this.colors === '黄码') {
+            this.colors = 1
+          } else if (this.colors === '红码') {
+            this.colors = 2
+          }
+          if (this.workType === '上班') {
+            if (this.colors !== '') {
+              const list = {
+                code: this.formItem.code,
+                name: this.formItem.name,
+                color: this.colors
+              }
+              ClockIn(list).then(() => {
+                this.submit = true
+                this.endTime = this.dateFormat()
+                this.colors = null
+                this.$refs.formInline.resetFields()
+              })
+            } else {
+              this.$Message.error('健康码不能为空！')
+            }
+          } else if (this.workType === '下班') {
+            ClockOut(this.formItem).then(() => {
+              this.submit = true
+              this.endTime = this.dateFormat()
+              this.$refs.formInline.resetFields()
+            })
+          }
+        } else {
+          this.$Message.error('表单校验错误！')
+        }
+      })
     },
     changeType(i) {
       const { upWork } = this.$refs
@@ -195,6 +223,7 @@ export default {
     display: flex;
     flex-direction: column;
     .mid-top {
+      margin-top: 5vw;
       flex-basis: 10%;
       display: flex;
       justify-content: center;
@@ -222,10 +251,9 @@ export default {
           border-right: 0;
           background: #F7F7F7;
         }
-        //::v-deep .ivu-form-item {
-        //  margin: 3em 0 0;
-        //  background: #1d42ab;
-        //}
+        ::v-deep .ivu-form-item-error-tip {
+          margin-left: 20%;
+        }
         .form-label {
           position: absolute;
           left: -1%;
@@ -246,6 +274,7 @@ export default {
       display: flex;
       justify-content: center;
       align-items: center;
+      margin-top: 5rem;
       .circle-btn {
         width: 30%;
         border-radius: 50%;

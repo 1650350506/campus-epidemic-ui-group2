@@ -33,7 +33,13 @@
           <div class="btn">批量提交</div>
         </Poptip>
       </div>
-      <div class="table-box"> <Table  :columns="columns2" :data="data2" :border="false" class="table" @on-selection-change="selectItem"></Table></div>
+      <div class="table-box">
+        <Table  :columns="columns2" :data="data2" :border="false" class="table"
+                @on-select="onSelectAll" @on-select-cancel='onSelectCancel'
+                @on-select-all ='onSelectAll' @on-select-all-cancel='onSelectAllCancel'
+        >
+        </Table>
+      </div>
       <Page :total="total" :current="queryInfo.pageNum" show-elevator show-sizer class-name="page" @on-change="editPageNum" @on-page-size-change="editPageSize"></Page>
     </Card>
   </div>
@@ -61,7 +67,7 @@ export default {
   data() {
     return {
       batchSum: 0,
-      riskGrade: 0,
+      riskGrade: null,
       riskGradeList: ['高风险', '中风险', '低风险'],
       provinceValue: '',
       provinceData: [],
@@ -183,7 +189,10 @@ export default {
         pageSize: 10,
         value: ''
       },
-      total: 0
+      total: 0,
+      selectedData: [], // 选中的数组
+      arr1: [], // 原本
+      arr2: [] // 去重后的，
     }
   },
   computed: {
@@ -194,24 +203,58 @@ export default {
     this.getRiskInfoListByProvince()
   },
   methods: {
+    onSelectAll(selection) {
+      // arr1 去重之前的 选中后合并的数组
+      this.arr1 = [...selection, ...this.selectedData]
+      // 去重  some  和every 相反，只要有一个满足条件，就返回true
+      for (const val of this.arr1) {
+        if (!this.arr2.some(item => item.code === val.code)) {
+          this.arr2.push(val)
+        }
+      }
+      if (this.arr2.length >= 30) {
+        this.enableModal = true
+      }
+      this.batchSum = this.arr2.length
+    },
+
+    // 取消选中某一项时触发
+    onSelectCancel(selection, row) {
+      const result = this.arr2.findIndex((ele) => {
+        return ele.code === row.code
+      })
+      this.arr2.splice(result, 1)
+      this.batchSum = this.arr2.length
+    },
+
+    // 点击取消全选时触发
+    onSelectAllCancel() {
+      this.arr2 = this.arr2.filter(item => {
+        return this.data.every(item2 => {
+          return item.code !== item2.code
+        })
+      })
+      console.log(this.arr2)
+      this.batchSum = this.arr2.length
+    },
     // 批量提交
     batchSubmit() {
+      this.batchList = []
+      this.arr2.forEach((item) => {
+        this.batchList.push(item.code)
+      })
       const data = {
         list: this.batchList,
         riskLevel: this.riskGrade
       }
       BatchUpdateRiskAreaByCode(data).then(() => {
         this.$Message.success('批量修改风险地区成功！')
+        this.queryInfo.value = ''
+        this.arr1 = []
+        this.arr2 = []
+        this.batchSum = 0
         this.getRiskInfoListByProvince()
       })
-    },
-    selectItem(e) { // 表格全选方法
-      this.batchList = []
-      e.forEach((item, index) => {
-        console.log(item)
-        this.batchList.push(item.code)
-      })
-      this.batchSum = this.batchList.length
     },
     //  选择批量修改的等级
     chooseRiskGrade(index) {
@@ -334,7 +377,17 @@ export default {
     // 选择页码
     editPageNum(e) {
       this.queryInfo.pageNum = e
-      this.getRiskInfoListByProvince()
+      GetRiskInfoListByProvince(this.queryInfo).then(res => {
+        res.field.data.forEach(item => {
+          this.arr2.forEach(element => {
+            if (element.code === item.code) {
+              this.$set(item, '_checked', true)
+            }
+          })
+        })
+        this.total = res.field.total
+        this.data2 = res.field.data
+      })
     },
     // 选择当页最大条数
     editPageSize(e) {

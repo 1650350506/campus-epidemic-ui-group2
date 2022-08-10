@@ -11,12 +11,12 @@
       <div class="basic">
         <div class="form-title">基本信息</div>
         <div class="form-content">
-          <Form ref="formInline">
-            <Form-item>
+          <Form ref="formInline" :rules="ruleValidate" :model="formItem">
+            <Form-item prop="code">
               <div class="form-label">学号</div>
               <Input type="text" v-model="formItem.code" class="input-style"></Input>
             </Form-item>
-            <Form-item>
+            <Form-item prop="name">
               <div class="form-label">姓名</div>
               <Input type="text" v-model="formItem.name"></Input>
             </Form-item>
@@ -31,8 +31,6 @@
             :key="item"
             style="padding: 0 1em 0 1em;"
             :label="'行程记录' + (index + 1)"
-            :prop="'items.' + index + '.value'"
-            :rules="{required: true, message: '行程轨迹' + (index + 1) +'不能为空', trigger: 'blur'}"
           >
             <Row>
               <Col span="18" style="display: flex">
@@ -43,6 +41,7 @@
               <Col span="4" offset="1">
                 <Button type="error" @click="handleRemove(index)">删除</Button>
               </Col>
+              <span style="color: #fe0022" v-show="trackRule">行程记录不能为空！</span>
               <Col span="2" offset="1">
               </Col>
             </Row>
@@ -104,7 +103,16 @@ export default {
       provinceData: [],
       cityValue: '',
       cityData: [],
-      travelRecordList: []
+      travelRecordList: [],
+      ruleValidate: {
+        code: [
+          { required: true, message: '学号不能为空', trigger: 'blur' }
+        ],
+        name: [
+          { required: true, message: '姓名不能为空', trigger: 'blur' }
+        ]
+      },
+      trackRule: false
     }
   },
   created() {
@@ -139,17 +147,27 @@ export default {
       }
     },
     recordSubmit() {
-      const list = {
-        code: this.formItem.code,
-        cityList: this.travelRecordList
-      }
-      console.log(list)
-      SubStuRecord(list).then(() => {
-        this.submitSuccess = false
-        this.formItem.code = ''
-        this.formItem.name = ''
-        this.provinceValue = ''
-        this.cityValue = ''
+      this.$refs.formInline.validate((valid) => {
+        if (valid) {
+          if (this.travelRecordList > 0) {
+            this.trackRule = false
+            const list = {
+              code: this.formItem.code,
+              cityList: this.travelRecordList
+            }
+            SubStuRecord(list).then(() => {
+              this.submitSuccess = false
+              this.formItem.code = ''
+              this.formItem.name = ''
+              this.provinceValue = ''
+              this.cityValue = ''
+            })
+          } else {
+            this.trackRule = true
+          }
+        } else {
+          this.$Message.error('表单验证失败1!')
+        }
       })
     },
     handleReset(name) {
@@ -262,6 +280,9 @@ export default {
           border-right: 0;
           border-radius: 0;
           background: #F7F7F7;
+        }
+        ::v-deep .ivu-form-item-error-tip {
+          margin-left: 20%;
         }
         .form-label {
           position: absolute;

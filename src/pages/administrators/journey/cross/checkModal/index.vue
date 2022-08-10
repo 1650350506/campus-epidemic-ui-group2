@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import { GetJourneyInfoList, GetOutSchoolList } from '../../../../../api/administorators/journery'
+import { GetJourneyInfoList, GetOutSchoolList } from '@/api/administorators/journery'
 
 export default {
   name: 'checkLocal',
@@ -63,6 +63,10 @@ export default {
         {
           title: '入校时间',
           key: 'endTime'
+        },
+        {
+          title: '去向信息',
+          key: 'destinationInformation'
         },
         {
           title: '途经地点',
@@ -102,11 +106,14 @@ export default {
     getOutSchoolListByCode() {
       GetOutSchoolList(this.queryInfo).then((res) => {
         this.data1 = []
+        console.log('out')
+        console.log(res)
         res.forEach((item) => {
           this.data1.push({
             startTime: item.startTime,
             endTime: item.endTime,
-            waypoint: item.waypoint
+            waypoint: item.waypoint,
+            destinationInformation: item.destinationInformation
           })
         })
       })

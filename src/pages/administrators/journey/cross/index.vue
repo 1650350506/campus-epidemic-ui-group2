@@ -32,7 +32,7 @@
       </div>
       <div class="table-box">
         <Table  :border="false" :columns="columns" :data="data" class="table"
-                @on-select="onSelectAll" @on-select-cancel='onSelectCancel' :loading="loading"
+                @on-select="onSelectAll" @on-select-cancel='onSelectCancel'
                 @on-select-all ='onSelectAll' @on-select-all-cancel='onSelectAllCancel'
         ></Table>
       </div>
@@ -115,7 +115,7 @@ export default {
         },
         {
           title: '离校时间',
-          align: 'center',
+          align: 'left',
           key: 'leaveTime',
           render: (h, params) => {
             let timeName
@@ -131,7 +131,7 @@ export default {
           title: '风险等级',
           key: 'riskLevel',
           sortable: true,
-          align: 'center',
+          align: 'left',
           render: (h, params) => {
             let types
             let typeName
@@ -165,7 +165,17 @@ export default {
         {
           title: '风险地区',
           key: 'riskArea',
-          align: 'center'
+          align: 'left',
+          render: (h, params) => {
+            let types
+            let typeName
+            if (params.row.riskLevel === 0) {
+              typeName = '------'
+            } else {
+              typeName = params.row.riskArea
+            }
+            return h('div', [(typeName)])
+          }
         },
         {
           title: '操作',
@@ -256,8 +266,7 @@ export default {
       batchList: [],
       selectedData: [], // 选中的数组
       arr1: [], // 原本
-      arr2: [], // 去重后的，
-      loading: false
+      arr2: [] // 去重后的，
     }
   },
   computed: {
@@ -274,6 +283,11 @@ export default {
       })
       BatchDelCrossBatchDailyCodeList({ codeList: this.batchList }).then(() => {
         this.$Message.success('批量删除成功！')
+        this.arr1 = []
+        this.arr2 = []
+        this.batchSum = 0
+        this.queryInfo.keyword = ''
+        this.getStuList()
       })
     },
     closeCheck() {
@@ -354,7 +368,6 @@ export default {
     // 选择页码
     editPageNum(e) {
       this.queryInfo.pageNum = e
-      this.loading = true
       GetStuList(this.queryInfo).then((res) => {
         res.data.forEach(item => {
           this.arr2.forEach(element => {
@@ -363,7 +376,6 @@ export default {
             }
           })
         })
-        this.loading = false
         this.total = res.total
         this.data = res.data
       })

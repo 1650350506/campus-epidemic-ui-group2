@@ -70,7 +70,7 @@
           <div class="modal-item">
             <div class="null"></div><div class="title"><span>二级学院</span></div><div class="star"></div>
             <div class="core">
-              <Form-item prop="deptCode">
+              <Form-item prop="deptName">
                 <Select v-model="addList1.deptName" style="width:190px">
                   <Option v-for="(item,index) in deptList" :value="item.name" :label="item.name" :key="index"></Option>
                 </Select>
@@ -101,7 +101,7 @@
       </Form>
       <div slot="footer">
         <Button @click="close">关闭</Button>
-        <Button @click="addFacultyInfo" type="primary">确定</Button>
+        <Button @click="addInnerFacultyInfo" type="primary">确定</Button>
       </div>
     </Modal>
   </div>
@@ -122,22 +122,26 @@ export default {
           { type: 'string', min: 6, max: 16, message: '账号位数6~16', trigger: 'blur' }
         ],
         pwd: [
-          { required: true, message: '密码不能为空', trigger: 'blur' }
+          { required: true, message: '密码不能为空', trigger: 'blur' },
+          { type: 'string', min: 6, max: 16, message: '密码大于6位', trigger: 'blur' }
         ],
         code: [
-          { required: true, message: '职工工号不能为空', trigger: 'blur' }
+          { required: true, message: '职工工号不能为空', trigger: 'blur' },
+          { type: 'string', min: 6, max: 16, message: '职工工号位数6数字', trigger: 'blur' }
         ],
         name: [
           { required: true, message: '姓名不能为空', trigger: 'blur' }
         ],
         idCard: [
-          { required: true, message: '身份证不能为空', trigger: 'blur' }
+          { required: true, message: '身份证不能为空', trigger: 'blur' },
+          { pattern: /^\d{15}|(\d{17}(\d|x|X))$/, message: '身份证号码格式不正确', trigger: 'blur' }
         ],
         sex: [
           { required: true, message: '请选择性别', trigger: 'change' }
         ],
         phone: [
-          { required: true, message: '手机号不能为空', trigger: 'blur' }
+          { required: true, message: '手机号不能为空', trigger: 'blur' },
+          { pattern: /^1[3456789]\d{9}$/, message: '手机号码格式不正确', trigger: 'blur' }
         ],
         deptName: [
           { required: true, message: '请选择二级学院', trigger: 'change' }
@@ -159,7 +163,7 @@ export default {
         name: '',
         phone: '',
         schoolPost: '',
-        sex: 0,
+        sex: null,
         systemPost: ''
       },
       addUserInfo: {
@@ -174,6 +178,25 @@ export default {
         switchUser: false
       },
       deptList: []
+    }
+  },
+  watch: {
+    showSwitch(newVal) {
+      if (newVal === true) {
+        this.addList1 = {
+          account: '',
+          pwd: '',
+          code: '',
+          deptCode: '',
+          deptName: '',
+          idCard: '',
+          name: '',
+          phone: '',
+          schoolPost: '',
+          sex: null,
+          systemPost: ''
+        }
+      }
     }
   },
   created() {
@@ -221,14 +244,19 @@ export default {
       const list = {
         ids: [id]
       }
+      // eslint-disable-next-line no-empty-function
       ActiveUserInfo(list).then(() => {
-        this.addInnerFacultyInfo()
       })
     },
     addInnerFacultyInfo() {
-      InsertWorkPerson(this.addList1).then(() => {
-        this.$Message.success('新增账号成功！')
-        this.close()
+      this.$refs.formValidate.validate((valid) => {
+        if (valid) {
+          InsertWorkPerson(this.addList1).then(() => {
+            this.addFacultyInfo()
+          })
+        } else {
+          this.$Message.error('提交失败！')
+        }
       })
     }
   }

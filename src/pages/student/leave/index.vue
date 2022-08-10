@@ -8,55 +8,65 @@
       <img class="img-style" src="../../../assets/images/top.png" alt="">
     </div>
     <div class="mid-box">
-      <div class="basic">
-        <div class="form-title">基本信息</div>
-        <div class="form-content">
-          <Form ref="formInline">
-            <Form-item>
+      <Form ref="formInline" :rules="ruleValidate" :model="formItem">
+        <div class="basic">
+          <div class="form-title">基本信息</div>
+          <div class="form-content">
+            <Form-item prop="code">
               <div class="form-label">学号</div>
               <Input type="text" v-model="formItem.code" class="input-style"></Input>
             </Form-item>
-            <Form-item>
+            <Form-item prop="name">
               <div class="form-label">姓名</div>
               <Input type="text" v-model="formItem.name"></Input>
             </Form-item>
-          </Form>
+          </div>
         </div>
-      </div>
-      <div class="whereabouts">
-        <div class="form-goto">
-          <span>行程范围</span>
-          <Radio-group v-model="formItem.type" @on-change="changeAddress">
-            <Radio label="本市"></Radio>
-            <Radio label="跨市"></Radio>
-          </Radio-group>
-        </div>
-        <div class="form-msg">
-          <div class="form-title">去向信息</div>
-          <div class="msg-content">
-            <div class="msg-item">
-              <div class="msg-left">地区</div>
-              <div class="msg-right" style="display: flex; flex-direction: column">
-                <div style="display: flex">
-                  <Cascader placeholder="选择省" style="width: 5rem; margin: 0 1rem 1rem 0" :data="provinceData" v-model="provinceValue" @on-change="loadData"></Cascader>
-                  <Cascader placeholder="选择市" style="width: 5rem; margin: 0 1rem 1rem 0" :data="cityData" v-model="cityValue" @on-change="loadData"></Cascader>
-                  <Cascader placeholder="选择区" style="width: 5rem" v-show="is_Local" :data="countyData" v-model="countyValue" @on-change="loadData"></Cascader>
-                </div>
-                <div style="display: flex">
-                  <Cascader placeholder="选择街道" style="width: 8rem;margin: 0 1rem 1rem 0" v-show="is_Local" :data="streetData" v-model="streetValue" @on-change="loadData"></Cascader>
-                  <Cascader placeholder="选择社区" style="width: 8rem" v-show="is_Local" :data="townData" v-model="townValue" @on-change="loadData"></Cascader>
+        <div class="whereabouts">
+          <div class="form-goto">
+            <span>行程范围</span>
+            <Form-item prop="type">
+              <Radio-group v-model="formItem.type"  @on-change="changeAddress">
+                <Radio label="本市">本市</Radio>
+                <Radio label="跨市">跨市</Radio>
+              </Radio-group>
+            </Form-item>
+            <!--            <Form-item prop="type">-->
+            <!--              <Radio-group v-model="formItem.type" @on-change="changeAddress">-->
+            <!--                <Radio label="本市"></Radio>-->
+            <!--                <Radio label="跨市"></Radio>-->
+            <!--              </Radio-group>-->
+            <!--            </Form-item>-->
+          </div>
+          <div class="form-msg">
+            <div class="form-title">去向信息</div>
+            <div class="msg-content">
+              <div class="msg-item">
+                <div class="msg-left">地区</div>
+                <div class="msg-right" style="display: flex; flex-direction: column">
+                  <div style="display: flex">
+                    <Cascader placeholder="选择省" style="width: 5rem; margin: 0 1rem 1rem 0" :data="provinceData" v-model="provinceValue" @on-change="loadData"></Cascader>
+                    <Cascader placeholder="选择市" style="width: 5rem; margin: 0 1rem 1rem 0" :data="cityData" v-model="cityValue" @on-change="loadData"></Cascader>
+                    <Cascader placeholder="选择区" style="width: 5rem" v-if="is_Local" :data="countyData" v-model="countyValue" @on-change="loadData"></Cascader>
+                  </div>
+                  <div style="display: flex">
+                    <Cascader placeholder="选择街道" style="width: 8rem;margin: 0 1rem 1rem 0"  v-if="is_Local" :data="streetData" v-model="streetValue" @on-change="loadData"></Cascader>
+                    <Cascader placeholder="选择社区" style="width: 8rem"  v-if="is_Local" :data="townData" v-model="townValue" @on-change="loadData"></Cascader>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="msg-item">
-              <div class="msg-left">详细地址</div>
-              <div class="msg-right">
-                <Input placeholder="详细地址" style="width: 17rem" v-model="formItem.whereDetail"></Input>
+              <div class="msg-item">
+                <div class="msg-left">详细地址</div>
+                <div class="msg-right">
+                  <form-item prop="whereDetail">
+                    <Input placeholder="详细地址" style="width: 17rem" v-model="formItem.whereDetail"></Input>
+                  </form-item>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </Form>
     </div>
     <div class="btn-box">
       <Button type="primary" style="width:90vw; height: 12vw" size="large" @click="subMsg">提交</Button>
@@ -97,22 +107,36 @@ export default {
       formItem: {
         code: '',
         name: '',
-        type: 0,
+        type: null,
         whereCode: '',
         whereDetail: ''
       },
-      provinceValue: '',
+      provinceValue: [],
       provinceData: [],
-      cityValue: '',
+      cityValue: [],
       cityData: [],
-      countyValue: '',
+      countyValue: [],
       countyData: [],
-      streetValue: '',
+      streetValue: [],
       streetData: [],
       townData: [],
-      townValue: '',
+      townValue: [],
       is_Local: false,
-      submitSuccess: true
+      submitSuccess: true,
+      ruleValidate: {
+        code: [
+          { required: true, message: '学号不能为空', trigger: 'blur' }
+        ],
+        name: [
+          { required: true, message: '姓名不能为空', trigger: 'blur' }
+        ],
+        type: [
+          { required: true, message: '城市类型不能为空', trigger: 'change' }
+        ],
+        whereDetail: [
+          { required: true, message: '详细地址不能为空', trigger: 'blur' }
+        ]
+      }
     }
   },
   created() {
@@ -146,16 +170,25 @@ export default {
       } else if (this.formItem.type === '跨市') {
         this.is_Local = false
       }
-      console.log(this.is_Local)
     },
     subMsg() {
-      if (this.formItem.type === '本市') {
-        [this.formItem.type, this.formItem.whereCode] = [0, this.townValue[0]]
-      } else if (this.formItem.type === '跨市') {
-        [this.formItem.type, this.formItem.whereCode] = [1, this.cityValue[0]]
-      }
-      SubStuLeave(this.formItem).then(() => {
-        this.submitSuccess = false
+      this.$refs.formInline.validate((valid) => {
+        if (valid) {
+          if (this.formItem.type === '本市') {
+            this.formItem.type = 0
+            this.formItem.whereCode = this.townValue[0]
+          } else if (this.formItem.type === '跨市') {
+            this.formItem.type = 1
+            this.formItem.whereCode = this.cityValue[0]
+          }
+          SubStuLeave(this.formItem).then(() => {
+            this.submitSuccess = false
+            this.formItem.code = ''
+            this.formItem.name = ''
+          })
+        } else {
+          this.$Message.error('表单验证失败!')
+        }
       })
     },
     backHome() {
@@ -317,6 +350,9 @@ export default {
           border-right: 0;
           border-radius: 0;
           background: #F7F7F7;
+        }
+        ::v-deep .ivu-form-item-error-tip {
+          margin-left: 20%;
         }
         .form-label {
           position: absolute;

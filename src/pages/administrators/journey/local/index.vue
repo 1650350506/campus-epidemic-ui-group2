@@ -32,7 +32,7 @@
       </div>
       <div class="table-box">
         <Table :border="false" :columns="columns" :data="data"
-               @on-select="onSelectAll" @on-select-cancel='onSelectCancel' :loading="loading"
+               @on-select="onSelectAll" @on-select-cancel='onSelectCancel'
                @on-select-all ='onSelectAll' @on-select-all-cancel='onSelectAllCancel'
         ></Table>
       </div>
@@ -44,13 +44,12 @@
 
 <script>
 import iHeaderBreadcrumb from '@/layouts/basic-layout/header-breadcrumb'
-import Search from '@/components/top/search'
 import CheckLocal from './checkLocal/index'
 import {
   GetLocalStuList,  DeleteLocalStuInfo
   , GetLocalStuInfoByCode
 } from '@api/group/stuManage'
-import { BatchDelBatchDailyCodeList, BatchDelLocalBatchDailyCodeList } from '../../../../api/administorators/journery'
+import { BatchDelBatchDailyCodeList, BatchDelLocalBatchDailyCodeList } from '@/api/administorators/journery'
 import { mapState } from 'vuex'
 
 export default {
@@ -144,32 +143,33 @@ export default {
         {
           type: 'selection',
           width: 60,
-          align: 'center'
+          align: 'left'
         },
         {
           title: '学生学号',
-          align: 'center',
+          align: 'left',
           key: 'code'
         },
         {
           title: '学生姓名',
-          align: 'center',
+          align: 'left',
           key: 'name'
         },
         {
           title: '二级学院',
+          align: 'left',
           key: 'secondCollage'
         },
         {
           title: '离校时间',
-          align: 'center',
+          align: 'left',
           key: 'startTime'
         },
         {
           title: '风险等级',
           key: 'riskLevel',
           sortable: true,
-          align: 'center',
+          align: 'left',
           render: (h, params) => {
             let types
             let typeName
@@ -203,7 +203,7 @@ export default {
         {
           title: '涉及地区',
           key: 'whereDetail',
-          align: 'center',
+          align: 'left',
           width: 200
         },
         {
@@ -281,9 +281,7 @@ export default {
       crossList: [],
       selectedData: [], // 选中的数组
       arr1: [], // 原本
-      arr2: [], // 去重后的，
-      loading: false
-
+      arr2: [] // 去重后的，
     }
   },
   computed: {
@@ -311,6 +309,9 @@ export default {
       }
       BatchDelLocalBatchDailyCodeList(data).then(() => {
         this.$Message.success('批量删除学生本市行程信息成功！')
+        this.arr1 = []
+        this.arr2 = []
+        this.batchNum = 0
         this.getLocalStuList()
       })
     },
@@ -364,7 +365,6 @@ export default {
 
     // 取消选中某一项时触发
     onSelectCancel(selection, row) {
-      // 拿到取消选择的项数据 从arr2中去除 findIndex找返回传入一个符合条件的数组第一个元素位置,没有返回-1
       const result = this.arr2.findIndex((ele) => {
         return ele.code === row.code
       })
@@ -392,7 +392,6 @@ export default {
             }
           })
         })
-        this.loading = false
         this.total = res.total
         this.data = res.data
       })
@@ -424,8 +423,6 @@ export default {
             address: item
           })
         })
-        console.log('ce')
-        console.log(this.crossList)
         res.dailyRecordList.forEach(item => {
           this.outList.push({
             startTime: item.startTime,

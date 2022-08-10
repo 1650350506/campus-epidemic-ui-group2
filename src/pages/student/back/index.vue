@@ -11,12 +11,12 @@
       <div class="basic">
         <div class="form-title">基本信息</div>
         <div class="form-content">
-          <Form ref="formInline">
-            <Form-item>
+          <Form ref="formInline" :rules="ruleValidate" :model="formItem">
+            <Form-item prop="code">
               <div class="form-label">学号</div>
               <Input type="text" v-model="formItem.code"></Input>
             </Form-item>
-            <Form-item>
+            <Form-item prop="name">
               <div class="form-label">姓名</div>
               <Input type="text" v-model="formItem.name"></Input>
             </Form-item>
@@ -90,8 +90,6 @@ import { GetCityList, GetProvinceList } from '@api/administorators/riskArea'
 import md5 from 'js-md5'
 import { mapActions } from 'vuex'
 import iCopyright from '@/components/copyright'
-const BMap = window.VueBaiduMap
-const coordtransform = require('coordtransform')
 export default {
   name: 'dashboard-console',
   components: { iCopyright },
@@ -107,6 +105,14 @@ export default {
       formItem: {
         code: '',
         name: ''
+      },
+      ruleValidate: {
+        code: [
+          { required: true, message: '学号不能为空', trigger: 'blur' }
+        ],
+        name: [
+          { required: true, message: '姓名不能为空', trigger: 'blur' }
+        ]
       },
       provinceValue: '',
       provinceData: [],
@@ -175,12 +181,18 @@ export default {
           name: this.formItem.name,
           travelRecordList: this.travelRecordList
         }
-        SubStuBack(list).then(() => {
-          this.submitSuccess = false
-          this.formItem.code = ''
-          this.formItem.name = ''
-          this.provinceValue = ''
-          this.cityValue = ''
+        this.$refs.formInline.validate((valid) => {
+          if (valid) {
+            SubStuBack(list).then(() => {
+              this.submitSuccess = false
+              this.formItem.code = ''
+              this.formItem.name = ''
+              this.provinceValue = ''
+              this.cityValue = ''
+            })
+          } else {
+            this.$Message.error('表单验证失败!')
+          }
         })
       } else {
         this.$Message.error('必须先定位成功！才能提交！')
@@ -301,6 +313,9 @@ export default {
           border-right: 0;
           border-radius: 0;
           background: #F7F7F7;
+        }
+        ::v-deep .ivu-form-item-error-tip {
+          margin-left: 20%;
         }
         .form-label {
           position: absolute;
