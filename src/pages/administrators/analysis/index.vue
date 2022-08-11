@@ -23,7 +23,7 @@
     <div class="chart-bottom" style="background: #fff">
       <Card class="card">
         <h2 slot="title" style="margin: 1em 0;">隔离人员/防疫人员配比</h2>
-        <div id="main3" :style="{ width: '100%' , height: '24vw'}"></div>
+        <div id="main3" :style="{ width: '100%' , height: '25vw'}"></div>
       </Card>
     </div>
     <div class="chart-mid card-marginTop">
@@ -465,7 +465,7 @@ i {
   }
 }
 .chart-bottom {
-  height: 33vw;
+  height: 34vw;
   .card {
     height: 100%;
     width: 100%;

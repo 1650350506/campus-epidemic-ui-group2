@@ -443,7 +443,7 @@ export default {
       const data = {
         code: e
       }
-      DeleteIsolationInfo(data).then((res) => {
+      DeleteIsolationInfo(data).then(() => {
         this.$Message.success('解除隔离成功!')
         this.getIsolationInfoList()
         this.getTreatedTotal()

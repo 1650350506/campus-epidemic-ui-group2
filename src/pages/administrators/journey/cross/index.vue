@@ -12,7 +12,7 @@
         </div>
         <div style="margin-right: 2em">
           <Select v-model="selectModel" style="width:160px" @on-change="queryListByGrade(selectModel)" placeholder="按分险等级查询">
-            <Option v-for="item in gradeList" :value="item" :key="item">{{ item }}</Option>
+            <Option v-for="item in gradeList" :value="item.level" :key="item">{{ item.title }}</Option>
           </Select>
         </div>
         <Button type="primary" class="btn" @click="queryStuInfoByKey">查询</Button>
@@ -60,7 +60,9 @@ export default {
       batchSum: 0,
       selectModel: '按分险等级查询',
       gradeList: [
-        '默认', '只看中风险', '只看高风险'
+        { level: null, title: '默认' },
+        { level: 1, title: '只看中风险' },
+        { level: 2, title: '只看高风险' }
       ],
       showDialogVisible: false,
       checkList1: {
@@ -313,13 +315,7 @@ export default {
     },
     // 通过等级查询
     queryListByGrade(grade) {
-      if (grade === '默认') {
-        this.queryInfo.riskLevel = ''
-      } else if (grade === '只看中风险') {
-        this.queryInfo.riskLevel = '1'
-      } else if (grade === '只看高风险') {
-        this.queryInfo.riskLevel = '2'
-      }
+      this.queryInfo.riskLevel = grade
       this.queryInfo.pageNum = 1
       this.queryInfo.pageSize = 10
       this.getStuList()

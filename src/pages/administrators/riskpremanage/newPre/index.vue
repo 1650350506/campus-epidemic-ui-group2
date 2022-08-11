@@ -96,7 +96,7 @@ export default {
         address: '',
         isolationLocation: '',
         isolationReason: '',
-        state: 0,
+        state: null,
         startTime: ''
       }
     }
@@ -144,11 +144,18 @@ export default {
     },
     addIsolatePersonnelInfo() {
       this.addInfo.startTime = this.dateFormat(this.addInfo.startTime)
-      console.log(this.addInfo)
-      NewIsolatePre(this.addInfo).then(() => {
-        this.$Message.success('新增隔离人员成功！')
-      })
-      this.close()
+      if (this.addInfo.isolationLocation === '') {
+        this.$Message.error('隔离地点不能为空！')
+      } else if (this.addInfo.isolationReason === '') {
+        this.$Message.error('隔离原因不能为空！')
+      } else if (this.addInfo.state === null) {
+        this.$Message.error('隔离状态不能为空！')
+      } else {
+        NewIsolatePre(this.addInfo).then(() => {
+          this.$Message.success('新增隔离人员成功！')
+        })
+        this.close()
+      }
     }
   }
 }

@@ -21,8 +21,8 @@
       <div class="batch-box">
         <div class="select-text">已选择 <span>{{batchSum}}</span>项</div>
         <div class="group">
-          <RadioGroup  @on-change="chooseRiskGrade">
-            <Radio  v-for="(item, index) in riskGradeList" :key="index" :label="item"></Radio>
+          <RadioGroup  @on-change="chooseRiskGrade" v-model="riskGrade">
+            <Radio  v-for="(item, index) in riskGradeList" :key="index" :label="item.level">{{item.title}}</Radio>
           </RadioGroup>
         </div>
         <Poptip
@@ -68,7 +68,11 @@ export default {
     return {
       batchSum: 0,
       riskGrade: null,
-      riskGradeList: ['高风险', '中风险', '低风险'],
+      riskGradeList: [
+        { level: 0, title: '低风险' },
+        { level: 1, title: '中风险' },
+        { level: 2, title: '高风险' }
+      ],
       provinceValue: '',
       provinceData: [],
       cityValue: '',
@@ -250,6 +254,7 @@ export default {
       BatchUpdateRiskAreaByCode(data).then(() => {
         this.$Message.success('批量修改风险地区成功！')
         this.queryInfo.value = ''
+        this.riskGrade = null
         this.arr1 = []
         this.arr2 = []
         this.batchSum = 0
@@ -258,15 +263,15 @@ export default {
     },
     //  选择批量修改的等级
     chooseRiskGrade(index) {
-      let state
-      if (index === '低风险') {
-        state = 0
-      } else if (index === '中风险') {
-        state = 1
-      } else if (index === '高风险') {
-        state = 2
-      }
-      this.riskGrade = state
+      // let state
+      // if (index === '低风险') {
+      //   state = 0
+      // } else if (index === '中风险') {
+      //   state = 1
+      // } else if (index === '高风险') {
+      //   state = 2
+      // }
+      // this.riskGrade = state
     },
     submitInfo(info) {
       const RiskInfo = {

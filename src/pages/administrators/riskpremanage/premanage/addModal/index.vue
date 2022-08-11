@@ -27,15 +27,15 @@
               </div>
               <div>核酸结果：
                 <Radio-group v-model="addInfo.nucleicAcidKey">
-                  <Radio label="阴性" value="0"></Radio>
-                  <Radio label="阳性" value="1"></Radio>
+                  <Radio label="0">阴性</Radio>
+                  <Radio label="1">阳性</Radio>
                 </Radio-group>
               </div>
               <div>
                 测温结果：
                 <Radio-group v-model="addInfo.temperature">
-                  <Radio label="正常" value="36"></Radio>
-                  <Radio label="异常" value="38"></Radio>
+                  <Radio label="36">正常</Radio>
+                  <Radio label="38">异常</Radio>
                 </Radio-group>
               </div>
             </div>
@@ -199,9 +199,6 @@ export default {
     dateFormat(time) {
       const date = new Date(time)
       const year = date.getFullYear()
-      /* 在日期格式中，月份是从0开始的，因此要加0
-       * 使用三元表达式在小于10的前面加0，以达到格式统一  如 09:11:05
-       * */
       const month = date.getMonth() + 1 < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1
       const day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate()
       const hours = date.getHours() < 10 ? `0${date.getHours()}` : date.getHours()
@@ -219,7 +216,6 @@ export default {
     // 获取全部的关联人员
     getEpidemicPreventionPersonnel() {
       GetEpidemicPreventionPersonnel().then(res => {
-        console.log(res)
         res.field.forEach(item => {
           this.associationList.push({
             deptCode: item.code,
@@ -233,19 +229,13 @@ export default {
       this.getStuCode()
       if (this.addInfo.nucleicAcidKey !== null && this.addInfo.temperature !== null) {
         this.addInfo.nucleicAcidTime = this.dateFormat(this.addInfo.nucleicAcidTime)
-        if (this.addInfo.nucleicAcidKey === '阴性') {
-          this.addInfo.nucleicAcidKey = 0
-        } else if (this.addInfo.nucleicAcidKey === '阳性') {
-          this.addInfo.nucleicAcidKey = 1
-        }
-        if (this.addInfo.temperature === '正常') {
-          this.addInfo.temperature = 36
-        } else if (this.addInfo.temperature === '异常') {
-          this.addInfo.temperature = 38
-        }
         AddIsolationRecord(this.addInfo).then(() => {
           this.$Message.success('添加隔离记录成功')
           this.$emit('update', this.addInfo.code)
+          this.addInfo.nucleicAcidKey = null
+          this.addInfo.nucleicAcidTime = null
+          this.addInfo.protector = null
+          this.addInfo.temperature = null
         })
       } else {
         this.$Message.error('核酸结果和测温结果不能为空！')

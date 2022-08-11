@@ -39,6 +39,7 @@
 
 <script>
 import { GetJourneyInfoList, GetOutSchoolList } from '@/api/administorators/journery'
+import { toolTip } from '@/util/tool/enum'
 
 export default {
   name: 'checkLocal',
@@ -66,11 +67,17 @@ export default {
         },
         {
           title: '去向信息',
-          key: 'destinationInformation'
+          key: 'destinationInformation',
+          render: (h, params) => {
+            return toolTip(h, 2, params.row.destinationInformation)
+          }
         },
         {
           title: '途经地点',
-          key: 'waypoint'
+          key: 'waypoint',
+          render: (h, params) => {
+            return toolTip(h, 2, params.row.waypoint)
+          }
         }
       ],
       data: [],
@@ -163,7 +170,7 @@ export default {
       flex-basis: 15%;
     }
     .mid-box-right {
-      flex-basis: 70%;
+      flex: 1;
     }
   }
 }

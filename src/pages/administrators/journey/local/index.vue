@@ -1,7 +1,6 @@
 <template>
   <div  style="margin:84px 24px 0 24px">
     <Card :bordered="false"  class="card">
-      <!--       这是面包屑组件-->
       <i-header-breadcrumb  ref="breadcrumb" />
       <h2 style="margin-top: 10px;">你好！ {{userInfo.roleName}}！</h2>
     </Card>
@@ -12,7 +11,7 @@
         </div>
         <div style="margin-right: 2em">
           <Select v-model="selectModel" style="width:160px" @on-change="queryListByGrade(selectModel)" placeholder="按分险等级查询">
-            <Option v-for="item in gradeList" :value="item" :key="item">{{ item }}</Option>
+            <Option v-for="item in gradeList" :value="item.level" :key="item">{{ item.title }}</Option>
           </Select>
         </div>
         <Button type="primary" class="btn" @click="queryStuInfoByKey">查询</Button>
@@ -49,7 +48,7 @@ import {
   GetLocalStuList,  DeleteLocalStuInfo
   , GetLocalStuInfoByCode
 } from '@api/group/stuManage'
-import { BatchDelBatchDailyCodeList, BatchDelLocalBatchDailyCodeList } from '@/api/administorators/journery'
+import { BatchDelLocalBatchDailyCodeList } from '@/api/administorators/journery'
 import { mapState } from 'vuex'
 
 export default {
@@ -62,7 +61,9 @@ export default {
       batchNum: 0,
       selectModel: '',
       gradeList: [
-        '默认', '只看中风险', '只看高风险'
+        { level: null, title: '默认' },
+        { level: 1, title: '只看中风险' },
+        { level: 2, title: '只看高风险' }
       ],
       showDialogVisible: false,
       outList: [],
@@ -325,13 +326,7 @@ export default {
       })
     },
     queryListByGrade(grade) { // 通过等级查询
-      if (grade === '默认') {
-        this.queryInfo.risk = null
-      } else if (grade === '只看中风险') {
-        this.queryInfo.risk = 1
-      } else if (grade === '只看高风险') {
-        this.queryInfo.risk = 2
-      }
+      this.queryInfo.risk = grade
       this.queryInfo.pageNum = 1
       this.queryInfo.pageSize = 10
       this.getLocalStuList()

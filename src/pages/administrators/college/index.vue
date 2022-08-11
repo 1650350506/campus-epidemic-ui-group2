@@ -11,7 +11,7 @@
         </div>
         <div style="margin-right: 2em">
           <Select v-model="healthyModel" style="width:160px" @on-change="queryListByHealthy(healthyModel)" placeholder="按健康码颜色查询">
-            <Option v-for="(item,index) in healthyList" :value="item" :key="index">{{ item }}</Option>
+            <Option v-for="(item,index) in healthyList" :value="item.level" :key="index">{{ item.title }}</Option>
           </Select>
         </div>
         <Button type="primary" class="btn" @click="queryFacultyInfoByKey">查询</Button>
@@ -68,7 +68,12 @@ export default {
         color: null
       },
       healthyModel: '按健康码颜色查询',
-      healthyList: ['默认', '绿码', '黄码', '红码'],
+      healthyList: [
+        { level: null, title: '默认' },
+        { level: 0, title: '绿码' },
+        { level: 1, title: '黄码' },
+        { level: 2, title: '红码' }
+      ],
       columns: [
         {
           type: 'selection',
@@ -111,13 +116,13 @@ export default {
             console.log(params.row)
             if (params.row.color === 0) {
               types = 'success'
-              typeName = '绿码'
+              typeName = '绿　码'
             } else if (params.row.color === 1) {
               types = 'warning'
-              typeName = '黄码'
+              typeName = '黄　码'
             } else if (params.row.color === 2) {
               types = 'error'
-              typeName = '红码'
+              typeName = '红　码'
             } else {
               types = ''
               typeName = '未提交'
@@ -302,26 +307,16 @@ export default {
       })
     },
     queryListByHealthy(healthyModel) { // 按健康吗颜色查询
-      if (healthyModel === '默认') {
-        this.queryInfo.color = null
-      } else if (healthyModel === '绿码') {
-        this.queryInfo.color = 0
-      } else if (healthyModel === '黄码') {
-        this.queryInfo.color = 1
-      } else if (healthyModel === '红码') {
-        this.queryInfo.color = 2
-      }
+      this.queryInfo.color = healthyModel
       this.getFacultyList()
     },
-    // 查询工作人员列表
-    getFacultyList() {
+    getFacultyList() { // 查询工作人员列表
       GetFacultyInfo(this.queryInfo).then((res) => {
         this.total = res.total
         this.data = res.data
       })
     },
-    // 查询信息信息
-    getFacultyInfoByCode(code) {
+    getFacultyInfoByCode(code) { // 查询信息信息
       GetFacultyInfoByCode({ code: code }).then(res => {
         this.dialogList.code.value = res.code
         this.dialogList.name.value = res.name
@@ -358,9 +353,7 @@ export default {
       this.getFacultyList()
     },
     onSelectAll(selection) {
-      // arr1 去重之前的 选中后合并的数组
       this.arr1 = [...selection, ...this.selectedData]
-      // 去重  some  和every 相反，只要有一个满足条件，就返回true
       for (const val of this.arr1) {
         if (!this.arr2.some(item => item.code === val.code)) {
           this.arr2.push(val)

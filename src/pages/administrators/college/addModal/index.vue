@@ -9,7 +9,7 @@
       <Form ref="formValidate" :model="addList1" :rules="ruleValidate">
         <div class="modal-box">
           <div class="modal-item">
-            <div class="null"></div><div class="title"><span>账号:</span></div><div class="star"></div>
+            <div class="null"></div><div class="title"><span>账号</span></div><div class="star"></div>
             <div class="core">
               <Form-item prop="account">
                 <Input placeholder="请输入账号" v-model="addList1.account"></Input>
@@ -17,7 +17,7 @@
             </div>
           </div>
           <div class="modal-item">
-            <div class="null"></div><div class="title"><span>密码:</span></div><div class="star"></div>
+            <div class="null"></div><div class="title"><span>密码</span></div><div class="star"></div>
             <div class="core">
               <Form-item prop="pwd">
                 <Input placeholder="请输入密码" v-model="addList1.pwd"></Input>
@@ -53,8 +53,8 @@
             <div class="core">
               <Form-item prop="sex">
                 <Radio-group v-model="addList1.sex">
-                  <Radio label="男" value="0"></Radio>
-                  <Radio label="女" value="1"></Radio>
+                  <Radio label="0">男</Radio>
+                  <Radio label="1">女</Radio>
                 </Radio-group>
               </Form-item>
             </div>
@@ -90,8 +90,8 @@
             <div class="core">
               <Form-item prop="systemPost">
                 <Select v-model="addList1.systemPost" style="width:190px">
-                  <Option  value="防控人员" label="防控人员"></Option>
-                  <Option  value="防控组长" label="防控组长"></Option>
+                  <Option  value="防疫人员" label="防疫人员"></Option>
+                  <Option  value="防疫组长" label="防疫组长"></Option>
                 </Select>
               </Form-item>
             </div>
@@ -127,13 +127,14 @@ export default {
         ],
         code: [
           { required: true, message: '职工工号不能为空', trigger: 'blur' },
-          { type: 'string', min: 6, max: 16, message: '职工工号位数6数字', trigger: 'blur' }
+          { type: 'string', min: 6, max: 7, message: '工号位数6数字且前两位与院系对应', trigger: 'blur' }
         ],
         name: [
           { required: true, message: '姓名不能为空', trigger: 'blur' }
         ],
         idCard: [
           { required: true, message: '身份证不能为空', trigger: 'blur' },
+          { type: 'string', min: 18, max: 18, message: '身份证位数为18位', trigger: 'blur' },
           { pattern: /^\d{15}|(\d{17}(\d|x|X))$/, message: '身份证号码格式不正确', trigger: 'blur' }
         ],
         sex: [
@@ -180,25 +181,6 @@ export default {
       deptList: []
     }
   },
-  watch: {
-    showSwitch(newVal) {
-      if (newVal === true) {
-        this.addList1 = {
-          account: '',
-          pwd: '',
-          code: '',
-          deptCode: '',
-          deptName: '',
-          idCard: '',
-          name: '',
-          phone: '',
-          schoolPost: '',
-          sex: null,
-          systemPost: ''
-        }
-      }
-    }
-  },
   created() {
     this.getDeptName()
   },
@@ -213,21 +195,10 @@ export default {
       })
     },
     addFacultyInfo() {
-      this.deptList.forEach((item) => {
-        if (item.name === this.addList1.deptName) {
-          this.addList1.deptCode = item.code
-        }
-      })
-      if (this.addList1.sex === '男') {
-        this.addList1.sex = 0
-      } else if (this.addList1.sex === '女') {
-        this.addList1.sex = 1
-      }
       this.addUserInfo.account = this.addList1.account
       this.addUserInfo.mobile = this.addList1.phone
       this.addUserInfo.name = this.addList1.name
       this.addUserInfo.pwd = this.addList1.pwd
-      console.log(this.addList1)
       RegUserInfo(this.addUserInfo).then(() => {
         this.getUserInfoByName()
       })
@@ -244,13 +215,19 @@ export default {
       const list = {
         ids: [id]
       }
-      // eslint-disable-next-line no-empty-function
       ActiveUserInfo(list).then(() => {
+        this.close()
+        this.$refs.formValidate.resetFields()
       })
     },
     addInnerFacultyInfo() {
       this.$refs.formValidate.validate((valid) => {
         if (valid) {
+          this.deptList.forEach((item) => {
+            if (item.name === this.addList1.deptName) {
+              this.addList1.deptCode = item.code
+            }
+          })
           InsertWorkPerson(this.addList1).then(() => {
             this.addFacultyInfo()
           })
