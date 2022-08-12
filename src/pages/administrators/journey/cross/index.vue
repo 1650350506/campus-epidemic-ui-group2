@@ -45,9 +45,7 @@
 <script>
 import iHeaderBreadcrumb from '@/layouts/basic-layout/header-breadcrumb'
 import CheckModal from './checkModal'
-import {
-  GetStuList, DeleteStuInfo
-} from '@api/group/stuManage'
+import { GetStuList, DeleteStuInfo } from '@api/group/stuManage'
 import { BatchDelCrossBatchDailyCodeList } from '@api/administorators/journery'
 import { mapState } from 'vuex'
 export default {
@@ -157,9 +155,6 @@ export default {
                   padding: '0 10px'
                 },
                 on: {
-                  // eslint-disable-next-line no-empty-function
-                  click: () => {
-                  }
                 }
               }, typeName)])
           }
@@ -169,7 +164,6 @@ export default {
           key: 'riskArea',
           align: 'left',
           render: (h, params) => {
-            let types
             let typeName
             if (params.row.riskLevel === 0) {
               typeName = '------'
@@ -228,9 +222,6 @@ export default {
                   on: {
                     'on-ok': () => {
                       this.deleteStuInfoByCode(params.row.code)
-                    },
-                    // eslint-disable-next-line no-empty-function
-                    'on-cancel': () => {
                     }
                   }
                 }, [
@@ -266,9 +257,9 @@ export default {
       },
       total: 0,
       batchList: [],
-      selectedData: [], // 选中的数组
-      arr1: [], // 原本
-      arr2: [] // 去重后的，
+      selectedData: [],
+      arr1: [],
+      arr2: []
     }
   },
   computed: {
@@ -292,7 +283,7 @@ export default {
         this.batchList.push(item.code)
       })
       BatchDelCrossBatchDailyCodeList({ codeList: this.batchList }).then(() => {
-        this.$Message.success('批量删除成功！')
+        this.$Message.success('删除学生14天前行程记录成功！')
         this.arr1 = []
         this.arr2 = []
         this.batchSum = 0
@@ -306,31 +297,32 @@ export default {
     closeEdit() {
       this.updateDialogVisible = false
     },
-    // 通过学生学号删除
-    deleteStuInfoByCode(code) {
-      DeleteStuInfo({ code: code }).then(() => {
-        this.$Message.success('删除成功！')
-        this.getStuList()
+    deleteStuInfoByCode(code) {  // 通过学生学号删除
+      DeleteStuInfo({ code: code }).then((res) => {
+        console.log('通过学生学号删除')
+        console.log(res)
+        if (res === 0) {
+          this.$Message.error('无该学生的行程信息')
+        } else {
+          this.$Message.success('删除学生14天前行程记录成功！')
+          this.getStuList()
+        }
       })
     },
-    // 通过等级查询
-    queryListByGrade(grade) {
+    queryListByGrade(grade) { // 通过等级查询
       this.queryInfo.riskLevel = grade
       this.queryInfo.pageNum = 1
       this.queryInfo.pageSize = 10
       this.getStuList()
     },
-    // 获得学生基本信息
-    getStuList() {
+    getStuList() { // 获得学生基本信息
       GetStuList(this.queryInfo).then((res) => {
         this.data = res.data
         this.total = res.total
       })
     },
     onSelectAll(selection) {
-      // arr1 去重之前的 选中后合并的数组
       this.arr1 = [...selection, ...this.selectedData]
-      // 去重  some  和every 相反，只要有一个满足条件，就返回true
       for (const val of this.arr1) {
         if (!this.arr2.some(item => item.code === val.code)) {
           this.arr2.push(val)
@@ -341,19 +333,14 @@ export default {
       }
       this.batchSum = this.arr2.length
     },
-
-    // 取消选中某一项时触发
-    onSelectCancel(selection, row) {
-      // 拿到取消选择的项数据 从arr2中去除 findIndex找返回传入一个符合条件的数组第一个元素位置,没有返回-1
+    onSelectCancel(row) {
       const result = this.arr2.findIndex((ele) => {
         return ele.code === row.code
       })
       this.arr2.splice(result, 1)
       this.batchSum = this.arr2.length
     },
-
-    // 点击取消全选时触发
-    onSelectAllCancel() {
+    onSelectAllCancel() { // 点击取消全选时触发
       this.arr2 = this.arr2.filter(item => {
         return this.data.every(item2 => {
           return item.code !== item2.code
@@ -368,15 +355,14 @@ export default {
         this.queryStuInfoByKey()
       }
     },
-    // 关键字查询
-    queryStuInfoByKey() {
+    queryStuInfoByKey() { // 关键字查询
+      this.batchSum = 0
       this.queryInfo.pageNum = 1
       this.queryInfo.pageSize = 10
       this.data = []
       this.getStuList()
     },
-    // 选择页码
-    editPageNum(e) {
+    editPageNum(e) {   // 选择页码
       this.queryInfo.pageNum = e
       GetStuList(this.queryInfo).then((res) => {
         res.data.forEach(item => {
@@ -390,8 +376,7 @@ export default {
         this.data = res.data
       })
     },
-    // 选择当页最大条数
-    editPageSize(e) {
+    editPageSize(e) { // 选择当页最大条数
       this.queryInfo.pageSize = e
       this.getStuList()
     }
@@ -461,13 +446,10 @@ export default {
   flex-basis: 100%;
   height: 100px;
   display: flex;
-  //align-items: center;
   .null {
     flex-basis: 2%;
   }
   .star {
-    //color: #ea2969;
-    //flex-basis: 5%;
     text-align: right;
     font-size: 18px;
     padding-right: 5px;

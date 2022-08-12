@@ -77,9 +77,6 @@ export default {
                 on: {
                   'on-ok': () => {
                     this.editIsolationStateByCode(params.row.code)
-                  },
-                  // eslint-disable-next-line no-empty-function
-                  'on-cancel': () => {
                   }
                 }
               }, [
@@ -89,12 +86,13 @@ export default {
                     size: 'small'
                   },
                   attrs: {
-                    title: '解除'
+                    title: '已隔离'
                   },
                   style: {
                     color: '#01b0ff',
                     marginRight: '5px',
-                    border: '0px'
+                    border: '0px',
+                    background: 'transparent'
                   },
                   on: {
                   }

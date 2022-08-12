@@ -181,13 +181,12 @@ body{
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 2vw;
-            i {
-                font-size: 2em;
+            padding: 0 3vw 0 2vw;
+            em {
+                font-size: 2rem;
                 color: #ffffff;
             }
             h2 {
-                font-size: 1.3em;
                 color: #F7F7F7;
             }
         }
@@ -210,4 +209,72 @@ body{
             z-index: 99;
         }
     }
+}
+//
+.model-box {
+    display: flex;
+    flex-direction: column;
+    .top-box {
+        flex-basis: 40%;
+        display: flex;
+        flex-wrap: wrap;
+        .modal-item {
+            width: 50%;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            font-size: 16px;
+            .null {
+                flex-basis: 5%;
+            }
+            .star {
+                flex-basis: 3%;
+            }
+            .title {
+                color: #050505;
+                font-weight: 500;
+                font-size: 16px;
+                flex-basis: 35%;
+                text-align: right;
+                line-height: 30px;
+            }
+            .core {
+                color: #6c6a6a;
+                flex-basis: 55%;
+            }
+        }
+    }
+    .mid-box {
+        margin: 1em 0 0;
+        display: flex;
+        .mid-box-right {
+            margin-top: 5%;
+            flex: 1;
+            .add-condition {
+                margin-top: 1em;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: space-between;
+                align-items: center;
+                height: 80px;
+            }
+        }
+    }
+    .footer-box {
+        padding: 0 2em;
+    }
+}
+.mid-box-left {
+    margin-top: 1em;
+    color: #050505;
+    font-weight: 500;
+    font-size: 18px;
+    text-align: center;
+    flex-basis: 20%;
+}
+.model-list-title {
+    margin-top: 5px;
+    margin-left: 4%;
+    font-size: 18px;
+    color: #000;
 }

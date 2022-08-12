@@ -10,7 +10,7 @@
           <Input  placeholder="请输入学生学号、学生姓名、二级学院" v-on:keyup.enter.native="queryEnter" style="width: 300px" v-model="queryInfo.key"></Input>
         </div>
         <div style="margin-right: 2em">
-          <Select v-model="selectModel" style="width:160px" @on-change="queryListByGrade(selectModel)" placeholder="按分险等级查询">
+          <Select v-model="selectModel" style="width:160px" @on-change="queryListByGrade(selectModel)" placeholder="按风险等级查询">
             <Option v-for="item in gradeList" :value="item.level" :key="item">{{ item.title }}</Option>
           </Select>
         </div>
@@ -194,9 +194,6 @@ export default {
                   padding: '0 10px'
                 },
                 on: {
-                  // eslint-disable-next-line no-empty-function
-                  click: () => {
-                  }
                 }
               }, typeName)])
           }
@@ -204,13 +201,11 @@ export default {
         {
           title: '涉及地区',
           key: 'whereDetail',
-          align: 'left',
-          width: 200
+          align: 'left'
         },
         {
           title: '操作',
           key: 'action',
-          width: 160,
           align: 'center',
           render: (h, params) => {
             return h('div', {
@@ -280,9 +275,9 @@ export default {
       total: 0,
       batchList: [],
       crossList: [],
-      selectedData: [], // 选中的数组
-      arr1: [], // 原本
-      arr2: [] // 去重后的，
+      selectedData: [],
+      arr1: [],
+      arr2: []
     }
   },
   computed: {
@@ -319,10 +314,11 @@ export default {
     close() {
       this.showDialogVisible = false
     },
-    deleteStuInfoByCode(code) {  // 通过学生学号删除
-      DeleteLocalStuInfo({ code: code }).then(() => {
+    async deleteStuInfoByCode(code) {  // 通过学生学号删除
+      await DeleteLocalStuInfo({ code: code }).then(() => {
         this.$Message.success('删除本市学生信息成功！')
         this.getLocalStuList()
+        this.getLocalStuInfoByCode(code)
       })
     },
     queryListByGrade(grade) { // 通过等级查询
@@ -344,15 +340,15 @@ export default {
       })
     },
     queryStuInfoByKey() { // 关键字查询
+      this.batchNum = 0
       this.data = []
       this.queryInfo.pageNum = 1
       this.queryInfo.pageSize = 10
       this.getLocalStuList()
     },
     onSelectAll(selection) {
-      // arr1 去重之前的 选中后合并的数组
       this.arr1 = [...selection, ...this.selectedData]
-      // 去重  some  和every 相反，只要有一个满足条件，就返回true
+      // eslint-disable-next-line no-unused-vars
       for (const val of this.arr1) {
         if (!this.arr2.some(item => item.code === val.code)) {
           this.arr2.push(val)
@@ -363,18 +359,14 @@ export default {
       }
       this.batchNum = this.arr2.length
     },
-
-    // 取消选中某一项时触发
-    onSelectCancel(selection, row) {
+    onSelectCancel(row) { // 取消选中某一项时触发
       const result = this.arr2.findIndex((ele) => {
         return ele.code === row.code
       })
       this.arr2.splice(result, 1)
       this.batchNum = this.arr2.length
     },
-
-    // 点击取消全选时触发
-    onSelectAllCancel() {
+    onSelectAllCancel() { // 点击取消全选时触发
       this.arr2 = this.arr2.filter(item => {
         return this.data.every(item2 => {
           return item.code !== item2.code
@@ -403,7 +395,6 @@ export default {
     },
     getLocalStuInfoByCode(code) { //   点击查看里面的基本信息
       GetLocalStuInfoByCode({ code: code }).then(res => {
-        console.log(res)
         this.checkList1.code.value = res.code
         this.checkList1.name.value = res.name
         this.checkList1.sex.value = res.sex
@@ -425,6 +416,7 @@ export default {
             address: item
           })
         })
+        this.outList = []
         res.dailyRecordList.forEach(item => {
           this.outList.push({
             startTime: item.startTime,

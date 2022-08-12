@@ -21,15 +21,11 @@
       <div class="batch-box">
         <div class="select-text">已选择 <span>{{batchSum}}</span>项</div>
         <div class="group">
-          <RadioGroup  @on-change="chooseRiskGrade" v-model="riskGrade">
+          <RadioGroup  v-model="riskGrade">
             <Radio  v-for="(item, index) in riskGradeList" :key="index" :label="item.level">{{item.title}}</Radio>
           </RadioGroup>
         </div>
-        <Poptip
-          confirm
-          title="你确定要修改所选地区的风险等级吗？"
-          @on-ok="batchSubmit"
-        >
+        <Poptip confirm title="你确定要修改所选地区的风险等级吗？" @on-ok="batchSubmit">
           <div class="btn">批量提交</div>
         </Poptip>
       </div>
@@ -48,17 +44,8 @@
 <script>
 
 import iHeaderBreadcrumb from '@/layouts/basic-layout/header-breadcrumb'
-import {
-  GetProvinceList,
-  GetCityList,
-  GetCountyList,
-  GetStreetList,
-  UpdateRiskAreaByCode,
-  BatchUpdateRiskAreaByCode,
-  GetRiskInfoListByProvince
-} from '@api/administorators/riskArea'
+import { GetProvinceList, GetCityList, GetCountyList, GetStreetList, UpdateRiskAreaByCode, BatchUpdateRiskAreaByCode, GetRiskInfoListByProvince } from '@api/administorators/riskArea'
 import { mapState } from 'vuex'
-
 export default {
   name: 'index',
   components: {
@@ -110,7 +97,8 @@ export default {
           width: '340',
           key: 'riskLevel',
           render: (h, params) => {
-            const arr = [{ riskLevel: '低风险', checked: false },
+            const arr = [
+              { riskLevel: '低风险', checked: false },
               { riskLevel: '中风险', checked: false },
               { riskLevel: '高风险', checked: false }]
             const temp = params.row.riskLevel
@@ -130,7 +118,7 @@ export default {
                   value: item.checked
                 },
                 on: {
-                  'on-change': (e) => {
+                  'on-change': () => {
                     this.data2[params.index].riskLevel = index
                   }
                 }
@@ -161,9 +149,6 @@ export default {
               on: {
                 'on-ok': () => {
                   this.submitInfo(params.row)
-                },
-                // eslint-disable-next-line no-empty-function
-                'on-cancel': () => {
                 }
               }
             }, [
@@ -194,9 +179,9 @@ export default {
         value: ''
       },
       total: 0,
-      selectedData: [], // 选中的数组
-      arr1: [], // 原本
-      arr2: [] // 去重后的，
+      selectedData: [],
+      arr1: [],
+      arr2: []
     }
   },
   computed: {
@@ -208,9 +193,7 @@ export default {
   },
   methods: {
     onSelectAll(selection) {
-      // arr1 去重之前的 选中后合并的数组
       this.arr1 = [...selection, ...this.selectedData]
-      // 去重  some  和every 相反，只要有一个满足条件，就返回true
       for (const val of this.arr1) {
         if (!this.arr2.some(item => item.code === val.code)) {
           this.arr2.push(val)
@@ -221,18 +204,14 @@ export default {
       }
       this.batchSum = this.arr2.length
     },
-
-    // 取消选中某一项时触发
-    onSelectCancel(selection, row) {
+    onSelectCancel(row) { // 取消选中某一项时触发
       const result = this.arr2.findIndex((ele) => {
         return ele.code === row.code
       })
       this.arr2.splice(result, 1)
       this.batchSum = this.arr2.length
     },
-
-    // 点击取消全选时触发
-    onSelectAllCancel() {
+    onSelectAllCancel() {  // 点击取消全选时触发
       this.arr2 = this.arr2.filter(item => {
         return this.data.every(item2 => {
           return item.code !== item2.code
@@ -241,8 +220,7 @@ export default {
       console.log(this.arr2)
       this.batchSum = this.arr2.length
     },
-    // 批量提交
-    batchSubmit() {
+    batchSubmit() { // 批量提交
       this.batchList = []
       this.arr2.forEach((item) => {
         this.batchList.push(item.code)
@@ -261,24 +239,12 @@ export default {
         this.getRiskInfoListByProvince()
       })
     },
-    //  选择批量修改的等级
-    chooseRiskGrade(index) {
-      // let state
-      // if (index === '低风险') {
-      //   state = 0
-      // } else if (index === '中风险') {
-      //   state = 1
-      // } else if (index === '高风险') {
-      //   state = 2
-      // }
-      // this.riskGrade = state
-    },
-    submitInfo(info) {
+    submitInfo(info) { // 修改风险等级
       const RiskInfo = {
         code: info.code,
         riskLevel: info.riskLevel
       }
-      UpdateRiskAreaByCode(RiskInfo).then(res => {
+      UpdateRiskAreaByCode(RiskInfo).then(() => {
         this.$Message.success('修改风险等级成功!')
         this.getRiskInfoListByProvince()
       })
@@ -376,11 +342,7 @@ export default {
       })
       this.streetData = arrays
     },
-    getRiskAreaListByCode(code) {
-      const container = { code: code }
-    },
-    // 选择页码
-    editPageNum(e) {
+    editPageNum(e) { // 选择页码
       this.queryInfo.pageNum = e
       GetRiskInfoListByProvince(this.queryInfo).then(res => {
         res.field.data.forEach(item => {
@@ -394,8 +356,7 @@ export default {
         this.data2 = res.field.data
       })
     },
-    // 选择当页最大条数
-    editPageSize(e) {
+    editPageSize(e) {   // 选择当页最大条数
       this.queryInfo.pageSize = e
       this.getRiskInfoListByProvince()
     },

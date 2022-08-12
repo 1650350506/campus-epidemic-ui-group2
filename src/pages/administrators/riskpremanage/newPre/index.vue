@@ -1,11 +1,5 @@
 <template>
-  <Modal
-    v-model="newSwitch"
-    @on-cancel="close"
-    width="720"
-    class-name="vertical-center-modal"
-    :styles="{top: '20px'}"
-  >
+  <Modal v-model="newSwitch" @on-cancel="close" width="720" class-name="vertical-center-modal" :styles="{top: '20px'}">
     <p slot="header" style="text-align: left; font-size: 20px; margin-left: 4%">添加隔离人员</p>
     <Input v-model="queryValue" placeholder="请输入学号查询" style="width: 200px; margin-right: 10px; margin-left: 4%"></Input> <Button type="primary" @click="getStuInfoListByCode">查询</Button>
     <div class="mid-box">
@@ -42,14 +36,13 @@
       <div class="footer-item">
         <div class="title">隔离状态:</div>
         <div class="null"></div>
-        <Select v-model="addInfo.state" style="width:200px">
+        <Select v-model="addInfo.state" style="width:200px" @on-change="hasRiskState">
           <Option  value="0">待隔离</Option>
           <Option  value="1">隔离中</Option>
-          <Option  value="2">隔离结束</Option>
           <Option  value="3">治疗中</Option>
         </Select>
       </div>
-      <div class="footer-item">
+      <div class="footer-item" v-if="showTimeInput">
         <div class="title">隔离开始时间:</div>
         <div class="null"></div>
         <Date-picker type="datetime" placeholder="选择日期和时间" v-model="addInfo.startTime" style="width: 200px"></Date-picker>
@@ -96,8 +89,24 @@ export default {
         address: '',
         isolationLocation: '',
         isolationReason: '',
-        state: null,
+        state: '',
         startTime: ''
+      },
+      showTimeInput: true
+    }
+  },
+  watch: {
+    newSwitch: function (newVal) {
+      if (newVal === false) {
+        this.queryValue = ''
+        this.addInfo = {
+          code: '',
+          address: '',
+          isolationLocation: '',
+          isolationReason: '',
+          state: '',
+          startTime: ''
+        }
       }
     }
   },
@@ -112,8 +121,18 @@ export default {
       const seconds = date.getSeconds() < 10 ? `0${date.getSeconds()}` : date.getSeconds()
       return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
     },
+    hasRiskState() {
+      console.log(this.addInfo.state)
+      if (this.addInfo.state === '0') {
+        this.showTimeInput = false
+      } else {
+        this.showTimeInput = true
+      }
+      console.log(this.showTimeInput)
+    },
     close() {
       this.$emit('addClose', false)
+      // eslint-disable-next-line guard-for-in
     },
     getStuInfoListByCode() {
       if (this.queryValue !== '') {
@@ -143,16 +162,33 @@ export default {
       }
     },
     addIsolatePersonnelInfo() {
-      this.addInfo.startTime = this.dateFormat(this.addInfo.startTime)
       if (this.addInfo.isolationLocation === '') {
         this.$Message.error('隔离地点不能为空！')
       } else if (this.addInfo.isolationReason === '') {
         this.$Message.error('隔离原因不能为空！')
-      } else if (this.addInfo.state === null) {
+      } else if (this.addInfo.state === '') {
         this.$Message.error('隔离状态不能为空！')
-      } else {
+      } else if (this.addInfo.code === '') {
+        this.$Message.error('学生学号不能为空！')
+      } else if (this.addInfo.startTime === '' && this.addInfo.state === '0') {
         NewIsolatePre(this.addInfo).then(() => {
           this.$Message.success('新增隔离人员成功！')
+          // eslint-disable-next-line guard-for-in,no-unused-vars
+          for (const value in this.addInfo) {
+            this.addInfo[value] = ''
+          }
+          this.queryValue = ''
+        })
+        this.close()
+      } else {
+        this.addInfo.startTime = this.dateFormat(this.addInfo.startTime)
+        NewIsolatePre(this.addInfo).then(() => {
+          this.$Message.success('新增隔离人员成功！')
+          // eslint-disable-next-line guard-for-in,no-unused-vars
+          for (const value in this.addInfo) {
+            this.addInfo[value] = ''
+          }
+          this.queryValue = ''
         })
         this.close()
       }

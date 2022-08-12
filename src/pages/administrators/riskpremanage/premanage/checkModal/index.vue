@@ -1,12 +1,8 @@
 <template>
   <div>
-    <Modal
-      v-model="checkSwitch"
-      @on-cancel="close"
-      width="720"
-      :styles="{top: '20px'}"
-    >
+    <Modal v-model="checkSwitch" @on-cancel="close" width="720" :styles="{top: '20px'}">
       <p slot="header" style="text-align: left; font-size: 20px">查看</p>
+      <div class="model-list-title">基础信息</div>
       <div class="model-box">
         <div class="top-box">
           <div class="modal-item" v-for="(item, index) in checkList1" :key="index">
@@ -55,7 +51,7 @@ export default {
           key: 'nucleicAcidKey',
           render: (h, params) => {
             let key
-            if (params.row.nucleicacidkey === 1) {
+            if (params.row.nucleicAcidKey === 1) {
               key = '阳性'
             } else {
               key = '阴性'
@@ -124,18 +120,7 @@ export default {
           key: 'isolationReason'
         }
       ],
-      data1: [
-        {
-          name: '李小红',
-          age: 30,
-          address: '上海市浦东新区世纪大道'
-        },
-        {
-          name: '周小伟',
-          age: 26,
-          address: '深圳市南山区深南大道'
-        }
-      ]
+      data1: []
     }
   },
   mounted() {
@@ -152,52 +137,4 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.model-box {
-  display: flex;
-  flex-direction: column;
-  .top-box {
-    flex-basis: 40%;
-    display: flex;
-    flex-wrap: wrap;
-    .modal-item {
-      width: 50%;
-      height: 40px;
-      display: flex;
-      align-items: center;
-      font-size: 16px;
-      .null {
-        flex-basis: 5%;
-      }
-      .star {
-        flex-basis: 3%;
-      }
-      .title {
-        color: #050505;
-        font-weight: 500;
-        font-size: 18px;
-        flex-basis: 35%;
-        text-align: right;
-        line-height: 30px;
-      }
-      .core {
-        color: #6c6a6a;
-        flex-basis: 55%;
-      }
-    }
-  }
-  .mid-box {
-    margin-top: 1em;
-    display: flex;
-    .mid-box-left {
-      color: #050505;
-      font-weight: 500;
-      font-size: 18px;
-      text-align: right;
-      flex-basis: 20%;
-    }
-    .mid-box-right {
-      flex-basis: 70%;
-    }
-  }
-}
 </style>

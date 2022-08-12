@@ -5,19 +5,14 @@
       <h2 style="margin-top: 10px;">你好！ {{userInfo.roleName}}！</h2>
     </Card>
     <div class="chart-top">
-      <Card v-for="(item, index) in topList" :key="index"  class="card-box" :style="{background:'linear-gradient(-45deg, transparent 50%,'+bgColorList[index]+' 0)'}">
-        <Row>
-          <Col span="8">
-            <div class="card-left-item">
-              <i :class="item.icon"></i>
-            </div>
-          </Col>
-          <Col span="2"></Col>
-          <Col span="12" class="col-style">
-            <h2 style="font-size: 24px">{{item.name}}</h2>
-            <h2 class="num">{{item.num}}</h2>
-          </Col>
-        </Row>
+      <Card v-for="(item, index) in topList" :key="index"  class="card-box">
+        <div class="col-style">
+          <h2 style="font-size: 24px; color: #999999">{{item.name}}</h2>
+          <h2 class="num">{{item.num}}</h2>
+          <img src="../../../assets/images/pre1.png" v-if="index === 0" width="50%" alt="">
+          <img src="../../../assets/images/pre2.png" v-if="index === 1" width="40%" style="top: 7%;left: 3%" alt="">
+          <img src="../../../assets/images/pre3.png" v-if="index === 2" width="46%" style="top: 3%;left: 3%" alt="">
+        </div>
       </Card>
     </div>
     <div class="chart-bottom" style="background: #fff">
@@ -35,23 +30,18 @@
             <Option value="14">过去14天</Option>
           </Select>
         </div>
-        <div id="main" style="width: 100%; height: 58vh;"></div>
+        <div id="main" style="width: 100%; aspect-ratio: 1/0.9"></div>
       </Card>
       <Card class="card" :bordered="false">
         <h2 slot="title" style="margin: 1em 0;">各个学院隔离人员分布</h2>
-        <div id="main2" :style="{ width: '100%', height: '60vh' }"></div>
+        <div id="main2" :style="{ width: '100%', aspectRatio:'1/0.9'}"></div>
       </Card>
     </div>
   </div>
 </template>
 <script>
 import iHeaderBreadcrumb from '@/layouts/basic-layout/header-breadcrumb'
-import {
-  GetAllIsolationTotal, GetEachEpidemicListAnalysis, GetEachIsolationListAnalysis,
-  GetIsolationListByDate,
-  GetNewIsolationTotal,
-  GetRelieveIsolationTotal
-} from '@api/administorators/analysis'
+import { GetAllIsolationTotal, GetEachEpidemicListAnalysis, GetEachIsolationListAnalysis, GetIsolationListByDate, GetNewIsolationTotal, GetRelieveIsolationTotal } from '@api/administorators/analysis'
 import { mapState } from 'vuex'
 const echarts = require('echarts')
 
@@ -207,7 +197,7 @@ export default {
         },
         legend: {
           orient: 'vertical',
-          top: '30%',
+          top: '20%',
           right: '0%',
           itemGap: 20
         },
@@ -216,7 +206,7 @@ export default {
             itemGap: -10,
             type: 'pie',
             radius: ['65%', '40%'],
-            center: ['40%', '60%'],
+            center: ['40%', '45%'],
             avoidLabelOverlap: false,
             itemStyle: {
               borderRadius: 10,
@@ -266,11 +256,10 @@ export default {
             show: false
           },
           splitLine: {
-            // 网格线
             lineStyle: {
-              type: 'dashed' // 设置网格线类型 dotted：虚线   solid:实线
+              type: 'dashed'
             },
-            show: true // 隐藏或显示
+            show: true
           }
         },
         series: [
@@ -314,8 +303,7 @@ export default {
     this.getEachIsolationListAnalysis()
   },
   methods: {
-    // 选择修改时间
-    selectTime(e) {
+    selectTime(e) { // 选择修改时间
       this.queryDayInfo.command = e
       this.getOldIsolationListByDate()
     },
@@ -331,20 +319,17 @@ export default {
       const myChart = echarts.init(document.getElementById('main2'))
       myChart.setOption(this.option1, true)
     },
-    // 获得总隔离人数
-    getAllIsolationTotal() {
+    getAllIsolationTotal() {  // 获得总隔离人数
       GetAllIsolationTotal().then((res) => {
         this.topList[0].num = res.field
       })
     },
-    // 获得新增隔离人数
-    getNewIsolationTotal() {
+    getNewIsolationTotal() {   // 获得新增隔离人数
       GetNewIsolationTotal().then((res) => {
         this.topList[1].num = res.field
       })
     },
-    // 获得新增解除人数
-    getReliveIsolationTotal() {
+    getReliveIsolationTotal() { // 获得新增解除人数
       GetRelieveIsolationTotal().then((res) => {
         this.topList[2].num = res.field
       })
@@ -403,10 +388,10 @@ h3 {
   margin-top: 1em;
 }
 .container {
-  background: #f7f7f7;
   padding: 0;
   margin-top: 16px;
   overflow-y: hidden;
+  background: #f7f7f7;
 }
 canvas {
   left: 50%;
@@ -428,6 +413,11 @@ canvas {
     height: 85%;
     border-radius: 10px;
     box-shadow: 2px 2px 5px rgba(0,0,0,0.4);
+    ::v-deep(.ivu-card-body) {
+      padding: 5% 8% 5% 5%;
+      width: 100%;
+      height: 100%;
+    }
   }
 }
 i {
@@ -443,13 +433,20 @@ i {
   }
 }
 .col-style {
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   justify-content: space-between;
-}
-.num {
-  font-size: 4em;
+  .num {
+    font-size: 4em;
+  }
+  img {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
 }
 .chart-mid {
   height: 42vw;

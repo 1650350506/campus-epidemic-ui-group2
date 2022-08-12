@@ -187,9 +187,9 @@ export default {
   methods: {
     close() {
       this.$emit('switchAdd', false)
+      this.$refs.formValidate.resetFields()
     },
-    //  获取各个学院名称
-    getDeptName() {
+    getDeptName() { //  获取各个学院名称
       GetDeptCodeAndName().then((res) => {
         this.deptList = res.field
       })
@@ -239,7 +239,6 @@ export default {
   }
 }
 </script>
-
 <style lang="less" scoped>
 .modal-box {
   display: flex;

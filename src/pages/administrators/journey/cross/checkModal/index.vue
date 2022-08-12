@@ -1,11 +1,6 @@
 <template>
   <div>
-    <Modal
-      v-model="checkSwitch"
-      @on-cancel="close"
-      width="720"
-      :styles="{top: '20px'}"
-    >
+    <Modal v-model="checkSwitch" @on-cancel="close" width="720" :styles="{top: '20px'}">
       <p slot="header" style="text-align: left; font-size: 20px">查看</p>
       <div class="model-box">
         <div class="model-list-title">基础信息</div>
@@ -130,54 +125,4 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.model-box {
-  display: flex;
-  flex-direction: column;
-  .top-box {
-    flex-basis: 40%;
-    display: flex;
-    flex-wrap: wrap;
-    .modal-item {
-      width: 50%;
-      height: 34px;
-      display: flex;
-      align-items: center;
-      font-size: 16px;
-      .null {
-        flex-basis: 5%;
-      }
-      .star {
-        flex-basis: 3%;
-      }
-      .title {
-        color: #050505;
-        font-weight: 500;
-        font-size: 16px;
-        flex-basis: 35%;
-        text-align: right;
-        line-height: 30px;
-      }
-      .core {
-        color: #6c6a6a;
-        flex-basis: 55%;
-      }
-    }
-  }
-  .mid-box {
-    display: flex;
-    justify-content: center;
-    .mid-box-left {
-      flex-basis: 15%;
-    }
-    .mid-box-right {
-      flex: 1;
-    }
-  }
-}
-.model-list-title {
-  margin-top: 5px;
-  margin-left: 7%;
-  font-size: 18px;
-  color: #000;
-}
 </style>

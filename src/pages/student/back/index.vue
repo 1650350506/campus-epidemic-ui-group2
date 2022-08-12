@@ -2,7 +2,7 @@
   <div class="page-container" v-if="submitSuccess">
     <div class="top-box">
       <div class="top-title">
-        <i class="iconfont icon-close" style="font-weight: bold" @click="backHome"></i>
+        <em class="iconfont icon-close" style="font-weight: bold" @click="backHome"></em>
         <h2>入校信息填写</h2>
       </div>
       <img class="img-style" src="../../../assets/images/top.png" alt="">
@@ -26,8 +26,14 @@
       <div class="whereabouts">
         <div class="form-goto">
           <span>获取定位</span>
-          <baidu-map :center="center" :zoom="zoom" @ready="handler" style="height:30vh;width: 86vw;margin: 1rem auto 0">
-            <bm-geolocation anchor="BMAP_ANCHOR_BOTTOM_RIGHT" :showAddressBar="true" :autoLocation="true" @locationSuccess="getLocation" @locationError="getLocationError"></bm-geolocation>
+          <baidu-map :center="center" :zoom="zoom" style="height:30vh;width: 86vw;margin: 1rem auto 0">
+            <bm-geolocation anchor="BMAP_ANCHOR_BOTTOM_RIGHT"
+                            :showAddressBar="true"
+                            :autoLocation="true"
+                            @rightclick="getLocation"
+                            @locationSuccess="getLocation"
+                            @locationError="getLocationError"
+            ></bm-geolocation>
           </baidu-map>
         </div>
         <div class="form-address">
@@ -75,9 +81,9 @@
   <div v-else class="page-success">
     <div class="success-box">
       <div class="top-title">
-        <i class="iconfont icon-arrow-left-bold" @click="backPrev"></i>
+        <em class="iconfont icon-arrow-left-bold" @click="backPrev"></em>
         <h2>返校信息填写</h2>
-        <i class="iconfont icon-close" style="font-weight: bold" @click="backHome"></i>
+        <em class="iconfont icon-close" style="font-weight: bold" @click="backHome"></em>
       </div>
       <img class="img-submit" src="../../../assets/images/subSuccess.png" alt="">
       <span class="submit-title">提交成功</span>
@@ -85,7 +91,7 @@
   </div>
 </template>
 <script>
-import { SubStuBack } from '@api/stu/stu'
+import { SubStuBack } from '@api/student/stu'
 import { GetCityList, GetProvinceList } from '@api/administorators/riskArea'
 import md5 from 'js-md5'
 import { mapActions } from 'vuex'
@@ -269,13 +275,13 @@ export default {
       height: 6vh;
       width: 100%;
       display: flex;
-      i {
+      align-items: center;
+      em {
         margin-left: 2vw;
         font-size: 2em;
         color: #ffffff;
       }
       h2 {
-        font-size: 1.3em;
         color: #F7F7F7;
         position: absolute;
         margin: 0;

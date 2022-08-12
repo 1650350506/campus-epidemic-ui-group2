@@ -188,7 +188,7 @@ export default {
                     placement: 'top-start',
                     confirm: true,
                     transfer: true,
-                    title: '确定将该防疫人员数据进行删除吗？？'
+                    title: '确定将该防疫人员数据进行删除吗？'
                   },
                   on: {
                     'on-ok': () => {
@@ -254,9 +254,9 @@ export default {
       batchList: [],
       msgList: [],
       selectedIds: new Set(),
-      selectedData: [], // 选中的数组
-      arr1: [], // 原本
-      arr2: [] // 去重后的，
+      selectedData: [],
+      arr1: [],
+      arr2: []
     }
   },
   computed: {
@@ -345,8 +345,7 @@ export default {
         this.queryFacultyInfoByKey()
       }
     },
-    //  关键字查询工作人员信息
-    queryFacultyInfoByKey() {
+    queryFacultyInfoByKey() { //  关键字查询工作人员信息
       this.data = []
       this.queryInfo.pageNum = 1
       this.queryInfo.pageSize = 10
@@ -354,6 +353,7 @@ export default {
     },
     onSelectAll(selection) {
       this.arr1 = [...selection, ...this.selectedData]
+      // eslint-disable-next-line no-unused-vars
       for (const val of this.arr1) {
         if (!this.arr2.some(item => item.code === val.code)) {
           this.arr2.push(val)
@@ -364,18 +364,14 @@ export default {
       }
       this.batchNum = this.arr2.length
     },
-
-    // 取消选中某一项时触发
-    onSelectCancel(selection, row) {
+    onSelectCancel(row) { // 取消选中某一项时触发
       const result = this.arr2.findIndex((ele) => {
         return ele.code === row.code
       })
       this.arr2.splice(result, 1)
       this.batchNum = this.arr2.length
     },
-
-    // 点击取消全选时触发
-    onSelectAllCancel() {
+    onSelectAllCancel() {  // 点击取消全选时触发
       this.arr2 = this.arr2.filter(item => {
         return this.data.every(item2 => {
           return item.code !== item2.code
@@ -414,7 +410,7 @@ export default {
   justify-content: space-between;
 
 }
-::v-deep .ivu-input {
+::v-deep (.ivu-input) {
   font-size: 16px;
   color: #000;
 }

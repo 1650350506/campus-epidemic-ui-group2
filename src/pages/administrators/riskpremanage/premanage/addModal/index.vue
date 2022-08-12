@@ -1,13 +1,9 @@
 <template>
   <div>
-    <Modal
-      v-model="addSwitch"
-      @on-cancel="close"
-      width="720"
-      :styles="{top: '20px'}"
-    >
+    <Modal v-model="addSwitch" @on-cancel="close" width="720" :styles="{top: '20px'}">
       <p slot="header" style="text-align: left">添加隔离记录</p>
       <div class="model-box">
+        <div class="model-list-title">基础信息</div>
         <div class="top-box">
           <div class="modal-item" v-for="(item, index) in addList1" :key="index" v-show="item.title !== '关联防疫人员'">
             <div class="null"></div><div class="title">{{item.title}}:</div><div class="star"></div>
@@ -96,7 +92,7 @@ export default {
           key: 'temperature',
           align: 'center',
           render: (h, params) => {
-            let temp = params.row.temperature
+            let temp
             let colors
             if (params.row.temperature === 36) {
               temp = '正常'
@@ -153,9 +149,6 @@ export default {
                   on: {
                     'on-ok': () => {
                       this.deleteIsolateRecordById(params.row.id, params.row.code)
-                    },
-                    // eslint-disable-next-line no-empty-function
-                    'on-cancel': () => {
                     }
                   }
                 }, [
@@ -191,6 +184,19 @@ export default {
       }
     }
   },
+  watch: {
+    addSwitch: function (newVal) {
+      if (newVal === false) {
+        this.addInfo = {
+          code: '',
+          nucleicAcidKey: null,
+          nucleicAcidTime: '',
+          protector: '',
+          temperature: null
+        }
+      }
+    }
+  },
   created() {
     // this.associationList.push(this.addList1.associates.value)
     this.getEpidemicPreventionPersonnel()
@@ -204,7 +210,6 @@ export default {
       const hours = date.getHours() < 10 ? `0${date.getHours()}` : date.getHours()
       const minutes = date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes()
       const seconds = date.getSeconds() < 10 ? `0${date.getSeconds()}` : date.getSeconds()
-      // 拼接
       return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
     },
     getStuCode() {
@@ -213,8 +218,7 @@ export default {
     close() {
       this.$emit('switchAdd', false)
     },
-    // 获取全部的关联人员
-    getEpidemicPreventionPersonnel() {
+    getEpidemicPreventionPersonnel() { // 获取全部的关联人员
       GetEpidemicPreventionPersonnel().then(res => {
         res.field.forEach(item => {
           this.associationList.push({
@@ -224,8 +228,7 @@ export default {
         })
       })
     },
-    //  新增隔离记录
-    addRecord() {
+    addRecord() { //  新增隔离记录
       this.getStuCode()
       if (this.addInfo.nucleicAcidKey !== null && this.addInfo.temperature !== null) {
         this.addInfo.nucleicAcidTime = this.dateFormat(this.addInfo.nucleicAcidTime)
@@ -252,66 +255,4 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.model-box {
-  display: flex;
-  flex-direction: column;
-  .top-box {
-    flex-basis: 40%;
-    display: flex;
-    flex-wrap: wrap;
-    .modal-item {
-      width: 50%;
-      height: 40px;
-      display: flex;
-      align-items: center;
-      font-size: 16px;
-      .null {
-        flex-basis: 5%;
-      }
-      .star {
-        flex-basis: 3%;
-      }
-      .title {
-        color: #050505;
-        font-weight: 500;
-        font-size: 18px;
-        flex-basis: 35%;
-        text-align: right;
-        line-height: 30px;
-      }
-      .core {
-        color: #6c6a6a;
-        flex-basis: 55%;
-      }
-    }
-  }
-  .mid-box {
-    margin: 1em 0 0;
-    display: flex;
-    //background: #cccdd7;
-    .mid-box-left {
-      margin-top: 1em;
-      color: #050505;
-      font-weight: 500;
-      font-size: 18px;
-      text-align: right;
-      flex-basis: 20%;
-    }
-    .mid-box-right {
-      margin-top: 5%;
-      flex-basis: 72%;
-      .add-condition {
-        margin-top: 1em;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
-        align-items: center;
-        height: 80px;
-      }
-    }
-  }
-  .footer-box {
-    padding: 0 2em;
-  }
-}
 </style>

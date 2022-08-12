@@ -2,14 +2,14 @@
   <div class="page-container">
     <div class="top-box">
       <div class="top-title">
-        <i class="ivu-icon ivu-icon-ios-close" @click="backHome"></i>
+        <em class="ivu-icon ivu-icon-ios-close" @click="backHome"></em>
         <h2>通行记录填写</h2>
       </div>
       <div class="mid-box">
         <Form ref="formInline" :rules="ruleValidate" :model="formItem">
           <div class="mid-top">
-            <div ref="upWork" style="border-radius: 20px 0% 0% 20px; background: #346DF4; color: #F7F7F7" class="btn-style" @click="changeType(0)">上班</div>
-            <div ref="downWork" style="border-radius: 0% 20px 20px 0%" class="btn-style" @click="changeType(1)">下班</div>
+            <div ref="upWork" style="border-radius: 20px 0 0 20px; background: #346DF4; color: #F7F7F7" class="btn-style" @click="changeType(0)">上班</div>
+            <div ref="downWork" style="border-radius: 0 20px 20px 0" class="btn-style" @click="changeType(1)">下班</div>
           </div>
           <div class="basic">
             <div class="form-title">基本信息</div>
@@ -28,9 +28,9 @@
             <div class="form-title">健康码颜色</div>
             <div class="radio-list">
               <Radio-group v-model="colors">
-                <Radio label="绿码"></Radio>
-                <Radio label="黄码"></Radio>
-                <Radio label="红码"></Radio>
+                <Radio label="0">绿码</Radio>
+                <Radio label="1">黄码</Radio>
+                <Radio label="2">红码</Radio>
               </Radio-group>
             </div>
           </div>
@@ -43,7 +43,7 @@
             </div>
           </div>
           <div class="result-box" v-show="submit">
-            <div><i class="ivu-icon ivu-icon-ios-checkmark"></i>{{endTime}}已打卡</div>
+            <div><em class="ivu-icon ivu-icon-ios-checkmark"></em>{{endTime}}已打卡</div>
           </div>
         </Form>
       </div>
@@ -122,13 +122,6 @@ export default {
     punch() {
       this.$refs.formInline.validate((valid) => {
         if (valid) {
-          if (this.colors === '绿码') {
-            this.colors = 0
-          } else if (this.colors === '黄码') {
-            this.colors = 1
-          } else if (this.colors === '红码') {
-            this.colors = 2
-          }
           if (this.workType === '上班') {
             if (this.colors !== '') {
               const list = {
@@ -167,6 +160,7 @@ export default {
         upWork.style.color = '#F7F7F7'
         downWork.style.background = '#F7F7F7'
         downWork.style.color = '#161616'
+        this.submit = false
       } else if (i === 1) {
         this.workType = '下班'
         this.colorShow = false
@@ -174,6 +168,7 @@ export default {
         downWork.style.color = '#F7F7F7'
         upWork.style.background = '#F7F7F7'
         upWork.style.color = '#161616'
+        this.submit = false
       }
     },
     backHome() {
@@ -198,7 +193,7 @@ export default {
       width: 100%;
       display: flex;
       align-items: center;
-      i {
+      em {
         font-weight: bold;
         font-size: 3em;
         color: #ffffff;
@@ -300,7 +295,7 @@ export default {
       div {
         height: 100%;
         font-size: 1.2em;
-        i {
+        em {
           font-size: 1.2em;
           background: #19be6b;
           border-radius: 50%;

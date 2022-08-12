@@ -1,7 +1,6 @@
 import request from '@/plugins/request'
 import moduleName from '@/config/moduleName'
-export function GetIsolationInfoList(data) {
-  // 查询全部隔离或者未隔离人员全部信息
+export function GetIsolationInfoList(data) {  // 查询全部隔离或者未隔离人员全部信息
   return request({
     url: `${moduleName.doraemon_campus}/areaPersonnel/findIsolateperson`,
     method: 'get',
@@ -11,8 +10,8 @@ export function GetIsolationInfoList(data) {
     }
   })
 }
-// 通过code查询全部隔离或者未隔离人员全部信息
-export function GetIsolationInfoListByCode(data) {
+
+export function GetIsolationInfoListByCode(data) { // 通过code查询全部隔离或者未隔离人员全部信息
   return request({
     url: `${moduleName.doraemon_campus}/areaPersonnel/findIsolaterecord`,
     method: 'get',
@@ -23,7 +22,7 @@ export function GetIsolationInfoListByCode(data) {
   })
 }
 
-export function DeleteIsolationInfo(data) {
+export function DeleteIsolationInfo(data) { // 解除隔离
   return request({
     url: `${moduleName.doraemon_campus}/riskPersonnel/delete`,
     method: 'delete',
@@ -34,9 +33,7 @@ export function DeleteIsolationInfo(data) {
   })
 }
 
-// 修改隔离状态
-
-export function EditIsolationState(data) {
+export function EditIsolationState(data) { // 修改隔离状态
   return request({
     url: `${moduleName.doraemon_campus}/riskPersonnel/notice`,
     method: 'put',
@@ -45,16 +42,15 @@ export function EditIsolationState(data) {
   })
 }
 
-// 获取全部防疫人员姓名
-export function GetEpidemicPreventionPersonnel() {
+export function GetEpidemicPreventionPersonnel() { // 获取全部防疫人员姓名
   return request({
     url: `${moduleName.doraemon_campus}/areaPersonnel/getEpidemicPreventionPersonnel`,
     method: 'get',
     urlType: 'jixian'
   })
 }
-// 添加隔离记录
-export function AddIsolationRecord(data) {
+
+export function AddIsolationRecord(data) { // 添加隔离记录
   console.log('data', data)
   return request({
     url: `${moduleName.doraemon_campus}/riskPersonnel/addIsolaterecord`,
@@ -64,40 +60,39 @@ export function AddIsolationRecord(data) {
   })
 }
 
-// 获得卡片的数据（治疗中）
-export function GetTreatedTotal() {
+export function GetTreatedTotal() { // 获得卡片的数据（治疗中）
   return request({
     url: `${moduleName.doraemon_campus}/areaPersonnel/selectPeopleTreatedNumber`,
     method: 'get',
     urlType: 'jixian'
   })
 }
-// 获得卡片的数据（待隔离）
-export function GetToBeTotal() {
+
+export function GetToBeTotal() { // 获得卡片的数据（待隔离）
   return request({
     url: `${moduleName.doraemon_campus}/areaPersonnel/toBeIsolateperson`,
     method: 'get',
     urlType: 'jixian'
   })
 }
-// 获得卡片的数据（已隔离）
-export function GetQuarantinedTotal() {
+
+export function GetQuarantinedTotal() { // 获得卡片的数据（已隔离）
   return request({
     url: `${moduleName.doraemon_campus}/areaPersonnel/QuarantinedIsolateperson`,
     method: 'get',
     urlType: 'jixian'
   })
 }
-// 获得卡片隔离结束数据
-export function GetIsolatedTotal() {
+
+export function GetIsolatedTotal() { // 获得卡片隔离结束数据
   return request({
     url: `${moduleName.doraemon_campus}/areaPersonnel/selectIsolatedPersonEndNumber`,
     method: 'get',
     urlType: 'jixian'
   })
 }
-// 新增隔离人员
-export function NewIsolatePre(data) {
+
+export function NewIsolatePre(data) { // 新增隔离人员
   return request({
     url: `${moduleName.doraemon_campus}/riskPersonnel/addIsolatePersonnel`,
     method: 'post',
@@ -106,9 +101,7 @@ export function NewIsolatePre(data) {
   })
 }
 
-// 根据学号查询学生基本信息
-
-export function GetStuInfoByCode(data) {
+export function GetStuInfoByCode(data) { // 根据学号查询学生基本信息
   return request({
     url: `${moduleName.doraemon_campus}/areaPersonnel/findStudent`,
     method: 'get',
@@ -119,8 +112,7 @@ export function GetStuInfoByCode(data) {
   })
 }
 
-// 根据id删除一条隔离记录
-export function DeleteRecordById(data) {
+export function DeleteRecordById(data) { // 根据id删除一条隔离记录
   return request({
     url: `${moduleName.doraemon_campus}/riskPersonnel/deleteIsolaterecord`,
     method: 'delete',

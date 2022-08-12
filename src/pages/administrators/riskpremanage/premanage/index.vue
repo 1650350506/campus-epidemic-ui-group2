@@ -6,9 +6,13 @@
     </Card>
     <div class="top-card">
       <Card class="card" v-for="(item, index) in topList" :key="index" ref="cardRef" dis-hover>
-        <div @click="showList(index)">
-          <h1>{{item.name}}</h1>
-          <h1>{{item.num}}</h1>
+        <div @click="showList(index)" class="card-item">
+          <h1 class="name">{{item.name}}</h1>
+          <h1 class="num">{{item.num}}</h1>
+          <img src="../../../../assets/images/epi.png" v-if="index===0" alt="" width="28%">
+          <img src="../../../../assets/images/eip2.png" v-if="index===1" alt="" width="30%" style="top: 8%">
+          <img src="../../../../assets/images/eip3.png" v-if="index===2" alt="" width="28%">
+          <img src="../../../../assets/images/eip4.png" v-if="index===3" alt="" width="30%" style="top: 8%">
         </div>
       </Card>
     </div>
@@ -177,7 +181,7 @@ export default {
           key: 'temperature',
           align: 'left',
           render: (h, params) => {
-            let temp = params.row.temperature
+            let temp
             let colors
             let displayType
             if (params.row.temperature <= 36 && params.row.temperature > 35) {
@@ -240,7 +244,6 @@ export default {
         {
           title: '隔离开始时间',
           key: 'startTime',
-          width: '180',
           align: 'left'
         },
         {
@@ -313,9 +316,6 @@ export default {
                   on: {
                     'on-ok': () => {
                       this.relieveIsolation(params.row.code)
-                    },
-                    // eslint-disable-next-line no-empty-function
-                    'on-cancel': () => {
                     }
                   }
                 }, [
@@ -400,14 +400,22 @@ export default {
     close() {
       this.showDialogVisible = false
     },
+    getCardMsg() {
+      this.getTreatedTotal()
+      this.getTobeTotal()
+      this.getQuarantinedTotal()
+      this.getIsolatedTotalTotal()
+    },
     closeByAdd() {
       this.updateDialogVisible = false
       this.queryInfo.keyword = ''
       this.getIsolationInfoList()
+      this.getCardMsg()
     },
     closeByNew() {
       this.addDialogVisible = false
       this.getIsolationInfoList()
+      this.getCardMsg()
     },
     dateFormat(time) {
       const date = new Date(time)
@@ -446,16 +454,13 @@ export default {
       DeleteIsolationInfo(data).then(() => {
         this.$Message.success('解除隔离成功!')
         this.getIsolationInfoList()
-        this.getTreatedTotal()
-        this.getTobeTotal()
-        this.getQuarantinedTotal()
-        this.getIsolatedTotalTotal()
+        this.getCardMsg()
       })
     },
     getIsolationInfoListByCode(code) { // 获取隔离信息
       const queryInfo = {
         pageNum: '1',
-        pageSize: '10',
+        pageSize: '20',
         code: code
       }
       this.msgData = []
@@ -475,7 +480,7 @@ export default {
     getIsolationServiceInfoList(code) { // 服务记录
       const queryInfo = {
         pageNum: '1',
-        pageSize: '10',
+        pageSize: '20',
         keyword: code,
         state: ''
       }
@@ -556,18 +561,40 @@ export default {
 </script>
 
 <style lang="less" scoped>
+
+.card-item {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  .name {
+    color: #999999;
+    font-size: 1.4rem;
+  }
+  .num {
+    font-size: 2.5rem;
+  }
+  img {
+    position: absolute;
+    right: 4%;
+    top: 12%;
+  }
+}
 .top-card {
   height: 18vh;
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-start;
-
   .card {
     cursor: pointer;
     width: 20%;
     height: 100%;
     margin-left: 6.6%;
     transition: all .5s ease-in;
+    ::v-deep(.ivu-card-body) {
+      height: 100%;
+      padding: 10% 5% 6% 8%;
+    }
     &:nth-of-type(4n+1) {
       margin-left: 0;
     }

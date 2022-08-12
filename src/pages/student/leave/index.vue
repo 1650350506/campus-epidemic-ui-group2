@@ -2,7 +2,7 @@
   <div class="page-container" v-if="submitSuccess">
     <div class="top-box">
       <div class="top-title">
-        <i class="iconfont icon-close" style="font-weight: bold" @click="backHome"></i>
+        <em class="iconfont icon-close" style="font-weight: bold" @click="backHome"></em>
         <h2>出校信息填写</h2>
       </div>
       <img class="img-style" src="../../../assets/images/top.png" alt="">
@@ -31,12 +31,6 @@
                 <Radio label="跨市">跨市</Radio>
               </Radio-group>
             </Form-item>
-            <!--            <Form-item prop="type">-->
-            <!--              <Radio-group v-model="formItem.type" @on-change="changeAddress">-->
-            <!--                <Radio label="本市"></Radio>-->
-            <!--                <Radio label="跨市"></Radio>-->
-            <!--              </Radio-group>-->
-            <!--            </Form-item>-->
           </div>
           <div class="form-msg">
             <div class="form-title">去向信息</div>
@@ -78,9 +72,9 @@
   <div v-else class="page-success">
     <div class="success-box">
       <div class="top-title">
-        <i class="ivu-icon ivu-icon-ios-arrow-back" @click="backPrev"></i>
+        <em class="iconfont icon-arrow-left-bold" @click="backPrev"></em>
         <h2>离校信息填写</h2>
-        <i class="ivu-icon ivu-icon-ios-close" style="font-weight: bold" @click="backHome"></i>
+        <em class="iconfont icon-close" style="font-weight: bold" @click="backHome"></em>
       </div>
       <img class="img-submit" src="../../../assets/images/subSuccess.png" alt="">
       <span class="submit-title">提交成功</span>
@@ -98,7 +92,7 @@ import {
 import md5 from 'js-md5'
 import { mapActions } from 'vuex'
 import iCopyright from '@/components/copyright'
-import { SubStuLeave } from '@/api/stu/stu'
+import { SubStuLeave } from '@/api/student/stu'
 export default {
   name: 'dashboard-console',
   components: { iCopyright },
@@ -155,11 +149,9 @@ export default {
         password
       })
         .then(() => {
-          // 重定向对象不存在则返回顶层路径
           this.getProvinceList()
         })
         .catch(error => {
-          // 异常情况
           this.$log.error(error)
           this.$Message.error(error.message)
         })
@@ -175,11 +167,9 @@ export default {
       this.$refs.formInline.validate((valid) => {
         if (valid) {
           if (this.formItem.type === '本市') {
-            this.formItem.type = 0
-            this.formItem.whereCode = this.townValue[0]
+            [this.formItem.type, this.formItem.whereCode] = [0, this.townValue[0]]
           } else if (this.formItem.type === '跨市') {
-            this.formItem.type = 1
-            this.formItem.whereCode = this.cityValue[0]
+            [this.formItem.type, this.formItem.whereCode] = [1, this.cityValue[0]]
           }
           SubStuLeave(this.formItem).then(() => {
             this.submitSuccess = false
@@ -307,9 +297,9 @@ export default {
       height: 6vh;
       width: 100%;
       display: flex;
-      i {
+      em {
         margin-left: 2vw;
-        font-size: 2em;
+        font-size: 2rem;
         color: #ffffff;
       }
       h2 {

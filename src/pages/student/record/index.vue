@@ -2,7 +2,7 @@
   <div class="page-container" v-if="submitSuccess">
     <div class="top-box">
       <div class="top-title">
-        <i class="iconfont icon-close" style="font-weight: bold" @click="backHome"></i>
+        <em class="iconfont icon-close" style="font-weight: bold" @click="backHome"></em>
         <h2>14天返校行程</h2>
       </div>
       <img class="img-style" src="../../../assets/images/top.png" alt="">
@@ -66,9 +66,9 @@
   <div v-else class="page-success">
     <div class="success-box">
       <div class="top-title">
-        <i class="iconfont icon-arrow-left-bold" @click="backPrev"></i>
+        <em class="iconfont icon-arrow-left-bold" @click="backPrev"></em>
         <h2>行程记录信息</h2>
-        <i class="iconfont icon-close" style="font-weight: bold" @click="backHome"></i>
+        <em class="iconfont icon-close" style="font-weight: bold" @click="backHome"></em>
       </div>
       <img class="img-submit" src="../../../assets/images/subSuccess.png" alt="">
       <span class="submit-title">提交成功</span>
@@ -77,7 +77,7 @@
 </template>
 <script>
 import { GetCityList, GetProvinceList } from '@api/administorators/riskArea'
-import { SubStuRecord } from '@api/stu/stu'
+import { SubStuRecord } from '@api/student/stu'
 import { mapActions } from 'vuex'
 import md5 from 'js-md5'
 import iCopyright from '@/components/copyright'
@@ -149,7 +149,7 @@ export default {
     recordSubmit() {
       this.$refs.formInline.validate((valid) => {
         if (valid) {
-          if (this.travelRecordList > 0) {
+          if (this.travelRecordList.length > 0) {
             this.trackRule = false
             const list = {
               code: this.formItem.code,
@@ -163,10 +163,11 @@ export default {
               this.cityValue = ''
             })
           } else {
+            console.log(this.travelRecordList)
             this.trackRule = true
           }
         } else {
-          this.$Message.error('表单验证失败1!')
+          this.$Message.error('表单验证失败!')
         }
       })
     },
@@ -237,8 +238,9 @@ export default {
       height: 6vh;
       width: 100%;
       display: flex;
-      i {
-        margin-left: 2vw;
+      align-items: center;
+      padding: 0 10px;
+      em {
         font-size: 2em;
         color: #ffffff;
       }
