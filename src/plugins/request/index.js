@@ -81,10 +81,8 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   response => {
     const { url } = response.config
-    console.log(response.data)
     // dataAxios 是 axios 返回数据中的 data
     const dataAxios = response.data
-    console.log(response)
     // 这个状态码是和后端约定的
     const { code } = dataAxios
 

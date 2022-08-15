@@ -2,6 +2,7 @@
  * 格式化全局注册组件名
  * @param {*} name 双驼峰组件名
  */
+
 export const formatComponentName = (name) => {
   const firstIndex = 0
   const deleteCount = 1

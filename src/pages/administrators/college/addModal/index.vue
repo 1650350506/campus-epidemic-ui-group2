@@ -81,7 +81,11 @@
             <div class="null"></div><div class="title"><span>校内职务</span></div><div class="star"></div>
             <div class="core">
               <Form-item prop="schoolPost">
-                <Input placeholder="请输入校内职务" v-model="addList1.schoolPost"></Input>
+                <Select v-model="addList1.schoolPost" style="width:190px">
+                  <Option value="学院院长" label="学院院长"></Option>
+                  <Option value="辅导员" label="辅导员"></Option>
+                  <Option value="教师" label="教师"></Option>
+                </Select>
               </Form-item>
             </div>
           </div>
@@ -127,7 +131,7 @@ export default {
         ],
         code: [
           { required: true, message: '职工工号不能为空', trigger: 'blur' },
-          { type: 'string', min: 6, max: 7, message: '工号位数6数字且前两位与院系对应', trigger: 'blur' }
+          { type: 'number', min: 6, max: 7, message: '工号位数6数字且前两位与院系对应', trigger: 'blur' }
         ],
         name: [
           { required: true, message: '姓名不能为空', trigger: 'blur' }
@@ -148,7 +152,7 @@ export default {
           { required: true, message: '请选择二级学院', trigger: 'change' }
         ],
         schoolPost: [
-          { required: true, message: '校内职务不能为空', trigger: 'blur' }
+          { required: true, message: '校内职务不能为空', trigger: 'change' }
         ],
         systemPost: [
           { required: true, message: '请选择系统职务', trigger: 'change' }
@@ -216,6 +220,7 @@ export default {
         ids: [id]
       }
       ActiveUserInfo(list).then(() => {
+        this.$Message.success('提交成功！')
         this.close()
         this.$refs.formValidate.resetFields()
       })

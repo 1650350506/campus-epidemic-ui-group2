@@ -16,15 +16,16 @@
     </div>
     <div class="footer-box">
       <div class="footer-item">
-        <div class="title">隔离地点:</div>
+        <span class="title"><span>隔离状态</span></span>
         <div class="null"></div>
-        <Select v-model="addInfo.isolationLocation" style="width:200px">
-          <Option  value="医务室">医务室</Option>
-          <Option  value="校园疫情防控中心">校园疫情防控中心</Option>
+        <Select v-model="addInfo.state" style="width:200px" @on-change="hasRiskState">
+          <Option  value="0">待隔离</Option>
+          <Option  value="1">隔离中</Option>
+          <Option  value="3">治疗中</Option>
         </Select>
       </div>
       <div class="footer-item">
-        <div class="title">隔离原因:</div>
+        <span class="title"><span>隔离原因</span></span>
         <div class="null"></div>
         <Select v-model="addInfo.isolationReason" style="width:200px">
           <Option  value="自测体温异常">自测体温异常</Option>
@@ -34,16 +35,15 @@
         </Select>
       </div>
       <div class="footer-item">
-        <div class="title">隔离状态:</div>
+        <span class="title"><span>隔离地点</span></span>
         <div class="null"></div>
-        <Select v-model="addInfo.state" style="width:200px" @on-change="hasRiskState">
-          <Option  value="0">待隔离</Option>
-          <Option  value="1">隔离中</Option>
-          <Option  value="3">治疗中</Option>
+        <Select v-model="addInfo.isolationLocation" style="width:200px">
+          <Option  value="医务室">医务室</Option>
+          <Option  value="校园疫情防控中心">校园疫情防控中心</Option>
         </Select>
       </div>
       <div class="footer-item" v-if="showTimeInput">
-        <div class="title">隔离开始时间:</div>
+        <span class="title"><span>隔离开始时间</span></span>
         <div class="null"></div>
         <Date-picker type="datetime" placeholder="选择日期和时间" v-model="addInfo.startTime" style="width: 200px"></Date-picker>
       </div>
@@ -57,6 +57,7 @@
 
 <script>
 import { GetStuInfoByCode, NewIsolatePre } from '@/api/personnel/riskpremanage'
+import { dateFormat } from '@/utils/date'
 
 export default {
   name: 'index',
@@ -95,54 +96,21 @@ export default {
       showTimeInput: true
     }
   },
-  watch: {
-    newSwitch: function (newVal) {
-      if (newVal === false) {
-        this.queryValue = ''
-        this.addInfo = {
-          code: '',
-          address: '',
-          isolationLocation: '',
-          isolationReason: '',
-          state: '',
-          startTime: ''
-        }
-      }
-    }
-  },
   methods: {
-    dateFormat(time) {
-      const date = new Date(time)
-      const year = date.getFullYear()
-      const month = date.getMonth() + 1 < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1
-      const day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate()
-      const hours = date.getHours() < 10 ? `0${date.getHours()}` : date.getHours()
-      const minutes = date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes()
-      const seconds = date.getSeconds() < 10 ? `0${date.getSeconds()}` : date.getSeconds()
-      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
-    },
     hasRiskState() {
-      console.log(this.addInfo.state)
-      if (this.addInfo.state === '0') {
-        this.showTimeInput = false
-      } else {
-        this.showTimeInput = true
-      }
-      console.log(this.showTimeInput)
+      this.showTimeInput = this.addInfo.state !== '0'
     },
     close() {
       this.$emit('addClose', false)
+      this.queryValue = ''
+      this.checkList1.code.value = ''
       // eslint-disable-next-line guard-for-in
     },
     getStuInfoListByCode() {
       if (this.queryValue !== '') {
         GetStuInfoByCode({ code: this.queryValue }).then(res => {
           this.checkList1.code.value = res.field.code
-          if (res.field.sex === 0) {
-            this.checkList1.sex.value = '男'
-          } else {
-            this.checkList1.sex.value = '女'
-          }
+          this.checkList1.sex.value = res.field.sex === 0 ? '男' : '女'
           this.checkList1.deptName.value = res.field.deptName
           this.checkList1.name.value = res.field.name
           this.checkList1.className.value = res.field.className
@@ -178,17 +146,19 @@ export default {
             this.addInfo[value] = ''
           }
           this.queryValue = ''
+          this.checkList1.code.value = ''
         })
         this.close()
       } else {
-        this.addInfo.startTime = this.dateFormat(this.addInfo.startTime)
+        this.addInfo.startTime = dateFormat(this.addInfo.startTime, 0)
         NewIsolatePre(this.addInfo).then(() => {
-          this.$Message.success('新增隔离人员成功！')
+          this.$Message.success('新增待隔离人员成功！')
           // eslint-disable-next-line guard-for-in,no-unused-vars
-          for (const value in this.addInfo) {
-            this.addInfo[value] = ''
+          for (const key in this.addInfo) {
+            this.addInfo[key] = ''
           }
           this.queryValue = ''
+          this.checkList1.code.value = ''
         })
         this.close()
       }
@@ -228,10 +198,23 @@ export default {
       flex-basis: 4%;
     }
     .title {
+      position: relative;
       color: #000;
       font-size: 16px;
-      flex-basis: 30%;
+      flex-basis: 31%;
       text-align: right;
+      span {
+        position: relative;
+        &::after {
+          content: "*";
+          position: absolute;
+          font-size: 1.2rem;
+          color: red;
+          left: -6%;
+          top: 64%;
+          transform: translate(-50%, -50%);
+        }
+      }
     }
   }
 }

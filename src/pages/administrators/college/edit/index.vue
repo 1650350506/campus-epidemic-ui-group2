@@ -10,7 +10,14 @@
       <div class="top-box">
         <div class="modal-item" v-for="(item, index) in editList1" :key="index">
           <div class="null"></div><div class="title">{{item.title}}:</div><div class="star"></div>
-          <div class="core">  <Input v-if="item.isEdit" v-model="item.value"></Input> <span v-else>{{item.value}}</span></div>
+          <div class="core">  <Input v-if="item.isEdit&&item.title !== '校内职务'" v-model="item.value"></Input>
+            <Select v-model="item.value" style="width:190px" v-else-if="item.isEdit&&item.title === '校内职务'">
+              <Option value="学院院长" label="学院院长"></Option>
+              <Option value="辅导员" label="辅导员"></Option>
+              <Option value="教师" label="教师"></Option>
+            </Select>
+            <span v-else>{{item.value}}</span>
+          </div>
         </div>
       </div>
     </div>

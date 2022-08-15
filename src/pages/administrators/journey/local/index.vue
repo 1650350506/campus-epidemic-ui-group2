@@ -172,18 +172,13 @@ export default {
           sortable: true,
           align: 'left',
           render: (h, params) => {
-            let types
-            let typeName
-            if (params.row.riskLevel === 0) {
-              types = 'success'
-              typeName = '低风险'
-            } else if (params.row.riskLevel === 1) {
-              types = 'warning'
-              typeName = '中风险'
-            } else if (params.row.riskLevel === 2) {
-              types = 'error'
-              typeName = '高风险'
+            const actions = {
+              0: ['success', '低风险'],
+              1: ['warning', '中风险'],
+              2: ['error', '高风险']
             }
+            const action = actions[params.row.riskLevel]
+            const [types, typeName] = action
             return h('div', [
               h('Button', {
                 props: {
@@ -293,6 +288,7 @@ export default {
       this.queryInfo.risk = ''
       this.queryInfo.pageNum = 1
       this.queryInfo.pageSize = 10
+      this.batchNum = 0
       this.getLocalStuList()
     },
     batchSubmit() {
@@ -326,6 +322,7 @@ export default {
       this.queryInfo.pageNum = 1
       this.queryInfo.pageSize = 10
       this.getLocalStuList()
+      this.batchNum = 0
     },
     queryEnter(e) {
       const keyCode = window.event ? e.keyCode : e.which
@@ -354,9 +351,6 @@ export default {
           this.arr2.push(val)
         }
       }
-      if (this.arr2.length >= 30) {
-        this.enableModal = true
-      }
       this.batchNum = this.arr2.length
     },
     onSelectCancel(row) { // 取消选中某一项时触发
@@ -372,7 +366,6 @@ export default {
           return item.code !== item2.code
         })
       })
-      console.log(this.arr2)
       this.batchNum = this.arr2.length
     },
     editPageNum(e) { // 选择页码
@@ -398,11 +391,7 @@ export default {
         this.checkList1.code.value = res.code
         this.checkList1.name.value = res.name
         this.checkList1.sex.value = res.sex
-        if (res.sex === 0) {
-          this.checkList1.sex.value = '男'
-        } else if (res.sex === 1) {
-          this.checkList1.sex.value = '女'
-        }
+        this.checkList1.sex.value = res.sex === 0 ? '男' : '女'
         this.checkList1.phone.value = res.phone
         this.checkList1.idCard.value = res.idCard
         this.checkList1.secondCollage.value = res.secondCollage
@@ -508,13 +497,10 @@ export default {
   flex-basis: 100%;
   height: 100px;
   display: flex;
-  //align-items: center;
   .null {
     flex-basis: 2%;
   }
   .star {
-    //color: #ea2969;
-    //flex-basis: 5%;
     text-align: right;
     font-size: 18px;
     padding-right: 5px;

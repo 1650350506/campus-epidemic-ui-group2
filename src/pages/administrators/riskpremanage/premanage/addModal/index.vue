@@ -6,36 +6,45 @@
         <div class="model-list-title">基础信息</div>
         <div class="top-box">
           <div class="modal-item" v-for="(item, index) in addList1" :key="index" v-show="item.title !== '关联防疫人员'">
-            <div class="null"></div><div class="title">{{item.title}}:</div><div class="star"></div>
+            <div class="null"></div><div class="title">{{item.title}}</div><div class="star"></div>
             <div class="core"><span>{{item.value}}</span></div>
           </div>
         </div>
         <div class="mid-box">
-          <div class="mid-box-left">监测信息:</div>
-          <div style="flex-basis: 2%"></div>
+          <div class="model-list-title">监测信息</div>
           <div class="mid-box-right">
             <div class="add-condition">
-              <Date-picker type="datetime" v-model="addInfo.nucleicAcidTime" placeholder="选择日期和时间" style="width: 200px"></Date-picker>
-              <div>关联防疫人员:
-                <Select  v-model="addInfo.protector" style="width:90px">
+              <div class="modal-item">
+                <div class="null"></div><div class="title"><span>监测时间</span></div><div class="star"></div>
+                <div class="core"><Date-picker type="datetime" v-model="addInfo.nucleicAcidTime" placeholder="选择日期" class="times"></Date-picker></div>
+              </div>
+              <div class="modal-item">
+                <div class="null"></div><div class="title"><span>关联防疫人员</span></div><div class="star"></div>
+                <div class="core"> <Select  v-model="addInfo.protector">
                   <Option v-for="(item, index) in associationList" :value="item.deptCode" :key="index">{{ item.name }}</Option>
                 </Select>
+                </div>
               </div>
-              <div>核酸结果：
-                <Radio-group v-model="addInfo.nucleicAcidKey">
-                  <Radio label="0">阴性</Radio>
-                  <Radio label="1">阳性</Radio>
-                </Radio-group>
+              <div class="modal-item">
+                <div class="null"></div><div class="title"><span>核酸结果</span></div><div class="star"></div>
+                <div class="core">
+                  <Radio-group v-model="addInfo.nucleicAcidKey" style="display: flex;justify-content: space-evenly">
+                    <Radio label="0">阴性</Radio>
+                    <Radio label="1">阳性</Radio>
+                  </Radio-group>
+                </div>
               </div>
-              <div>
-                测温结果：
-                <Radio-group v-model="addInfo.temperature">
-                  <Radio label="36">正常</Radio>
-                  <Radio label="38">异常</Radio>
-                </Radio-group>
+              <div class="modal-item">
+                <div class="null"></div><div class="title"><span>测温结果</span></div><div class="star"></div>
+                <div class="core">
+                  <Radio-group v-model="addInfo.temperature" style="display: flex;justify-content: space-evenly">
+                    <Radio label="36">正常</Radio>
+                    <Radio label="38">异常</Radio>
+                  </Radio-group>
+                </div>
               </div>
             </div>
-            <div style="display: flex; justify-content: end">
+            <div style="display: flex; justify-content: end;margin-right: 4%">
               <Button type="primary" @click="addRecord">添加</Button>
             </div>
           </div>
@@ -56,6 +65,7 @@ import {
   AddIsolationRecord, DeleteRecordById,
   GetEpidemicPreventionPersonnel
 } from '@api/personnel/riskpremanage'
+import { dateFormat } from '@/utils/date'
 
 export default {
   name: 'AddContent',
@@ -76,14 +86,16 @@ export default {
           key: 'nucleicAcidKey',
           align: 'center',
           render: (h, params) => {
-            let key
-            if (params.row.nucleicAcidKey === 1) {
-              key = '阳性'
-            } else if (params.row.nucleicAcidKey === 0) {
-              key = '阴性'
-            } else {
-              key = '------'
-            }
+            // let key
+            // if (params.row.nucleicAcidKey === 1) {
+            //   key = '阳性'
+            // } else if (params.row.nucleicAcidKey === 0) {
+            //   key = '阴性'
+            // } else {
+            //   key = '------'
+            // }
+            const keyArray = ['阴性', '阳性']
+            const key = keyArray[params.row.nucleicAcidKey] || '------'
             return h('span', key)
           }
         },
@@ -94,15 +106,18 @@ export default {
           render: (h, params) => {
             let temp
             let colors
-            if (params.row.temperature === 36) {
-              temp = '正常'
-              colors = '#0f7419'
-            } else if (params.row.temperature === 38) {
-              temp = '异常'
-              colors = '#d71313'
-            } else {
-              temp = '------'
-              colors = 'transparent'
+            switch (params.row.temperature) {
+              case 36:
+                temp = '正常'
+                colors = '#0f7419'
+                break
+              case 38:
+                temp = '异常'
+                colors = '#d71313'
+                break
+              default:
+                temp = '------'
+                colors = 'transparent'
             }
             return h('div',
               {
@@ -198,7 +213,6 @@ export default {
     }
   },
   created() {
-    // this.associationList.push(this.addList1.associates.value)
     this.getEpidemicPreventionPersonnel()
   },
   methods: {
@@ -231,7 +245,7 @@ export default {
     addRecord() { //  新增隔离记录
       this.getStuCode()
       if (this.addInfo.nucleicAcidKey !== null && this.addInfo.temperature !== null) {
-        this.addInfo.nucleicAcidTime = this.dateFormat(this.addInfo.nucleicAcidTime)
+        this.addInfo.nucleicAcidTime = dateFormat(this.addInfo.nucleicAcidTime, 0)
         AddIsolationRecord(this.addInfo).then(() => {
           this.$Message.success('添加隔离记录成功')
           this.$emit('update', this.addInfo.code)
@@ -255,4 +269,110 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.model-box {
+  display: flex;
+  flex-direction: column;
+  .top-box {
+    flex-basis: 40%;
+    display: flex;
+    flex-wrap: wrap;
+    .modal-item {
+      width: 50%;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      font-size: 16px;
+      .null {
+        flex-basis: 5%;
+      }
+      .star {
+        flex-basis: 3%;
+      }
+      .title {
+        color: #050505;
+        font-weight: 500;
+        font-size: 16px;
+        flex-basis: 35%;
+        text-align: right;
+        line-height: 30px;
+      }
+      .core {
+        color: #6c6a6a;
+        flex-basis: 55%;
+      }
+    }
+  }
+  .mid-box {
+    margin: 1em 0 0;
+    display: flex;
+    flex-direction: column;
+    .mid-box-right {
+      margin-top: 0%;
+      flex-basis: 72%;
+      .add-condition {
+        color: #000;
+        margin-top: 1em;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        height: 80px;
+        .modal-item {
+          width: 50%;
+          height: 40px;
+          display: flex;
+          align-items: center;
+          font-size: 16px;
+          .null {
+            flex-basis: 5%;
+          }
+          .star {
+            flex-basis: 3%;
+          }
+          .title {
+            color: #050505;
+            font-weight: 500;
+            font-size: 16px;
+            flex-basis: 35%;
+            text-align: right;
+            line-height: 30px;
+            span {
+              position: relative;
+              &::after {
+                content: "*";
+                position: absolute;
+                font-size: 1.2rem;
+                color: red;
+                left: -6%;
+                top: 64%;
+                transform: translate(-50%, -50%);
+              }
+            }
+          }
+          .core {
+            color: #6c6a6a;
+            flex-basis: 47%;
+          }
+        }
+      }
+    }
+  }
+  .footer-box {
+    padding: 0 2em;
+  }
+}
+.mid-box-left {
+  margin-top: 1em;
+  color: #050505;
+  font-weight: 500;
+  font-size: 18px;
+  text-align: center;
+  flex-basis: 20%;
+}
+.model-list-title {
+  margin-top: 5px;
+  margin-left: 4%;
+  font-size: 18px;
+  color: #000;
+}
 </style>

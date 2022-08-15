@@ -199,9 +199,6 @@ export default {
           this.arr2.push(val)
         }
       }
-      if (this.arr2.length >= 30) {
-        this.enableModal = true
-      }
       this.batchSum = this.arr2.length
     },
     onSelectCancel(row) { // 取消选中某一项时触发
@@ -213,7 +210,7 @@ export default {
     },
     onSelectAllCancel() {  // 点击取消全选时触发
       this.arr2 = this.arr2.filter(item => {
-        return this.data.every(item2 => {
+        return this.data2.every(item2 => {
           return item.code !== item2.code
         })
       })
@@ -246,7 +243,6 @@ export default {
       }
       UpdateRiskAreaByCode(RiskInfo).then(() => {
         this.$Message.success('修改风险等级成功!')
-        this.getRiskInfoListByProvince()
       })
     },
     getProvinceList() {
@@ -264,15 +260,19 @@ export default {
       })
     },
     reset() {
+      this.batchSum = 0
       this.provinceValue = ''
       this.cityValue = ''
       this.countyValue = ''
       this.streetValue = ''
+      this.arr1 = []
+      this.arr2 = []
+      this.queryInfo.pageNum = 1
+      this.queryInfo.pageSize = 10
+      this.queryInfo.value = ''
       this.getRiskInfoListByProvince()
     },
     loadData(value, selectedData) {
-      console.log(value[0])
-      console.log(selectedData[0].level)
       if (selectedData[0].level === 1) {
         this.getCityListByValue(value[0])
         this.queryInfo.pageNum = 1

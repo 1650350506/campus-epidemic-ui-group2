@@ -50,23 +50,15 @@ export default {
           align: 'center',
           width: '170',
           render: (h, params) => {
-            let types = ''
-            let typeName = ''
-            console.log('查看')
-            console.log(params.row)
-            if (params.row.color === 0) {
-              types = 'success'
-              typeName = '绿码'
-            } else if (params.row.color === 1) {
-              types = 'warning'
-              typeName = '黄码'
-            } else if (params.row.color === 2) {
-              types = 'error'
-              typeName = '红码'
-            } else {
-              types = 'text'
-              typeName = '------'
+            const actions = {
+              0: ['success', '绿码'],
+              1: ['warning', '黄码'],
+              2: ['error', '红码'],
+              default: ['text', '------']
             }
+            const action = actions[params.row.color] || actions['default']
+            const types = action[0]
+            const typeName = action[1]
             return h('div', [
               h('Button', {
                 props: {

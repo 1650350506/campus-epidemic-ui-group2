@@ -9,13 +9,17 @@
           <h1>登 录</h1>
           <div class="input-group">
             <label class="label">账号</label>
-            <input autocomplete="off" name="username" v-model="loginInfo.username" class="input" type="text">
+            <input autocomplete="off" name="username" v-model="loginInfo.username" class="input"
+                   type="text"
+            >
           </div>
           <div class="input-group">
             <label class="label">账号</label>
-            <input autocomplete="off" name="password" v-model="loginInfo.password"  class="input" type="password">
+            <input autocomplete="off" name="password" v-model="loginInfo.password" class="input"
+                   type="password"
+            >
           </div>
-          <div class="cntr"><input  type="checkbox" v-model="loginInfo.checked" id="cbx" class="hidden-xs-up">
+          <div class="cntr"><input type="checkbox" v-model="loginInfo.checked" id="cbx" class="hidden-xs-up">
             <label for="cbx" class="cbx"></label>
             <span class="cntr-title">记住密码</span>
           </div>
@@ -59,7 +63,6 @@ export default {
     ...mapMutations('admin/account', ['addToUserInfo']),
     getUserInfoByToken() {
       GetUserInfoByToken().then(res => {
-        console.log(res)
         if (res.role[0].name === '疫情2组管理员') {
           const info = {
             username: this.loginInfo.username,
@@ -106,22 +109,22 @@ export default {
 }
 </script>
 <style lang="less">
-    //.template-login-data{
-    //    background: #EBEBEB;
-    //    &-main{
-    //        border-radius: 10px;
-    //        padding: 16px;
-    //    }
-    //    &-other{
-    //        text-align: center;
-    //        img{
-    //            margin: 0 16px;
-    //        }
-    //    }
-    //    &-copyright{
-    //        *{
-    //            color: #fff !important;
-    //        }
-    //    }
-    //}
+//.template-login-data{
+//    background: #EBEBEB;
+//    &-main{
+//        border-radius: 10px;
+//        padding: 16px;
+//    }
+//    &-other{
+//        text-align: center;
+//        img{
+//            margin: 0 16px;
+//        }
+//    }
+//    &-copyright{
+//        *{
+//            color: #fff !important;
+//        }
+//    }
+//}
 </style>

@@ -108,8 +108,6 @@ export default {
     getOutSchoolListByCode() {
       GetOutSchoolList(this.queryInfo).then((res) => {
         this.data1 = []
-        console.log('out')
-        console.log(res)
         res.forEach((item) => {
           this.data1.push({
             startTime: item.startTime,

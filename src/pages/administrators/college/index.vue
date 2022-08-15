@@ -111,22 +111,14 @@ export default {
           title: '健康码颜色',
           key: 'color',
           render: (h, params) => {
-            let types = ''
-            let typeName = ''
-            console.log(params.row)
-            if (params.row.color === 0) {
-              types = 'success'
-              typeName = '绿　码'
-            } else if (params.row.color === 1) {
-              types = 'warning'
-              typeName = '黄　码'
-            } else if (params.row.color === 2) {
-              types = 'error'
-              typeName = '红　码'
-            } else {
-              types = ''
-              typeName = '未提交'
+            const actions = {
+              0: ['success', '绿　码'],
+              1: ['warning', '黄　码'],
+              2: ['error', '红　码'],
+              default: ['', '未提交']
             }
+            const action = actions[params.row.color] || actions['default']
+            const [types, typeName] = action
             return h('div', [
               h('Button', {
                 props: {
@@ -193,9 +185,6 @@ export default {
                   on: {
                     'on-ok': () => {
                       this.deleteFacultyInfoByCode(params.row.code)
-                    },
-                    // eslint-disable-next-line no-empty-function
-                    'on-cancel': () => {
                     }
                   }
                 }, [
@@ -273,6 +262,7 @@ export default {
       this.healthyModel = '按健康码颜色查询'
       this.queryInfo.color = null
       this.getFacultyList()
+      this.batchNum = 0
     },
     batchSubmit() {
       this.batchList = []
@@ -280,7 +270,7 @@ export default {
         this.batchList.push(item.code)
       })
       BatchDeleteFacultyInfoByCodeList({ codes: this.batchList }).then(() => {
-        this.$Message.success('批量删除防控人员成功')
+        this.$Message.success('批量删除防控人员成功!')
         this.queryInfo.key = ''
         this.arr1 = []
         this.arr2 = []
@@ -296,8 +286,6 @@ export default {
     },
     closeEdit() {
       this.updateDialogVisible = false
-      this.queryInfo.key = ''
-      this.getFacultyList()
     },
     deleteFacultyInfoByCode(code) {  //  删除工作人员信息
       const data = { code: code }
@@ -307,8 +295,10 @@ export default {
       })
     },
     queryListByHealthy(healthyModel) { // 按健康吗颜色查询
+      this.queryInfo.pageNum = 1
       this.queryInfo.color = healthyModel
       this.getFacultyList()
+      this.batchNum = 0
     },
     getFacultyList() { // 查询工作人员列表
       GetFacultyInfo(this.queryInfo).then((res) => {
@@ -320,11 +310,7 @@ export default {
       GetFacultyInfoByCode({ code: code }).then(res => {
         this.dialogList.code.value = res.code
         this.dialogList.name.value = res.name
-        if (res.sex === 0) {
-          this.dialogList.sex.value = '男'
-        } else if (res.sex === 1) {
-          this.dialogList.sex.value = '女'
-        }
+        this.dialogList.sex.value = res.sex === 0 ? '男' : '女'
         this.dialogList.deptName.value = res.deptName
         this.dialogList.phone.value = res.phone
         this.dialogList.systemPost.value = res.systemPost
@@ -359,9 +345,6 @@ export default {
           this.arr2.push(val)
         }
       }
-      if (this.arr2.length >= 30) {
-        this.enableModal = true
-      }
       this.batchNum = this.arr2.length
     },
     onSelectCancel(row) { // 取消选中某一项时触发
@@ -377,7 +360,6 @@ export default {
           return item.code !== item2.code
         })
       })
-      console.log(this.arr2)
       this.batchNum = this.arr2.length
     },
     editPageNum(e) {

@@ -40,6 +40,7 @@
   </div>
 </template>
 <script>
+import { dateFormat } from '@/utils/date'
 import iHeaderBreadcrumb from '@/layouts/basic-layout/header-breadcrumb'
 import { GetAllIsolationTotal, GetEachEpidemicListAnalysis, GetEachIsolationListAnalysis, GetIsolationListByDate, GetNewIsolationTotal, GetRelieveIsolationTotal } from '@api/administorators/analysis'
 import { mapState } from 'vuex'
@@ -119,6 +120,7 @@ export default {
           axisTick: {
             show: false
           },
+          minInterval: 1,
           nameGap: 20,
           nameLocation: 'center',
           nameRotate: '90',
@@ -339,7 +341,7 @@ export default {
         const arr1 = []
         const arr2 = []
         res.field.forEach(item => {
-          arr1.push(parseFloat(this.dateFormat(item.to_char)))
+          arr1.push(dateFormat(item.time, 2))
           arr2.push(item.count)
         })
         this.option.series[0].data = arr2.reverse()
@@ -373,12 +375,6 @@ export default {
         this.option1.series[0].data = arr
         this.updateOptions2()
       })
-    },
-    dateFormat(time) {
-      const date = new Date(time)
-      const month = date.getMonth() + 1 < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1
-      const day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate()
-      return `${month}.${day}`
     }
   }
 }

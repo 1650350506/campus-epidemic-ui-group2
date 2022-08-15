@@ -185,14 +185,14 @@ export default {
         const list = {
           code: this.formItem.code,
           name: this.formItem.name,
+          travelRecord: '',
           travelRecordList: this.travelRecordList
         }
         this.$refs.formInline.validate((valid) => {
           if (valid) {
             SubStuBack(list).then(() => {
               this.submitSuccess = false
-              this.formItem.code = ''
-              this.formItem.name = ''
+              this.$refs.formInline.resetFields()
               this.provinceValue = ''
               this.cityValue = ''
             })
@@ -226,7 +226,6 @@ export default {
     getProvinceList() {
       const arrays = []
       GetProvinceList().then((res) => {
-        console.log(res)
         res.forEach(ele => {
           arrays.push({
             level: 1,
@@ -343,7 +342,6 @@ export default {
         align-items: flex-start;
         font-size: 1.4em;
         color: #000;
-        margin-bottom: 1rem;
         span {
           margin-left: 6%;
           margin-right: 1%;

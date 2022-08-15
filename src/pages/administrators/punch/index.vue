@@ -54,6 +54,7 @@
 import { ClockIn, ClockOut } from '@api/administorators/manage'
 import { mapActions } from 'vuex'
 import md5 from 'js-md5'
+import { dateFormat } from '@/utils/date'
 
 export default {
   data() {
@@ -85,7 +86,7 @@ export default {
   created() {
     setInterval(() => {
       this.$nextTick(() => {
-        this.time = this.dateFormat()
+        this.time = this.$FormatDate(null, 1)
       })
     }, 1000)
     this.StuBack()
@@ -111,14 +112,6 @@ export default {
           this.$Message.error(error.message)
         })
     },
-    dateFormat() {
-      const date = new Date()
-      const hours = date.getHours() < 10 ? `0${date.getHours()}` : date.getHours()
-      const minutes = date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes()
-      const seconds = date.getSeconds() < 10 ? `0${date.getSeconds()}` : date.getSeconds()
-      // 拼接
-      return `${hours}:${minutes}:${seconds}`
-    },
     punch() {
       this.$refs.formInline.validate((valid) => {
         if (valid) {
@@ -131,7 +124,7 @@ export default {
               }
               ClockIn(list).then(() => {
                 this.submit = true
-                this.endTime = this.dateFormat()
+                this.endTime = dateFormat(null, 1)
                 this.colors = null
                 this.$refs.formInline.resetFields()
               })
@@ -141,7 +134,7 @@ export default {
           } else if (this.workType === '下班') {
             ClockOut(this.formItem).then(() => {
               this.submit = true
-              this.endTime = this.dateFormat()
+              this.endTime = dateFormat(null, 1)
               this.$refs.formInline.resetFields()
             })
           }

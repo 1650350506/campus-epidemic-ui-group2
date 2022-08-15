@@ -133,18 +133,13 @@ export default {
           sortable: true,
           align: 'left',
           render: (h, params) => {
-            let types
-            let typeName
-            if (params.row.riskLevel === 0) {
-              types = 'success'
-              typeName = '低风险'
-            } else if (params.row.riskLevel === 1) {
-              types = 'warning'
-              typeName = '中风险'
-            } else if (params.row.riskLevel === 2) {
-              types = 'error'
-              typeName = '高风险'
+            const actions = {
+              0: ['success', '低风险'],
+              1: ['warning', '中风险'],
+              2: ['error', '高风险']
             }
+            const action = actions[params.row.riskLevel]
+            const [types, typeName] = action
             return h('div', [
               h('Button', {
                 props: {
@@ -160,7 +155,7 @@ export default {
           }
         },
         {
-          title: '风险地区',
+          title: '涉及地区',
           key: 'riskArea',
           align: 'left',
           render: (h, params) => {
@@ -196,11 +191,7 @@ export default {
                     this.showDialogVisible = true
                     this.checkList1.code.value = params.row.code
                     this.checkList1.name.value = params.row.name
-                    if (this.checkList1.sex.value === 0) {
-                      this.checkList1.sex.value = '男'
-                    } else if (this.checkList1.sex.value === 1) {
-                      this.checkList1.sex.value = '女'
-                    }
+                    this.checkList1.sex.value = this.checkList1.sex.value === 0 ? '男' : '女'
                     this.checkList1.phoneNumber.value = params.row.phoneNumber
                     this.checkList1.idCard.value = params.row.idCard
                     this.checkList1.deptName.value = params.row.deptName
@@ -275,6 +266,7 @@ export default {
       this.queryInfo.riskLevel = ''
       this.queryInfo.pageNum = 1
       this.queryInfo.pageSize = 10
+      this.batchSum = 0
       this.getStuList()
     },
     batchSubmit() {
@@ -299,10 +291,8 @@ export default {
     },
     deleteStuInfoByCode(code) {  // 通过学生学号删除
       DeleteStuInfo({ code: code }).then((res) => {
-        console.log('通过学生学号删除')
-        console.log(res)
         if (res === 0) {
-          this.$Message.error('无该学生的行程信息')
+          this.$Message.error('该学生14天内有相应的行程信息，无法删除！')
         } else {
           this.$Message.success('删除学生14天前行程记录成功！')
           this.getStuList()
@@ -314,6 +304,7 @@ export default {
       this.queryInfo.pageNum = 1
       this.queryInfo.pageSize = 10
       this.getStuList()
+      this.batchSum = 0
     },
     getStuList() { // 获得学生基本信息
       GetStuList(this.queryInfo).then((res) => {
@@ -327,9 +318,6 @@ export default {
         if (!this.arr2.some(item => item.code === val.code)) {
           this.arr2.push(val)
         }
-      }
-      if (this.arr2.length >= 30) {
-        this.enableModal = true
       }
       this.batchSum = this.arr2.length
     },
@@ -346,7 +334,6 @@ export default {
           return item.code !== item2.code
         })
       })
-      console.log(this.arr2)
       this.batchSum = this.arr2.length
     },
     queryEnter(e) {

@@ -230,14 +230,8 @@ export default {
           key: 'nucleicacidkey',
           align: 'left',
           render: (h, params) => {
-            let key
-            if (params.row.nucleicacidkey === 1) {
-              key = '阳性'
-            } else if (params.row.nucleicacidkey === 0) {
-              key = '阴性'
-            } else {
-              key = '待测'
-            }
+            const keyArray = ['阴性', '阳性']
+            const key = keyArray[params.row.nucleicacidkey] || '待测'
             return h('span', key)
           }
         },
@@ -251,16 +245,8 @@ export default {
           key: 'state',
           align: 'left',
           render: (h, params) => {
-            let key
-            if (params.row.state === 0) {
-              key = '待隔离'
-            } else if (params.row.state === 1) {
-              key = '已隔离'
-            } else if (params.row.state === 2) {
-              key = '隔离结束'
-            } else if (params.row.state === 3) {
-              key = '治疗中'
-            }
+            const statusArray = ['待隔离', '已隔离', '隔离结束', '治疗中']
+            const key = statusArray[params.row.state] || '------'
             return h('span', key)
           }
         },
@@ -290,11 +276,7 @@ export default {
                     this.showDialogVisible = true
                     this.checkList1.name.value = params.row.name
                     this.checkList1.sex.value = params.row.sex
-                    if (params.row.sex === 0) {
-                      this.checkList1.sex.value = '男'
-                    } else {
-                      this.checkList1.sex.value = '女'
-                    }
+                    this.checkList1.sex.value = params.row.sex === 0 ? '男' : '女'
                     this.checkList1.stuCollege.value = params.row.stuCollege
                     this.checkList1.classname.value = params.row.classname
                     this.checkList1.phoneNumber.value = params.row.phoneNumber
@@ -359,11 +341,7 @@ export default {
                     this.addInfoList1.name.value = params.row.name
                     this.addInfoList1.sex.value = params.row.sex
                     this.addInfoList1.stuCollege.value = params.row.stuCollege
-                    if (params.row.sex === 0) {
-                      this.addInfoList1.sex.value = '男'
-                    } else {
-                      this.addInfoList1.sex.value = '女'
-                    }
+                    this.addInfoList1.sex.value = params.row.sex === 0 ? '男' : '女'
                     this.addInfoList1.classname.value = params.row.classname
                     this.addInfoList1.phoneNumber.value = params.row.phoneNumber
                   }
@@ -416,16 +394,6 @@ export default {
       this.addDialogVisible = false
       this.getIsolationInfoList()
       this.getCardMsg()
-    },
-    dateFormat(time) {
-      const date = new Date(time)
-      const year = date.getFullYear()
-      const month = date.getMonth() + 1 < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1
-      const day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate()
-      const hours = date.getHours() < 10 ? `0${date.getHours()}` : date.getHours()
-      const minutes = date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes()
-      const seconds = date.getSeconds() < 10 ? `0${date.getSeconds()}` : date.getSeconds()
-      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
     },
     getProtectorNameByCode(code) { // 获得隔离人员的关联人员
       const queryInfo = {

@@ -86,7 +86,7 @@ export default {
                     size: 'small'
                   },
                   attrs: {
-                    title: '已隔离'
+                    title: '确认隔离'
                   },
                   style: {
                     color: '#01b0ff',
@@ -96,7 +96,7 @@ export default {
                   },
                   on: {
                   }
-                }, '已隔离')
+                }, '确认隔离')
               ])
             ])
           }
@@ -120,17 +120,6 @@ export default {
     this.getWaitIsolationInfoList()
   },
   methods: {
-    addIsolation(obj) { // 点击修改该人状态（变成已隔离)
-      let state
-      if (obj.nucleic_result === '阴性') {
-        state = 0
-      } else if (obj.nucleic_result === '阳性') {
-        state = 1
-      }
-      obj.nucleic_result = state
-      obj.isolation_state = 1
-      console.log(obj)
-    },
     closeByNew() {
       this.addDialogVisible = false
     },

@@ -50,12 +50,14 @@ export default {
           align: 'center',
           key: 'nucleicAcidKey',
           render: (h, params) => {
-            let key
-            if (params.row.nucleicAcidKey === 1) {
-              key = '阳性'
-            } else {
-              key = '阴性'
-            }
+            // let key
+            // if (params.row.nucleicAcidKey === 1) {
+            //   key = '阳性'
+            // } else {
+            //   key = '阴性'
+            // }
+            const keyArray = ['阴性', '阳性']
+            const key = keyArray[params.row.nucleicAcidKey] || '阴性'
             return h('span', key)
           }
         },

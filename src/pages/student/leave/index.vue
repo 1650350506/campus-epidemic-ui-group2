@@ -358,12 +358,11 @@ export default {
       display: flex;
       flex-direction: column;
       .form-goto {
-        margin-bottom: 1rem;
-        flex-basis: 25%;
+        flex-basis: 20%;
         font-size: 1.4em;
         color: #000;
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         span {
           margin-left: 6%;
           margin-right: 5%;
