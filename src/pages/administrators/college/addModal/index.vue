@@ -131,7 +131,8 @@ export default {
         ],
         code: [
           { required: true, message: '职工工号不能为空', trigger: 'blur' },
-          { type: 'string', min: 6, max: 7, message: '工号为6位数', trigger: 'blur' }
+          { type: 'string', len: 6, message: '工号为6位数字', trigger: 'blur' },
+          { pattern: /^\d{6}$/, message: '不能为字符', trigger: 'blur' }
         ],
         name: [
           { required: true, message: '姓名不能为空', trigger: 'blur' }
@@ -161,7 +162,7 @@ export default {
       addList1: {
         account: '',
         pwd: '',
-        code: '',
+        code: null,
         deptCode: '',
         deptName: '',
         idCard: '',

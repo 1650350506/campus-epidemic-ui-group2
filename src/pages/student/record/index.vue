@@ -181,12 +181,10 @@ export default {
     handleRemove(index) {
       this.formDynamic.items.splice(index, 1)
       this.travelRecordList.splice(index, 1)
-      console.log(this.travelRecordList)
     },
     getProvinceList() {
       const arrays = []
       GetProvinceList().then((res) => {
-        console.log(res)
         res.forEach(ele => {
           arrays.push({
             level: 1,
@@ -196,14 +194,12 @@ export default {
           })
         })
         this.provinceData = arrays
-        console.log(this.data)
       })
     },
     loadData(value) {
       this.getCityListByValue(value[0])
       if (value.length > 1) {
         this.travelRecordList.push(value[1])
-        console.log(this.travelRecordList)
       }
     },
     getCityListByValue(val) {
