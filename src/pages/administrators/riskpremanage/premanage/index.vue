@@ -44,7 +44,7 @@
 import iHeaderBreadcrumb from '@/layouts/basic-layout/header-breadcrumb'
 import CheckContent from './checkModal'
 import AddContent from './addModal'
-import NewContent from './../newPre'
+import NewContent from '../newModal'
 import { DeleteIsolationInfo, GetIsolationInfoList, GetIsolationInfoListByCode, GetTreatedTotal, GetQuarantinedTotal, GetToBeTotal, GetIsolatedTotal } from '@api/personnel/riskpremanage'
 import { mapState } from 'vuex'
 
@@ -445,7 +445,8 @@ export default {
         console.log(this.msgData)
       })
     },
-    getIsolationServiceInfoList(code) { // 服务记录
+    // 服务记录
+    getIsolationServiceInfoList(code) {
       const queryInfo = {
         pageNum: '1',
         pageSize: '20',
@@ -464,10 +465,12 @@ export default {
         })
       })
     },
-    updateRecord(e) { // 返回子组件最新的隔离记录
+    // 返回子组件最新的隔离记录
+    updateRecord(e) {
       this.getIsolationInfoListByCode(e)
     },
-    queryQuarantinedInfoByKey() { // 关键字查询
+    // 关键字查询
+    queryQuarantinedInfoByKey() {
       this.data = []
       this.queryInfo.pageNum = 1
       this.queryInfo.pageSize = 10
@@ -485,11 +488,13 @@ export default {
       this.queryInfo.keyword = ''
       this.getIsolationInfoList()
     },
-    editPageNum(e) { // 选择页码
+    // 选择页码
+    editPageNum(e) {
       this.queryInfo.pageNum = e
       this.getIsolationInfoList()
     },
-    editPageSize(e) { // 选择当页最大条数
+    // 选择当页最大条数
+    editPageSize(e) {
       this.queryInfo.pageSize = e
       this.getIsolationInfoList()
     },

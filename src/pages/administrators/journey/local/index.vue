@@ -310,14 +310,16 @@ export default {
     close() {
       this.showDialogVisible = false
     },
-    async deleteStuInfoByCode(code) {  // 通过学生学号删除
+    // 通过学生学号删除
+    async deleteStuInfoByCode(code) {
       await DeleteLocalStuInfo({ code: code }).then(() => {
         this.$Message.success('删除本市学生信息成功！')
         this.getLocalStuList()
         this.getLocalStuInfoByCode(code)
       })
     },
-    queryListByGrade(grade) { // 通过等级查询
+    // 通过等级查询
+    queryListByGrade(grade) {
       this.queryInfo.risk = grade
       this.queryInfo.pageNum = 1
       this.queryInfo.pageSize = 10
@@ -330,13 +332,15 @@ export default {
         this.queryStuInfoByKey()
       }
     },
-    getLocalStuList() { // 获得学生基本信息
+    // 获得学生基本信息
+    getLocalStuList() {
       GetLocalStuList(this.queryInfo).then((res) => {
         this.data = res.data
         this.total = res.total
       })
     },
-    queryStuInfoByKey() { // 关键字查询
+    // 关键字查询
+    queryStuInfoByKey() {
       this.batchNum = 0
       this.data = []
       this.queryInfo.pageNum = 1
@@ -353,14 +357,16 @@ export default {
       }
       this.batchNum = this.arr2.length
     },
-    onSelectCancel(row) { // 取消选中某一项时触发
+    // 取消选中某一项时触发
+    onSelectCancel(row) {
       const result = this.arr2.findIndex((ele) => {
         return ele.code === row.code
       })
       this.arr2.splice(result, 1)
       this.batchNum = this.arr2.length
     },
-    onSelectAllCancel() { // 点击取消全选时触发
+    // 点击取消全选时触发
+    onSelectAllCancel() {
       this.arr2 = this.arr2.filter(item => {
         return this.data.every(item2 => {
           return item.code !== item2.code
@@ -368,7 +374,8 @@ export default {
       })
       this.batchNum = this.arr2.length
     },
-    editPageNum(e) { // 选择页码
+    // 选择页码
+    editPageNum(e) {
       this.queryInfo.pageNum = e
       GetLocalStuList(this.queryInfo).then((res) => {
         res.data.forEach(item => {
@@ -382,11 +389,13 @@ export default {
         this.data = res.data
       })
     },
-    editPageSize(e) { // 选择当页最大条数
+    // 选择当页最大条数
+    editPageSize(e) {
       this.queryInfo.pageSize = e
       this.getLocalStuList()
     },
-    getLocalStuInfoByCode(code) { //   点击查看里面的基本信息
+    //   点击查看里面的基本信息
+    getLocalStuInfoByCode(code) {
       GetLocalStuInfoByCode({ code: code }).then(res => {
         this.checkList1.code.value = res.code
         this.checkList1.name.value = res.name

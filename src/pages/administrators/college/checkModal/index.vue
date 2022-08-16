@@ -57,8 +57,7 @@ export default {
               default: ['text', '------']
             }
             const action = actions[params.row.color] || actions['default']
-            const types = action[0]
-            const typeName = action[1]
+            const [types, typeName] = action
             return h('div', [
               h('Button', {
                 props: {

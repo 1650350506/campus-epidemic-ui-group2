@@ -305,7 +305,8 @@ export default {
     this.getEachIsolationListAnalysis()
   },
   methods: {
-    selectTime(e) { // 选择修改时间
+    // 选择修改时间
+    selectTime(e) {
       this.queryDayInfo.command = e
       this.getOldIsolationListByDate()
     },
@@ -321,17 +322,20 @@ export default {
       const myChart = echarts.init(document.getElementById('main2'))
       myChart.setOption(this.option1, true)
     },
-    getAllIsolationTotal() {  // 获得总隔离人数
+    // 获得总隔离人数
+    getAllIsolationTotal() {
       GetAllIsolationTotal().then((res) => {
         this.topList[0].num = res.field
       })
     },
-    getNewIsolationTotal() {   // 获得新增隔离人数
+    // 获得新增隔离人数
+    getNewIsolationTotal() {
       GetNewIsolationTotal().then((res) => {
         this.topList[1].num = res.field
       })
     },
-    getReliveIsolationTotal() { // 获得新增解除人数
+    // 获得新增解除人数
+    getReliveIsolationTotal() {
       GetRelieveIsolationTotal().then((res) => {
         this.topList[2].num = res.field
       })

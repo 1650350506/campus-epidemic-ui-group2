@@ -168,7 +168,8 @@ export default {
           this.$Message.error(error.message)
         })
     },
-    getCityCode(value) { // 获得市区的编号
+    // 获得市区的编号
+    getCityCode(value) {
       if (this.travelRecordList.length < this.formDynamic.items.length) {
         this.travelRecordList.push(value[0])
       } else if (this.travelRecordList.length === this.formDynamic.items.length) {

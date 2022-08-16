@@ -232,7 +232,8 @@ export default {
     close() {
       this.$emit('switchAdd', false)
     },
-    getEpidemicPreventionPersonnel() { // 获取全部的关联人员
+    // 获取全部的关联人员
+    getEpidemicPreventionPersonnel() {
       GetEpidemicPreventionPersonnel().then(res => {
         res.field.forEach(item => {
           this.associationList.push({
@@ -242,7 +243,8 @@ export default {
         })
       })
     },
-    addRecord() { //  新增隔离记录
+    //  新增隔离记录
+    addRecord() {
       this.getStuCode()
       if (this.addInfo.nucleicAcidKey !== null && this.addInfo.temperature !== null) {
         this.addInfo.nucleicAcidTime = dateFormat(this.addInfo.nucleicAcidTime, 0)

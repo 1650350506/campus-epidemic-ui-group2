@@ -1,5 +1,6 @@
 import request from '@/plugins/request'
 import moduleName from '@/config/moduleName'
+
 // 删除教职工通过code
 export function DeleteFacultyInfoByCode(data) {
   return request({
@@ -11,6 +12,7 @@ export function DeleteFacultyInfoByCode(data) {
     }
   })
 }
+
 export function BatchDeleteFacultyInfoByCodeList(data) {
   return request({
     url: `${moduleName.doraemon_campus}/workPerson/deleteByCodes`,
@@ -19,6 +21,7 @@ export function BatchDeleteFacultyInfoByCodeList(data) {
     data
   })
 }
+
 export function GetFacultyInfo(data) {
   return request({
     url: `${moduleName.doraemon_campus}/workPerson/queryWorkPersonList`,
@@ -33,16 +36,6 @@ export function GetFacultyInfo(data) {
 export function GetFacultyInfoByCode(data) {
   return request({
     url: `${moduleName.doraemon_campus}/workPerson/queryWorkPersonDetailByCode`,
-    method: 'get',
-    urlType: 'jixian',
-    params: {
-      ...data
-    }
-  })
-}
-export function GetCityList(data) {
-  return request({
-    url: `${moduleName.doraemon_campus}/supAdmin/getCityByProvince`,
     method: 'get',
     urlType: 'jixian',
     params: {
@@ -70,6 +63,7 @@ export function ClockIn(data) {
     data
   })
 }
+
 // 下班打卡
 export function ClockOut(data) {
   return request({
@@ -79,6 +73,7 @@ export function ClockOut(data) {
     data
   })
 }
+
 // 查询二级学院信息列表
 export function GetDeptCodeAndName(data) {
   return request({
@@ -87,6 +82,7 @@ export function GetDeptCodeAndName(data) {
     urlType: 'jixian'
   })
 }
+
 // 添加防控人员
 export function InsertWorkPerson(data) {
   return request({

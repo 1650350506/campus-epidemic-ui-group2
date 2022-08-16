@@ -125,10 +125,6 @@ export default {
       data1: []
     }
   },
-  mounted() {
-    console.log(this.msgData)
-    console.log('这是查看')
-  },
   methods: {
     close() {
       this.$emit('switchCheck', false)

@@ -193,7 +193,8 @@ export default {
       this.$emit('switchAdd', false)
       this.$refs.formValidate.resetFields()
     },
-    getDeptName() { //  获取各个学院名称
+    //  获取各个学院名称
+    getDeptName() {
       GetDeptCodeAndName().then((res) => {
         this.deptList = res.field
       })

@@ -201,14 +201,16 @@ export default {
       }
       this.batchSum = this.arr2.length
     },
-    onSelectCancel(row) { // 取消选中某一项时触发
+    // 取消选中某一项时触发
+    onSelectCancel(row) {
       const result = this.arr2.findIndex((ele) => {
         return ele.code === row.code
       })
       this.arr2.splice(result, 1)
       this.batchSum = this.arr2.length
     },
-    onSelectAllCancel() {  // 点击取消全选时触发
+    // 点击取消全选时触发
+    onSelectAllCancel() {
       this.arr2 = this.arr2.filter(item => {
         return this.data2.every(item2 => {
           return item.code !== item2.code
@@ -217,7 +219,8 @@ export default {
       console.log(this.arr2)
       this.batchSum = this.arr2.length
     },
-    batchSubmit() { // 批量提交
+    // 批量提交
+    batchSubmit() {
       this.batchList = []
       this.arr2.forEach((item) => {
         this.batchList.push(item.code)
@@ -236,7 +239,8 @@ export default {
         this.getRiskInfoListByProvince()
       })
     },
-    submitInfo(info) { // 修改风险等级
+    // 修改风险等级
+    submitInfo(info) {
       const RiskInfo = {
         code: info.code,
         riskLevel: info.riskLevel
@@ -342,7 +346,8 @@ export default {
       })
       this.streetData = arrays
     },
-    editPageNum(e) { // 选择页码
+    // 选择页码
+    editPageNum(e) {
       this.queryInfo.pageNum = e
       GetRiskInfoListByProvince(this.queryInfo).then(res => {
         res.field.data.forEach(item => {
@@ -356,7 +361,8 @@ export default {
         this.data2 = res.field.data
       })
     },
-    editPageSize(e) {   // 选择当页最大条数
+    // 选择当页最大条数
+    editPageSize(e) {
       this.queryInfo.pageSize = e
       this.getRiskInfoListByProvince()
     },

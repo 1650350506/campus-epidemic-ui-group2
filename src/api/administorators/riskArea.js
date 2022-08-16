@@ -9,6 +9,7 @@ export function GetProvinceList(data) {
     data
   })
 }
+
 export function GetCityList(data) {
   return request({
     url: `${moduleName.doraemon_campus}/areaRisk/getCityByProvince`,
@@ -19,6 +20,7 @@ export function GetCityList(data) {
     }
   })
 }
+
 // 获取区县
 export function GetCountyList(data) {
   return request({
@@ -30,6 +32,7 @@ export function GetCountyList(data) {
     }
   })
 }
+
 // 获取街道
 export function GetStreetList(data) {
   return request({
@@ -50,6 +53,7 @@ export function UpdateRiskAreaByCode(data) {
     data
   })
 }
+
 // 批量修改风险地区
 export function BatchUpdateRiskAreaByCode(data) {
   return request({
@@ -72,16 +76,6 @@ export function GetRiskInfoListByProvince(data) {
   })
 }
 
-export function GetRiskInfoListByCounty(data) {
-  return request({
-    url: `${moduleName.doraemon_campus}/areaRisk/RederByCounty`,
-    method: 'get',
-    urlType: 'jixian',
-    params: {
-      ...data
-    }
-  })
-}
 export function GetRiskInfoListByTown(data) {
   return request({
     url: `${moduleName.doraemon_campus}/areaRisk/queryVillageByTown`,

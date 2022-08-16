@@ -289,7 +289,8 @@ export default {
     closeEdit() {
       this.updateDialogVisible = false
     },
-    deleteStuInfoByCode(code) {  // 通过学生学号删除
+    // 通过学生学号删除
+    deleteStuInfoByCode(code) {
       DeleteStuInfo({ code: code }).then((res) => {
         if (res === 0) {
           this.$Message.error('该学生14天内有相应的行程信息，无法删除！')
@@ -299,14 +300,16 @@ export default {
         }
       })
     },
-    queryListByGrade(grade) { // 通过等级查询
+    // 通过等级查询
+    queryListByGrade(grade) {
       this.queryInfo.riskLevel = grade
       this.queryInfo.pageNum = 1
       this.queryInfo.pageSize = 10
       this.getStuList()
       this.batchSum = 0
     },
-    getStuList() { // 获得学生基本信息
+    // 获得学生基本信息
+    getStuList() {
       GetStuList(this.queryInfo).then((res) => {
         this.data = res.data
         this.total = res.total
@@ -328,7 +331,8 @@ export default {
       this.arr2.splice(result, 1)
       this.batchSum = this.arr2.length
     },
-    onSelectAllCancel() { // 点击取消全选时触发
+    // 点击取消全选时触发
+    onSelectAllCancel() {
       this.arr2 = this.arr2.filter(item => {
         return this.data.every(item2 => {
           return item.code !== item2.code
@@ -342,14 +346,16 @@ export default {
         this.queryStuInfoByKey()
       }
     },
-    queryStuInfoByKey() { // 关键字查询
+    // 关键字查询
+    queryStuInfoByKey() {
       this.batchSum = 0
       this.queryInfo.pageNum = 1
       this.queryInfo.pageSize = 10
       this.data = []
       this.getStuList()
     },
-    editPageNum(e) {   // 选择页码
+    // 选择页码
+    editPageNum(e) {
       this.queryInfo.pageNum = e
       GetStuList(this.queryInfo).then((res) => {
         res.data.forEach(item => {
@@ -363,7 +369,8 @@ export default {
         this.data = res.data
       })
     },
-    editPageSize(e) { // 选择当页最大条数
+    // 选择当页最大条数
+    editPageSize(e) {
       this.queryInfo.pageSize = e
       this.getStuList()
     }

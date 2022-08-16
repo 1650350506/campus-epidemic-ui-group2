@@ -1,5 +1,6 @@
 import request from '@/plugins/request'
 import moduleName from '@/config/moduleName'
+
 export function GetJourneyInfoList(data) {
   return request({
     url: `${moduleName.doraemon_campus}/areaPersonnel/getStudentJourneyByCode`,
@@ -21,6 +22,7 @@ export function GetOutSchoolList(data) {
     }
   })
 }
+
 export function BatchDelLocalBatchDailyCodeList(data) {
   return request({
     url: `${moduleName.doraemon_campus}/travelRecord/delBatchDailyCodes`,
@@ -29,7 +31,9 @@ export function BatchDelLocalBatchDailyCodeList(data) {
     data
   })
 }
-export function BatchDelCrossBatchDailyCodeList(data) { // 批量删除跨市多余信息
+
+// 批量删除跨市多余信息
+export function BatchDelCrossBatchDailyCodeList(data) {
   return request({
     url: `${moduleName.doraemon_campus}/riskPersonnel/delStudentByCodeList`,
     method: 'post',

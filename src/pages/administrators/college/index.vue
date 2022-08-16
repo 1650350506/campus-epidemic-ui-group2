@@ -47,8 +47,8 @@
 <script>
 import iHeaderBreadcrumb from '@/layouts/basic-layout/header-breadcrumb'
 import addFaculty from './addModal'
-import checkModal from './check'
-import editModal from './edit'
+import checkModal from './checkModal'
+import editModal from './editModal'
 import { DeleteFacultyInfoByCode, GetFacultyInfo, GetFacultyInfoByCode, BatchDeleteFacultyInfoByCodeList } from '@api/administorators/manage'
 import { mapState } from 'vuex'
 
@@ -287,26 +287,30 @@ export default {
     closeEdit() {
       this.updateDialogVisible = false
     },
-    deleteFacultyInfoByCode(code) {  //  删除工作人员信息
+    //  删除工作人员信息
+    deleteFacultyInfoByCode(code) {
       const data = { code: code }
       DeleteFacultyInfoByCode(data).then(() => {
         this.$Message.success('删除防控人员成功')
         this.getFacultyList()
       })
     },
-    queryListByHealthy(healthyModel) { // 按健康吗颜色查询
+    // 按健康吗颜色查询
+    queryListByHealthy(healthyModel) {
       this.queryInfo.pageNum = 1
       this.queryInfo.color = healthyModel
       this.getFacultyList()
       this.batchNum = 0
     },
-    getFacultyList() { // 查询工作人员列表
+    // 查询工作人员列表
+    getFacultyList() {
       GetFacultyInfo(this.queryInfo).then((res) => {
         this.total = res.total
         this.data = res.data
       })
     },
-    getFacultyInfoByCode(code) { // 查询信息信息
+    // 查询信息信息
+    getFacultyInfoByCode(code) {
       GetFacultyInfoByCode({ code: code }).then(res => {
         this.dialogList.code.value = res.code
         this.dialogList.name.value = res.name
@@ -331,7 +335,8 @@ export default {
         this.queryFacultyInfoByKey()
       }
     },
-    queryFacultyInfoByKey() { //  关键字查询工作人员信息
+    //  关键字查询工作人员信息
+    queryFacultyInfoByKey() {
       this.data = []
       this.queryInfo.pageNum = 1
       this.queryInfo.pageSize = 10
@@ -339,7 +344,6 @@ export default {
     },
     onSelectAll(selection) {
       this.arr1 = [...selection, ...this.selectedData]
-      // eslint-disable-next-line no-unused-vars
       for (const val of this.arr1) {
         if (!this.arr2.some(item => item.code === val.code)) {
           this.arr2.push(val)
@@ -347,14 +351,16 @@ export default {
       }
       this.batchNum = this.arr2.length
     },
-    onSelectCancel(row) { // 取消选中某一项时触发
+    // 取消选中某一项时触发
+    onSelectCancel(row) {
       const result = this.arr2.findIndex((ele) => {
         return ele.code === row.code
       })
       this.arr2.splice(result, 1)
       this.batchNum = this.arr2.length
     },
-    onSelectAllCancel() {  // 点击取消全选时触发
+    // 点击取消全选时触发
+    onSelectAllCancel() {
       this.arr2 = this.arr2.filter(item => {
         return this.data.every(item2 => {
           return item.code !== item2.code

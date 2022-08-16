@@ -30,7 +30,7 @@
 <script>
 import iHeaderBreadcrumb from '@/layouts/basic-layout/header-breadcrumb'
 import { GetIsolationInfoList, EditIsolationState } from '@api/personnel/riskpremanage'
-import NewContent from './../newPre'
+import NewContent from '../newModal'
 import { mapState } from 'vuex'
 export default {
   name: 'index',
@@ -120,6 +120,7 @@ export default {
     this.getWaitIsolationInfoList()
   },
   methods: {
+    // 关闭新增对话框
     closeByNew() {
       this.addDialogVisible = false
     },
@@ -142,12 +143,14 @@ export default {
         this.getWaitIsolationInfoList()
       })
     },
+    // 回车查询
     queryEnter(e) {
       const keyCode = window.event ? e.keyCode : e.which
       if (keyCode === 13) {
         this.queryWaitIsolationInfoByKey()
       }
     },
+    // 重置处理
     resetQuery() {
       this.queryInfo.pageNum = 1
       this.queryInfo.pageSize = 10
