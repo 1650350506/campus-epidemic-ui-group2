@@ -34,7 +34,7 @@
           >
             <Row>
               <Col span="18" style="display: flex">
-                <Cascader :data="provinceData" ref="cascaderHandle" @on-change="loadData"></Cascader>
+                <Cascader :data="provinceData" ref="cascaderRef" @on-change="loadData"></Cascader>
               </Col>
               <Col span="4" offset="1">
                 <Button type="error" @click="handleRemove(index)">删除</Button>

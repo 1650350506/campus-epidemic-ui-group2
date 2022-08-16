@@ -214,6 +214,8 @@ export default {
         userName: this.addUserInfo.account
       }
       GetUserInfoByUsername(list).then((res) => {
+        this.$Message.success('提交成功！')
+        this.$refs.formValidate.resetFields()
         this.activeUserInfo(res.id)
       })
     },
@@ -222,9 +224,7 @@ export default {
         ids: [id]
       }
       ActiveUserInfo(list).then(() => {
-        this.$Message.success('提交成功！')
         this.close()
-        this.$refs.formValidate.resetFields()
       })
     },
     addInnerFacultyInfo() {

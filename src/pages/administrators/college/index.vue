@@ -263,6 +263,8 @@ export default {
       this.queryInfo.color = null
       this.getFacultyList()
       this.batchNum = 0
+      this.arr1 = []
+      this.arr2 = []
     },
     batchSubmit() {
       this.batchList = []

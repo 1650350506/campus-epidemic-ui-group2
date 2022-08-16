@@ -14,7 +14,7 @@
             >
           </div>
           <div class="input-group">
-            <label class="label">账号</label>
+            <label class="label">密码</label>
             <input autocomplete="off" name="password" v-model="loginInfo.password" class="input"
                    type="password"
             >

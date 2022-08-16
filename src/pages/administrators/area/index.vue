@@ -231,7 +231,6 @@ export default {
       }
       BatchUpdateRiskAreaByCode(data).then(() => {
         this.$Message.success('批量修改风险地区成功！')
-        this.queryInfo.value = ''
         this.riskGrade = null
         this.arr1 = []
         this.arr2 = []

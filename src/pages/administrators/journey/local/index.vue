@@ -288,6 +288,8 @@ export default {
       this.queryInfo.risk = ''
       this.queryInfo.pageNum = 1
       this.queryInfo.pageSize = 10
+      this.arr1 = []
+      this.arr2 = []
       this.batchNum = 0
       this.getLocalStuList()
     },

@@ -287,40 +287,6 @@ export default {
                   }
                 }
               }, '查看'),
-              [
-                h('Poptip', {
-                  props: {
-                    placement: 'top-start',
-                    confirm: true,
-                    transfer: true,
-                    title: '你确定要解除该人员的隔离状态吗？'
-                  },
-                  on: {
-                    'on-ok': () => {
-                      this.relieveIsolation(params.row.code)
-                    }
-                  }
-                }, [
-                  h('Button', {
-                    class: 'deleteHover',
-                    props: {
-                      size: 'small'
-                    },
-                    attrs: {
-                      title: '解除'
-                    },
-                    style: {
-                      marginRight: '5px',
-                      backgroundColor: 'transparent',
-                      display: this.displayType,
-                      border: '0px',
-                      color: '#01b0ff'
-                    },
-                    on: {
-                    }
-                  }, '解除')
-                ])
-              ],
               h('Button', {
                 props: {
                   // type: 'warning',
@@ -346,7 +312,41 @@ export default {
                     this.addInfoList1.phoneNumber.value = params.row.phoneNumber
                   }
                 }
-              }, '增加隔离记录')
+              }, '增加隔离记录'),
+              [
+                h('Poptip', {
+                  props: {
+                    placement: 'top-start',
+                    confirm: true,
+                    transfer: true,
+                    title: '你确定要解除该人员的隔离状态吗？'
+                  },
+                  on: {
+                    'on-ok': () => {
+                      this.relieveIsolation(params.row.code)
+                    }
+                  }
+                }, [
+                  h('Button', {
+                    class: 'deleteHover',
+                    props: {
+                      size: 'small'
+                    },
+                    attrs: {
+                      title: '解除'
+                    },
+                    style: {
+                      marginRight: '5px',
+                      backgroundColor: 'transparent',
+                      display: this.displayType2,
+                      border: '0px',
+                      color: '#01b0ff'
+                    },
+                    on: {
+                    }
+                  }, '解除')
+                ])
+              ]
             ])
           }
         }
@@ -361,7 +361,8 @@ export default {
         state: 1
       },
       total: 0,
-      displayType: 'inline-block'
+      displayType: 'inline-block',
+      displayType2: 'inline-block'
     }
   },
   computed: {
@@ -393,7 +394,9 @@ export default {
     closeByNew() {
       this.addDialogVisible = false
       this.getIsolationInfoList()
-      this.getCardMsg()
+      setTimeout(() => {
+        this.getCardMsg()
+      }, 1000)
     },
     getProtectorNameByCode(code) { // 获得隔离人员的关联人员
       const queryInfo = {
@@ -520,11 +523,9 @@ export default {
     },
     showList(index) {
       this.queryInfo.state = index
-      if (index !== 1) {
-        this.displayType = 'none'
-      } else {
-        this.displayType = 'inline-block'
-      }
+      this.displayType = index !== 1 ? 'none' : 'inline-block'
+      this.displayType2 = index === 1 || index === 3 ? 'inline-block' : 'none'
+      this.queryInfo.keyword = ''
       this.queryInfo.pageNum = 1
       this.queryInfo.pageSize = 10
       this.getIsolationInfoList()

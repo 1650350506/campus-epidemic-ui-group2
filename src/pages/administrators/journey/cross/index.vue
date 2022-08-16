@@ -267,6 +267,8 @@ export default {
       this.queryInfo.pageNum = 1
       this.queryInfo.pageSize = 10
       this.batchSum = 0
+      this.arr1 = []
+      this.arr2 = []
       this.getStuList()
     },
     batchSubmit() {
