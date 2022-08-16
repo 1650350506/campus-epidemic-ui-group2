@@ -28,15 +28,13 @@
         <Form ref="formDynamic" :model="formDynamic" :label-width="90">
           <Form-item
             v-for="(item, index) in formDynamic.items"
-            :key="item"
+            :key="index"
             style="padding: 0 1em 0 1em;"
             :label="'行程记录' + (index + 1)"
           >
             <Row>
               <Col span="18" style="display: flex">
-                <Cascader :data="provinceData" @on-change="loadData"></Cascader>
-                <p></p>
-                <Cascader :data="cityData" v-model="item.value" @on-change="getCityCode"></Cascader>
+                <Cascader :data="provinceData" ref="cascaderHandle" @on-change="loadData"></Cascader>
               </Col>
               <Col span="4" offset="1">
                 <Button type="error" @click="handleRemove(index)">删除</Button>
@@ -99,9 +97,9 @@ export default {
       },
       data: [],
       submitSuccess: true,
-      provinceValue: '',
+      provinceValue: [],
       provinceData: [],
-      cityValue: '',
+      cityValue: [],
       cityData: [],
       travelRecordList: [],
       ruleValidate: {
@@ -183,6 +181,7 @@ export default {
     handleRemove(index) {
       this.formDynamic.items.splice(index, 1)
       this.travelRecordList.splice(index, 1)
+      console.log(this.travelRecordList)
     },
     getProvinceList() {
       const arrays = []
@@ -202,6 +201,10 @@ export default {
     },
     loadData(value) {
       this.getCityListByValue(value[0])
+      if (value.length > 1) {
+        this.travelRecordList.push(value[1])
+        console.log(this.travelRecordList)
+      }
     },
     getCityListByValue(val) {
       const valueList = { value: val }
@@ -215,7 +218,8 @@ export default {
           })
         })
       })
-      this.cityData = arrays
+      const index = this.provinceData.findIndex((item) => item.value === val)
+      this.provinceData[index].children = arrays
     },
     backHome() {
       window.location.href = 'about:blank'

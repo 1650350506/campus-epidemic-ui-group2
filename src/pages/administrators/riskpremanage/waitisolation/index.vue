@@ -123,6 +123,7 @@ export default {
     // 关闭新增对话框
     closeByNew() {
       this.addDialogVisible = false
+      this.getWaitIsolationInfoList()
     },
     // 查询已隔离或者未隔离信息
     getWaitIsolationInfoList() {

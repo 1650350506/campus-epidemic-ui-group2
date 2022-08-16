@@ -93,7 +93,8 @@ export default {
         state: '',
         startTime: ''
       },
-      showTimeInput: true
+      showTimeInput: true,
+      clearInput: false
     }
   },
   methods: {
@@ -104,7 +105,12 @@ export default {
       this.$emit('addClose', false)
       this.queryValue = ''
       this.checkList1.code.value = ''
-      // eslint-disable-next-line guard-for-in
+      if (this.clearInput === false) {
+        // eslint-disable-next-line guard-for-in
+        for (const Key in this.addInfo) {
+          this.addInfo[Key] = ''
+        }
+      }
     },
     getStuInfoListByCode() {
       if (this.queryValue !== '') {
@@ -139,6 +145,7 @@ export default {
       } else if (this.addInfo.code === '') {
         this.$Message.error('学生学号不能为空！')
       } else if (this.addInfo.startTime === '' && this.addInfo.state === '0') {
+        this.clearInput = true
         NewIsolatePre(this.addInfo).then(() => {
           this.$Message.success('新增隔离人员成功！')
           // eslint-disable-next-line guard-for-in,no-unused-vars
@@ -147,9 +154,11 @@ export default {
           }
           this.queryValue = ''
           this.checkList1.code.value = ''
+          this.clearInput = false
         })
         this.close()
       } else {
+        this.clearInput = true
         this.addInfo.startTime = dateFormat(this.addInfo.startTime, 0)
         NewIsolatePre(this.addInfo).then(() => {
           this.$Message.success('新增待隔离人员成功！')
@@ -161,6 +170,7 @@ export default {
           this.checkList1.code.value = ''
         })
         this.close()
+        this.clearInput = false
       }
     }
   }

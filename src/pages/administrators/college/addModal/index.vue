@@ -131,7 +131,7 @@ export default {
         ],
         code: [
           { required: true, message: '职工工号不能为空', trigger: 'blur' },
-          { type: 'number', min: 6, max: 7, message: '工号位数6数字且前两位与院系对应', trigger: 'blur' }
+          { type: 'string', min: 6, max: 7, message: '工号为6位数', trigger: 'blur' }
         ],
         name: [
           { required: true, message: '姓名不能为空', trigger: 'blur' }
