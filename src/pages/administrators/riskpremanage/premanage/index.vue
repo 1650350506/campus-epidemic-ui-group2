@@ -238,7 +238,8 @@ export default {
         {
           title: '隔离开始时间',
           key: 'startTime',
-          align: 'left'
+          align: 'left',
+          width: '180'
         },
         {
           title: '隔离状态',
