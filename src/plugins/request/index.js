@@ -105,6 +105,9 @@ service.interceptors.response.use(
           // [ 示例 ] 其它和后台约定的 code
           errorCreate(`${dataAxios.msg}`)
           break
+        case -1:
+          errorCreate(`${dataAxios.errorInfo}`)
+          break
         default:
           // 不是正确的 code
           errorCreate(`${dataAxios.msg}`)
