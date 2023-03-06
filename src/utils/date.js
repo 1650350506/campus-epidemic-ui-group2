@@ -15,9 +15,3 @@ export function dateFormat(time, types) {
     return `${month}.${day}`
   }
 }
-
-// export default {
-//   install: (Vue) => {
-//     Vue.prototype.$FormatDate = dateFormat()
-//   }
-// }

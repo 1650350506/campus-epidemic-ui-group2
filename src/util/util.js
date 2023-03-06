@@ -48,6 +48,7 @@ export const deepClone = data => {
       obj.push(deepClone(data[i]))
     }
   } else if (type === 'object') {
+    // eslint-disable-next-line guard-for-in,no-unused-vars
     for (const key in data) {
       obj[key] = deepClone(data[key])
     }

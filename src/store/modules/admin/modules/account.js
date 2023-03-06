@@ -27,17 +27,12 @@ export default {
          * @param {Object} param password {String} 密码
          * @param {Object} param route {Object} 登录成功后定向的路由对象 任何 vue-router 支持的格式
          */
-    login({ dispatch }, {
-      username = '',
-      password = '',
-      tenantId = ''
-    } = {}) {
+    login({ dispatch }, { username = '', password = '', tenantId = '' } = {}) {
       return new Promise((resolve, reject) => {
         // 开始请求登录接口
         AccountLogin({
           username,
-          password,
-          tenantId
+          password
         })
           .then(async res => {
             // 设置 cookie 一定要存 uuid 和 token 两个 cookie
@@ -46,8 +41,8 @@ export default {
             // token 代表用户当前登录状态 建议在网络请求中携带 token
             // 如有必要 token 需要定时更新，默认保存一天，可在 setting.js 中修改
             // 如果你的 token 不是通过 cookie 携带，而是普通字段，也可视情况存储在 localStorage
-            util.cookies.set('uuid', res.user_id)
-            util.cookies.set('token', res.access_token)
+            console.log(res.data)
+            util.cookies.set('token', res.data[0])
             // 设置 vuex 用户信息
             const info = { name: res.user_name, avatar: 'https://dev-file.iviewui.com/userinfoPDvn9gKWYihR24SpgC319vXY8qniCqj4/avatar' }
             util.cookies.set('userInfo', info)
@@ -55,7 +50,7 @@ export default {
             // 用户登录后从持久化数据加载一系列的设置
             await dispatch('load')
             // 结束
-            resolve()
+            resolve(res)
           })
           .catch(err => {
             // console.log('err: ', err);

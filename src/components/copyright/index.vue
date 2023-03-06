@@ -8,7 +8,7 @@ export default {
     return {
       links: [
         {
-          title: '官网',
+          title: '',
           key: '官网',
           href: 'http://www.hztianque.com/home',
           blankTarget: true
@@ -26,7 +26,7 @@ export default {
                         blankTarget: true
                     } */
       ],
-      copyright: 'Copyright © 2019 杭州天阙科技有限公司'
+      copyright: '张枨涯 © 2023 嘉兴南湖学院'
     }
   }
 }

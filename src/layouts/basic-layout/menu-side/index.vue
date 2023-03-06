@@ -3,7 +3,7 @@
     <div class="i-layout-sider-logo" :class="{ 'i-layout-sider-logo-dark': siderTheme === 'dark' }">
       <transition name="fade-quick">
         <i-link to="/index" v-show="!hideLogo">
-          <img src="@/assets/images/logo-small.png" v-if="menuCollapse">
+          <img src="@/assets/images/logo-small.png" v-if="!menuCollapse">
           <img src="@/assets/images/logo.png" v-else-if="siderTheme === 'light'">
           <img src="@/assets/images/logo-dark.png" v-else>
         </i-link>
@@ -19,7 +19,7 @@
       :open-names="openNames"
       width="auto"
     >
-      <template v-if="!menuCollapse">
+      <template v-if="menuCollapse">
         <template v-for="(item, index) in filterSider">
           <i-menu-side-item v-if="item.children === undefined || !item.children.length" :menu="item" :key="index" />
           <i-menu-side-submenu v-else :menu="item" :key="index + 'submenu'" />
@@ -65,7 +65,8 @@ export default {
     return {
       applist: [],
       allapplist: [],
-      selectData: []
+      selectData: [],
+      menusList: []
     }
   },
   computed: {
@@ -85,6 +86,7 @@ export default {
   watch: {
     $route: {
       handler() {
+        console.log('this is menu ')
         this.handleUpdateMenuState()
       },
       immediate: true
@@ -99,6 +101,8 @@ export default {
   },
   methods: {
     listBaseMenuT() {
+      const list = localStorage.getItem('menusList')
+      console.log({list})
       this.filterSider.forEach(item => {
         this.applist.push({
           title: item.title,

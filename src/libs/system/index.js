@@ -11,15 +11,15 @@ import { cloneDeep } from 'lodash'
  * */
 function getHeaderName(currentPath, menuList) {
   const allMenus = []
-  menuList.forEach(menu => {
-    const headerName = menu.header || ''
-    const menus = transferMenu(menu, headerName)
-    allMenus.push({
-      path: menu.path,
-      header: headerName
-    })
-    menus.forEach(item => allMenus.push(item))
-  })
+  // menuList.forEach(menu => {
+  //   const headerName = menu.header || ''
+  //   const menus = transferMenu(menu, headerName)
+  //   allMenus.push({
+  //     path: menu.path,
+  //     header: headerName
+  //   })
+  //   menus.forEach(item => allMenus.push(item))
+  // })
 
   const currentMenu = allMenus.find(item => item.path === currentPath)
   return currentMenu ? currentMenu.header : null
@@ -64,14 +64,14 @@ export { getMenuSider }
  * */
 function getSiderSubmenu(currentPath, menuList) {
   const allMenus = []
-  menuList.forEach(menu => {
-    const menus = transferSubMenu(menu, [])
-    allMenus.push({
-      path: menu.path,
-      openNames: []
-    })
-    menus.forEach(item => allMenus.push(item))
-  })
+  // menuList.forEach(menu => {
+  // const menus = transferSubMenu(menu, [])
+  // allMenus.push({
+  //   path: menu.path,
+  //   openNames: []
+  // })
+  // menus.forEach(item => allMenus.push(item))
+  // })
 
   const currentMenu = allMenus.find(item => item.path === currentPath)
   return currentMenu ? currentMenu.openNames : []
@@ -106,14 +106,14 @@ export { getSiderSubmenu }
 function getAllSiderMenu(menuList) {
   const allMenus = []
 
-  menuList.forEach(menu => {
-    if (menu.children && menu.children.length) {
-      const menus = getMenuChildren(menu)
-      menus.forEach(item => allMenus.push(item))
-    } else {
-      allMenus.push(menu)
-    }
-  })
+  // menuList.forEach(menu => {
+  //   if (menu.children && menu.children.length) {
+  //     const menus = getMenuChildren(menu)
+  //     menus.forEach(item => allMenus.push(item))
+  //   } else {
+  //     allMenus.push(menu)
+  //   }
+  // })
 
   return allMenus
 }
@@ -135,15 +135,17 @@ export { getAllSiderMenu }
  * @description 将菜单转为平级
  * */
 function flattenSiderMenu(menuList, newList) {
-  menuList.forEach(menu => {
-    const newMenu = {}
-    for (const i in menu) {
-      if (i !== 'children') newMenu[i] = cloneDeep(menu[i])
-    }
-    newList.push(newMenu)
-    menu.children && flattenSiderMenu(menu.children, newList)
-  })
-  return newList
+
+  const newMenu = {}
+  // menuList.forEach(menu => {
+  //   const newMenu = {}
+  //   for (const i in menu) {
+  //     if (i !== 'children') newMenu[i] = cloneDeep(menu[i])
+  //   }
+  //   newList.push(newMenu)
+  //   menu.children && flattenSiderMenu(menu.children, newList)
+  // })
+  return newMenu
 }
 
 export { flattenSiderMenu }

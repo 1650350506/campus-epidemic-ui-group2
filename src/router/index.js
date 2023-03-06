@@ -55,19 +55,6 @@ router.beforeEach((to, from, next) => {
               if (menu.children) {
                 menu.children.forEach(item => {
                   if (to.path === item.path) {
-                    GetPermissionBtns({ parentId: item.id }).then(res => {
-                      store.commit('admin/menu/setPermissionButtons', res)
-                      next()
-                    })
-                      .catch(error => {
-                        console.log(error)
-                        next({
-                          name: 'login',
-                          query: {
-                            redirect: to.fullPath
-                          }
-                        })
-                      })
                     dispatch = true
                   }
                 })
@@ -111,7 +98,7 @@ router.beforeEach((to, from, next) => {
           })
       } else {
         const { path } = to
-        const menus = store.getters['admin/menu/filterSider']
+        const menus = localStorage.getItem('menusList')
         // 判断是否需要登录才可以进入
         if (to.matched.some(_ => _.meta.auth)) {
           menus.forEach(menu => {

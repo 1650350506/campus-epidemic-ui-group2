@@ -51,23 +51,13 @@ const service = axios.create({
 // 请求拦截器
 service.interceptors.request.use(
   config => {
-    if (config.urlType === 'login') {
-      config.baseURL = '/api'
-      config.headers.Authorization = 'Basic dXNlcmNlbnRlcjoxMTg2MDQ1ZDU1OTlkZTZlZjJjYTI4MjM0N2E1NWNhMg=='
-      const mete = (config.meta || {})
-      // 在请求发送之前做一些处理
-      if (config.method === 'post' && mete.isSerialize !== false) {
-        config.data = serialize(config.data)
-        // encode 解决提交中文乱码 post
-        config.data = encodeURI(config.data)
-      }
-    } else if (config.urlType === 'jixian') {
-      config.baseURL = '/jixian'
-      config.headers.Authorization = util.cookies.get('token')
-    }
+    config.baseURL = 'http://127.0.0.1:8081'
+    config.headers.Authorization = util.cookies.get('token')
+
     const token = util.cookies.get('token')
     // 让每个请求携带token-- ['X-Token']为自定义key 请根据实际情况自行修改
-    config.headers.auth = `bearer ${token}`
+    config.headers.auth = token
+    console.log(config)
     return config
   },
   error => {

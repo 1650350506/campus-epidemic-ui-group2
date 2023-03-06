@@ -1,24 +1,24 @@
 <template>
   <div style="margin:84px 24px 0 24px">
-    <Card :bordered="false"  class="card">
-      <i-header-breadcrumb  ref="breadcrumb" />
-      <h2 style="margin-top: 10px;">你好！ {{userInfo.roleName}}！</h2>
+    <Card :bordered="false" class="card">
+      <i-header-breadcrumb ref="breadcrumb" />
+      <h2 style="margin-top: 10px;">你好！ {{ userInfo.roleName }}！</h2>
     </Card>
     <div class="chart-top">
-      <Card v-for="(item, index) in topList" :key="index"  class="card-box">
+      <Card v-for="(item, index) in topList" :key="index" class="card-box">
         <div class="col-style">
-          <h2 style="font-size: 24px; color: #999999">{{item.name}}</h2>
-          <h2 class="num">{{item.num}}</h2>
-          <img src="../../../assets/images/pre1.png" v-if="index === 0" width="50%" alt="">
-          <img src="../../../assets/images/pre2.png" v-if="index === 1" width="40%" style="top: 7%;left: 3%" alt="">
-          <img src="../../../assets/images/pre3.png" v-if="index === 2" width="46%" style="top: 3%;left: 3%" alt="">
+          <h2 style="font-size: 24px; color: #999999">{{ item.name }}</h2>
+          <h2 class="num">{{ item.num }}</h2>
+          <img src="../../../assets/images/pre1.png" v-if="index === 0" width="46%" alt="">
+          <img src="../../../assets/images/pre2.png" v-if="index === 1" width="40%" alt="">
+          <img src="../../../assets/images/pre3.png" v-if="index === 2" width="40%" alt="">
         </div>
       </Card>
     </div>
     <div class="chart-bottom" style="background: #fff">
       <Card class="card">
         <h2 slot="title" style="margin: 1em 0;">隔离人员/防疫人员配比</h2>
-        <div id="main3" :style="{ width: '100%' , height: '25vw'}"></div>
+        <div id="main3" :style="{ width: '100%', height: '25vw' }"></div>
       </Card>
     </div>
     <div class="chart-mid card-marginTop">
@@ -34,7 +34,7 @@
       </Card>
       <Card class="card" :bordered="false">
         <h2 slot="title" style="margin: 1em 0;">各个学院隔离人员分布</h2>
-        <div id="main2" :style="{ width: '100%', aspectRatio:'1/0.9'}"></div>
+        <div id="main2" :style="{ width: '100%', aspectRatio: '1/0.9' }"></div>
       </Card>
     </div>
   </div>
@@ -292,17 +292,17 @@ export default {
     ...mapState('admin/account', ['userInfo'])
   },
   mounted() {
-    this.updateOptions()
-    this.updateOptions1()
-    this.updateOptions2()
+    // this.updateOptions()
+    // this.updateOptions1()
+    // this.updateOptions2()
   },
   created() {
-    this.getOldIsolationListByDate()
-    this.getNewIsolationTotal()
-    this.getAllIsolationTotal()
-    this.getReliveIsolationTotal()
-    this.getEachEpidemicListAnalysis()
-    this.getEachIsolationListAnalysis()
+    // this.getOldIsolationListByDate()
+    // this.getNewIsolationTotal()
+    // this.getAllIsolationTotal()
+    // this.getReliveIsolationTotal()
+    // this.getEachEpidemicListAnalysis()
+    // this.getEachIsolationListAnalysis()
   },
   methods: {
     // 选择修改时间
@@ -387,32 +387,38 @@ export default {
 h3 {
   margin-top: 1em;
 }
+
 .container {
   padding: 0;
   margin-top: 16px;
   overflow-y: hidden;
   background: #f7f7f7;
 }
+
 canvas {
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
 }
+
 .select-box {
   width: 140px;
   margin-top: 1em;
 }
+
 .chart-top {
   width: 100%;
   height: 14vw;
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+
   .card-box {
     width: 30%;
     height: 85%;
     border-radius: 10px;
-    box-shadow: 2px 2px 5px rgba(0,0,0,0.4);
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
+
     ::v-deep(.ivu-card-body) {
       padding: 5% 8% 5% 5%;
       width: 100%;
@@ -420,18 +426,22 @@ canvas {
     }
   }
 }
+
 i {
   font-size: 3em;
   font-weight: bold;
   cursor: pointer;
 }
+
 .card-left-item {
   margin-top: 8%;
   text-align: center;
+
   i {
     font-size: 6em;
   }
 }
+
 .col-style {
   width: 100%;
   height: 100%;
@@ -439,15 +449,18 @@ i {
   flex-direction: column;
   align-items: flex-end;
   justify-content: space-between;
+
   .num {
     font-size: 4em;
   }
+
   img {
     position: absolute;
     top: 0;
     left: 0;
   }
 }
+
 .chart-mid {
   height: 42vw;
   width: 100%;
@@ -455,14 +468,17 @@ i {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+
   .card {
     position: relative;
     width: 49%;
     height: 96%;
   }
 }
+
 .chart-bottom {
   height: 34vw;
+
   .card {
     height: 100%;
     width: 100%;

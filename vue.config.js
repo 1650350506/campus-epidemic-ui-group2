@@ -25,7 +25,7 @@ module.exports = {
         }
       },
       '/jixian': {
-        target: 'http://192.168.1.3:28088',
+        target: 'http://127.0.0.1:8081',
         ws: true,
         changeOrigin: true,
         pathRewrite: {

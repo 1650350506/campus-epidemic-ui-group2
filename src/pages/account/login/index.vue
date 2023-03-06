@@ -9,15 +9,11 @@
           <h1>登 录</h1>
           <div class="input-group">
             <label class="label">账号</label>
-            <input autocomplete="off" name="username" v-model="loginInfo.username" class="input"
-                   type="text"
-            >
+            <input autocomplete="off" name="username" v-model="loginInfo.username" class="input" type="text">
           </div>
           <div class="input-group">
             <label class="label">密码</label>
-            <input autocomplete="off" name="password" v-model="loginInfo.password" class="input"
-                   type="password"
-            >
+            <input autocomplete="off" name="password" v-model="loginInfo.password" class="input" type="password">
           </div>
           <div class="cntr"><input type="checkbox" v-model="loginInfo.checked" id="cbx" class="hidden-xs-up">
             <label for="cbx" class="cbx"></label>
@@ -31,17 +27,15 @@
 </template>
 <script>
 import { mapState, mapActions, mapMutations } from 'vuex'
-import md5 from 'js-md5'
-import { GetUserInfoByToken } from '@api/system/user'
-
+import { GetMenus} from '../../../api/system/menu.js'
 export default {
   data() {
     return {
       autoLogin: true,
       showList: [false, false, false, false],
       loginInfo: {
-        username: '',
-        password: '',
+        username: 'zhangsan',
+        password: '123',
         checked: false
       }
     }
@@ -62,38 +56,39 @@ export default {
     ]),
     ...mapMutations('admin/account', ['addToUserInfo']),
     getUserInfoByToken() {
-      GetUserInfoByToken().then(res => {
-        if (res.role[0].name === '疫情2组管理员') {
-          const info = {
-            username: this.loginInfo.username,
-            password: this.loginInfo.password,
-            checked: this.loginInfo.checked,
-            roleName: '管理员'
-          }
-          this.addToUserInfo(info)
-          this.$router.replace('/isolationAnalysis')
-        } else if (res.role[0].name === '疫情2组防疫人员') {
-          const info = {
-            username: this.loginInfo.username,
-            password: this.loginInfo.password,
-            checked: this.loginInfo.checked,
-            roleName: '防疫人员'
-          }
-          this.addToUserInfo(info)
-          this.$router.replace('/quarantinedManage')
-        }
-      })
     },
     handleSubmit() {
       const { username } = this.loginInfo
-      const password = md5(this.loginInfo.password)
+      const password = this.loginInfo.password
       this.login({
         username,
         password
       })
-        .then(() => {
-          // 重定向对象不存在则返回顶层路径
-          this.getUserInfoByToken()
+        .then((res) => {
+          GetMenus().then(res => {
+            localStorage.setItem('menusList', JSON.stringify(res.data.permissionCodeList))
+          })
+          if (res.data[1] === '管理员') {
+            console.log(res.data[1])
+            const info = {
+              username: this.loginInfo.username,
+              password: this.loginInfo.password,
+              checked: this.loginInfo.checked,
+              roleName: '管理员'
+            }
+            this.addToUserInfo(info)
+            this.$router.replace('/isolationAnalysis')
+          } else if (res.data[1] === '防疫人员') {
+            console.log(res.data[1])
+            const info = {
+              username: this.loginInfo.username,
+              password: this.loginInfo.password,
+              checked: this.loginInfo.checked,
+              roleName: '防疫人员'
+            }
+            this.addToUserInfo(info)
+            this.$router.replace('/quarantinedManage')
+          }
         })
         .catch(error => {
           // 异常情况

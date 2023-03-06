@@ -10,7 +10,7 @@
           <div>地区查询</div>
           <Cascader style="width: 150px; margin: 0 10px 0 5px" :data="provinceData" v-model="provinceValue" placeholder="请选择省份" @on-change="loadData"></Cascader>
           <Cascader style="width: 150px; margin: 0 10px 0 5px" :data="cityData" v-model="cityValue" placeholder="请选择城市" @on-change="loadData"></Cascader>
-          <Cascader style="width: 150px; margin: 0 10px 0 5px" :data="countyData" v-model="countyValue" placeholder="请选择区县" @on-change="loadData"></Cascader>
+          <Cascader style="          ntyValue" placeholder="请选择区县" @on-change="loadData"></Cascader>
           <Cascader style="width: 150px; margin: 0 10px 0 5px" :data="streetData" v-model="streetValue" placeholder="请选择街道" @on-change="loadData"></Cascader>
         </div>
         <Button @click="reset">重置</Button>

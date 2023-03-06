@@ -8,19 +8,19 @@ import dashboard from '@/menu/modules/doraemon-dashboard'
 
 // 根据 menu 配置的权限，过滤菜单
 function filterMenu(menuList, access, lastList) {
-  menuList.forEach(menu => {
-    const menuAccess = menu.auth
-    if (!menuAccess || includeArray(menuAccess, access)) {
-      const newMenu = {}
-      for (const i in menu) {
-        if (i !== 'children') newMenu[i] = cloneDeep(menu[i])
-      }
-      if (menu.children && menu.children.length) newMenu.children = []
-      lastList.push(newMenu)
-      menu.children && filterMenu(menu.children, access, newMenu.children)
-    }
-  })
-  return lastList
+  // menuList.forEach(menu => {
+  //   const menuAccess = menu.auth
+  //   if (!menuAccess || includeArray(menuAccess, access)) {
+  //     const newMenu = {}
+  //     for (const i in menu) {
+  //       if (i !== 'children') newMenu[i] = cloneDeep(menu[i])
+  //     }
+  //     if (menu.children && menu.children.length) newMenu.children = []
+  //     lastList.push(newMenu)
+  //     menu.children && filterMenu(menu.children, access, newMenu.children)
+  //   }
+  // })
+  return []
 }
 
 export default {
@@ -50,14 +50,8 @@ export default {
          * @description 根据 user 里登录用户权限，对侧边菜单进行鉴权过滤
          * */
     filterSider(state, getters, rootState) {
-      const userInfo = rootState.admin.user.info
-      // @权限
-      const { access } = userInfo
-      if (access && access.length) {
-        return filterMenu(state.sider, access, [])
-      } else {
-        return filterMenu(state.sider, [], [])
-      }
+      console.log(localStorage.getItem('menusList'))
+      return []
     },
     /**
          * @description 根据 user 里登录用户权限，对顶栏菜单进行鉴权过滤
@@ -205,69 +199,70 @@ export default {
   },
   actions: {
     getMenus() {
-      return new Promise((resolve, reject) => {
-        // 获取用户菜单
-        GetMenus({ appKey: 'cappus-epidemic-group2' })
-          .then(res => {
-            const menuSider = []
-            menuSider.push(dashboard)
-            res.forEach(menu => {
-              const childMenu = []
-              if (menu.children) {
-                menu.children.forEach(item => {
-                  if (item.jumpType === 'open') {
-                    childMenu.push({
-                      custom: item.ico,
-                      title: item.cname,
-                      path: item.normalUrl,
-                      id: item.id,
-                      target: '_blank'
-                    })
-                  } else if (item.jumpType === 'iframe') {
-                    childMenu.push({
-                      custom: item.ico,
-                      title: item.cname,
-                      path: `/iframe-page/${item.id}`,
-                      id: item.id,
-                      normalUrl: item.normalUrl,
-                      jumpType: item.jumpType
-                    })
-                  } else {
-                    childMenu.push({
-                      custom: item.ico,
-                      title: item.cname,
-                      path: item.normalUrl,
-                      id: item.id
-                    })
-                  }
-                })
-                menuSider.push({
-                  path: `${menu.normalUrl}`,
-                  title: menu.cname,
-                  header: 'home',
-                  custom: menu.ico,
-                  children: childMenu
-                })
-              } else {
-                menuSider.push({
-                  path: `${menu.normalUrl}`,
-                  title: menu.cname,
-                  header: 'home',
-                  custom: menu.ico,
-                  children: childMenu
-                })
-              }
-            })
-            menuSider.shift()
-            menuSider.unshift()
-            // 结束
-            resolve(menuSider)
-          })
-          .catch(err => {
-            // console.log('err: ', err);
-            reject(err)
-          })
-      })
+      // return new Promise((resolve, reject) => {
+      //   // 获取用户菜单
+      //   GetMenus({})
+      //     .then(res => {
+      //       const menuSider = []
+      //       menuSider.push(dashboard)
+      //       res.forEach(menu => {
+      //         const childMenu = []
+      //         if (menu.children) {
+      //           menu.children.forEach(item => {
+      //             if (item.jumpType === 'open') {
+      //               childMenu.push({
+      //                 custom: item.ico,
+      //                 title: item.cname,
+      //                 path: item.normalUrl,
+      //                 id: item.id,
+      //                 target: '_blank'
+      //               })
+      //             } else if (item.jumpType === 'iframe') {
+      //               childMenu.push({
+      //                 custom: item.ico,
+      //                 title: item.cname,
+      //                 path: `/iframe-page/${item.id}`,
+      //                 id: item.id,
+      //                 normalUrl: item.normalUrl,
+      //                 jumpType: item.jumpType
+      //               })
+      //             } else {
+      //               childMenu.push({
+      //                 custom: item.ico,
+      //                 title: item.cname,
+      //                 path: item.normalUrl,
+      //                 id: item.id
+      //               })
+      //             }
+      //           })
+      //           menuSider.push({
+      //             path: `${menu.normalUrl}`,
+      //             title: menu.cname,
+      //             header: 'home',
+      //             custom: menu.ico,
+      //             children: childMenu
+      //           })
+      //         } else {
+      //           menuSider.push({
+      //             path: `${menu.normalUrl}`,
+      //             title: menu.cname,
+      //             header: 'home',
+      //             custom: menu.ico,
+      //             children: childMenu
+      //           })
+      //         }
+      //       })
+      //       menuSider.shift()
+      //       menuSider.unshift()
+      //       // 结束
+      //       resolve(menuSider)
+      //       console.log(menuSider)
+      //     })
+      //     .catch(err => {
+      //       // console.log('err: ', err);
+      //       reject(err)
+      //     })
+      // })
     }
   }
 }
