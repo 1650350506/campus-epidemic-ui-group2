@@ -1,9 +1,8 @@
 import request from '@/plugins/request'
-import moduleName from '@/config/moduleName'
 
 export function SubStuRecord(data) {
   return request({
-    url: `${moduleName.doraemon_campus}/riskPersonnel/addStudentCrossCity`,
+    url: `/riskPersonnel/addStudentCrossCity`,
     method: 'post',
     urlType: 'jixian',
     meta: {
@@ -16,7 +15,7 @@ export function SubStuRecord(data) {
 // 回校
 export function SubStuBack(data) {
   return request({
-    url: `${moduleName.doraemon_campus}/travelRecord/returnSchoolSubmit`,
+    url: `/travelRecord/returnSchoolSubmit`,
     method: 'post',
     urlType: 'jixian',
     meta: {
@@ -29,7 +28,7 @@ export function SubStuBack(data) {
 // 出校
 export function SubStuLeave(data) {
   return request({
-    url: `${moduleName.doraemon_campus}/travelRecord/leaveSchoolSubmit`,
+    url: `/travelRecord/leaveSchoolSubmit`,
     method: 'post',
     urlType: 'jixian',
     meta: {

@@ -31,12 +31,12 @@ const frameIn = [
       },
       {
         path: '/journey/local',
-        name: '',
+        name: '/journey/local',
         component: () => import('@/pages/administrators/journey/local')
       },
       {
         path: '/journey/cross',
-        name: '',
+        name: '/journey/cross',
         component: () => import('@/pages/administrators/journey/cross')
       },
       {
