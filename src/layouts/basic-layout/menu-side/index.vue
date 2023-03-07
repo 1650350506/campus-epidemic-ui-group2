@@ -2,11 +2,11 @@
   <div>
     <div class="i-layout-sider-logo" :class="{ 'i-layout-sider-logo-dark': siderTheme === 'dark' }">
       <transition name="fade-quick">
-        <i-link to="/index" v-show="!hideLogo">
-          <img src="@/assets/images/logo-small.png" v-if="!menuCollapse">
-          <img src="@/assets/images/logo.png" v-else-if="siderTheme === 'light'">
-          <img src="@/assets/images/logo-dark.png" v-else>
-        </i-link>
+        <!--        <i-link to="/index" v-show="!hideLogo">-->
+        <!--          <img src="@/assets/images/logo-small.png" v-if="!menuCollapse">-->
+        <!--          <img src="@/assets/images/logo.png" v-else-if="siderTheme === 'light'">-->
+        <!--          <img src="@/assets/images/logo-dark.png" v-else>-->
+        <!--        </i-link>-->
       </transition>
     </div>
     <Menu
@@ -19,18 +19,10 @@
       :open-names="openNames"
       width="auto"
     >
-      <template v-if="menuCollapse">
-        <template v-for="(item, index) in filterSider">
+      <template>
+        <template v-for="(item, index) in applist">
           <i-menu-side-item v-if="item.children === undefined || !item.children.length" :menu="item" :key="index" />
           <i-menu-side-submenu v-else :menu="item" :key="index + 'submenu'" />
-        </template>
-      </template>
-      <template v-else>
-        <template v-for="(item, index) in filterSider">
-          <Tooltip :content="tTitle(item.title)" placement="right" v-if="item.children === undefined || !item.children.length" :key="index">
-            <i-menu-side-item :menu="item" hide-title />
-          </Tooltip>
-          <i-menu-side-collapse v-else :menu="item" :key="index + 'collapse'" top-level />
         </template>
       </template>
     </Menu>
@@ -43,7 +35,6 @@ import iMenuSideCollapse from './menu-collapse'
 import tTitle from '../mixins/translate-title'
 
 import { mapState, mapGetters } from 'vuex'
-import { listBaseMenu } from '@/api/system/menu'
 
 // 元素是否在可视区域
 function isElementInViewport(el) {
@@ -101,41 +92,16 @@ export default {
   },
   methods: {
     listBaseMenuT() {
-      const list = localStorage.getItem('menusList')
-      console.log({list})
-      this.filterSider.forEach(item => {
+      const list = JSON.parse(localStorage.getItem('menusList'))
+      console.log(list)
+      list.forEach(item => {
+        console.log(item)
         this.applist.push({
-          title: item.title,
+          // 后续改为title
+          title: item.name,
           path: item.path,
-          custom: item.custom
+          icon: item.icon
         })
-      })
-      listBaseMenu({ groupEname: 'LightGroup' }).then(res => {
-        res.forEach(element => {
-          const apps = []
-          element.children.forEach(item => {
-            if (item.jumpType === 'open') {
-              apps.push({
-                title: item.appName,
-                path: item.indexUrl,
-                custom: item.ico,
-                target: '_blank'
-              })
-            } else {
-              apps.push({
-                title: item.appName,
-                path: item.indexUrl,
-                custom: item.ico
-              })
-            }
-          })
-          this.allapplist.push({
-            title: element.title,
-            custom: element.ico,
-            children: apps
-          })
-        })
-        this.selectData = this.allapplist
       })
     },
     searchQuery(query) {

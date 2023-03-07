@@ -1,6 +1,6 @@
 <template>
   <Layout class="i-layout">
-    <Sider v-if="!isMobile && !hideSider" class="i-layout-sider" :class="siderClasses" :width="menuSideWidth">
+    <Sider class="i-layout-sider" :class="siderClasses" :width="menuSideWidth">
       <i-menu-side :hide-logo="isHeaderStick && headerFix && showHeader" />
     </Sider>
     <Layout class="i-layout-inside" :class="insideClasses">
@@ -38,7 +38,7 @@
       </Content>
       <i-copyright />
     </Layout>
-    <div v-if="isMobile && !hideSider">
+    <div>
       <Drawer v-model="showDrawer" placement="left" :closable="false" :class-name="drawerClasses">
         <i-menu-side />
       </Drawer>

@@ -10,7 +10,12 @@ import { cloneDeep } from 'lodash'
  * @param {Array} menuList 所有路径
  * */
 function getHeaderName(currentPath, menuList) {
-  const allMenus = []
+  console.log('List')
+  const allMenus = [
+    {
+      path: '/xxxx'
+    }
+  ]
   // menuList.forEach(menu => {
   //   const headerName = menu.header || ''
   //   const menus = transferMenu(menu, headerName)

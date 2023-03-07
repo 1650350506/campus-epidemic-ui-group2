@@ -75,17 +75,6 @@ router.beforeEach((to, from, next) => {
             path = to.path
             headerName = getHeaderName(path, menuSider)
           }
-          // 在 404 时，是没有 headerName 的
-          if (headerName !== null) {
-            store.commit('admin/menu/setHeaderName', headerName)
-            const filterMenuSider = getMenuSider(menuSider, headerName)
-            store.commit('admin/menu/setSider', filterMenuSider)
-            store.commit('admin/menu/setAllSider', filterMenuSider)
-            store.commit('admin/menu/setActivePath', path)
-            const openNames = getSiderSubmenu(path, menuSider)
-            store.commit('admin/menu/setOpenNames', openNames)
-            util.cookies.set('menuPath', path)
-          }
         })
           .catch(error => {
             console.log(error)
@@ -101,28 +90,6 @@ router.beforeEach((to, from, next) => {
         const menus = localStorage.getItem('menusList')
         // 判断是否需要登录才可以进入
         if (to.matched.some(_ => _.meta.auth)) {
-          menus.forEach(menu => {
-            if (menu.children) {
-              menu.children.forEach(item => {
-                if (to.path === item.path) {
-                  GetPermissionBtns({ parentId: item.id }).then(res => {
-                    store.commit('admin/menu/setPermissionButtons', res)
-                    next()
-                  })
-                    .catch(error => {
-                      console.log(error)
-                      next({
-                        name: 'login',
-                        query: {
-                          redirect: to.fullPath
-                        }
-                      })
-                    })
-                  dispatch = true
-                }
-              })
-            }
-          })
           if (!dispatch) {
             next('/404')
           }
@@ -132,13 +99,6 @@ router.beforeEach((to, from, next) => {
         }
         const headerName = getHeaderName(path, menus)
         // 在 404 时，是没有 headerName 的
-        if (headerName !== null) {
-          store.commit('admin/menu/setHeaderName', headerName)
-          store.commit('admin/menu/setActivePath', path)
-          const openNames = getSiderSubmenu(path, menus)
-          store.commit('admin/menu/setOpenNames', openNames)
-          util.cookies.set('menuPath', path)
-        }
       }
     } else {
       // 没有登录的时候跳转到登录界面

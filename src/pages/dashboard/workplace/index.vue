@@ -132,15 +132,14 @@
   <!--  </div>-->
 </template>
 <script>
-import { mapState, mapGetters } from "vuex";
-import myApps from "./my-apps";
-import shortcut from "./shortcut";
-import todo from "./todo";
-import axios from "axios";
-import { listBaseMenu, demo } from "@/api/system/menu";
+import { mapState, mapGetters } from 'vuex'
+import myApps from './my-apps'
+import shortcut from './shortcut'
+import todo from './todo'
+import axios from 'axios'
 
 export default {
-  name: "dashboard-workplace",
+  name: 'dashboard-workplace',
   components: { myApps, shortcut, todo },
   data() {
     return {
@@ -148,21 +147,21 @@ export default {
       appNumber: 0,
       workToDoNumber: 0,
       workToDoList: [],
-      shortcutList: [],
-    };
+      shortcutList: []
+    }
   },
   computed: {
-    ...mapState("admin/user", ["info"]),
-    ...mapGetters("admin/menu", ["filterSider"]),
+    ...mapState('admin/user', ['info']),
+    ...mapGetters('admin/menu', ['filterSider'])
   },
   mounted() {
     this.filterSider.forEach((menu) => {
       if (this.shortcutList.length < 6) {
-        this.shortcutList.push(menu);
+        this.shortcutList.push(menu)
       }
-    });
-    this.listBaseMenuT();
-    this.listTopTodo();
+    })
+    this.listBaseMenuT()
+    this.listTopTodo()
   },
   methods: {
     listBaseMenuT() {
@@ -175,7 +174,7 @@ export default {
       //   this.appNumber = this.appMenus.length
       // })
     },
-    listTopTodo() {},
+    listTopTodo() {}
     // testDemo() {
     //   // eslint-disable-next-line no-undef
     //   demo().then((res) => {
@@ -183,8 +182,8 @@ export default {
     //     return res
     //   })
     // }
-  },
-};
+  }
+}
 </script>
 <style lang="less">
 .dashboard-workplace {
